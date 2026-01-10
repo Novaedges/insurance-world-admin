@@ -18,7 +18,11 @@
       </div>
       <div class="form-group full-width">
         <label>Description</label>
-        <textarea formControlName="description" rows="3" placeholder="Product Description"></textarea>
+        <textarea
+          formControlName="description"
+          rows="3"
+          placeholder="Product Description"
+        ></textarea>
       </div>
       <div class="form-group">
         <label>Insurance Category</label>
@@ -124,14 +128,10 @@
 
   <div class="form-actions">
     @if (currentStep > 1) {
-      <button type="button" class="btn-secondary" (click)="prevStep()">
-        Back
-      </button>
+      <button type="button" class="btn-secondary" (click)="prevStep()">Back</button>
     }
     @if (currentStep < 3) {
-      <button type="button" class="btn-primary" (click)="nextStep()">
-        Next
-      </button>
+      <button type="button" class="btn-primary" (click)="nextStep()">Next</button>
     }
 
     @if (currentStep === 3) {

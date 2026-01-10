@@ -9,9 +9,7 @@
     <select formControlName="parentCategoryId">
       <option value="" disabled>Select Parent Category</option>
       @for (cat of parentCategories; track cat.id) {
-        <option [value]="cat.id">
-          {{ cat.name }} ({{ cat.type }})
-        </option>
+        <option [value]="cat.id">{{ cat.name }} ({{ cat.type }})</option>
       }
     </select>
   </div>

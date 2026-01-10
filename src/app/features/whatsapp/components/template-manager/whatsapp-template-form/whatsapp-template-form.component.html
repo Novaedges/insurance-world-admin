@@ -1,11 +1,7 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
   <div class="form-group">
     <label>Template Name</label>
-    <input
-      type="text"
-      formControlName="name"
-      placeholder="e.g., Welcome Message"
-    />
+    <input type="text" formControlName="name" placeholder="e.g., Welcome Message" />
   </div>
 
   <div class="form-group full-width">
@@ -15,7 +11,10 @@
       rows="4"
       [placeholder]="'Hello {{1}}, welcome...'"
     ></textarea>
-    <p class="text-xs text-muted mt-1">Use <code>{{ '{' + '{' }}1{{ '}' + '}' }}</code>, <code>{{ '{' + '{' }}2{{ '}' + '}' }}</code> for variables.</p>
+    <p class="text-xs text-muted mt-1">
+      Use <code>{{ '{' + '{' }}1{{ '}' + '}' }}</code
+      >, <code>{{ '{' + '{' }}2{{ '}' + '}' }}</code> for variables.
+    </p>
   </div>
 
   <div class="form-group">

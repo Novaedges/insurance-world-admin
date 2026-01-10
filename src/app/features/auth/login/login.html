@@ -19,12 +19,9 @@
           />
         </div>
         @if (
-            loginForm.get('phoneNumber')?.touched &&
-            loginForm.get('phoneNumber')?.errors?.['pattern']
+          loginForm.get('phoneNumber')?.touched && loginForm.get('phoneNumber')?.errors?.['pattern']
         ) {
-          <div class="error-msg">
-            Enter a valid 10-digit phone number
-          </div>
+          <div class="error-msg">Enter a valid 10-digit phone number</div>
         }
       </div>
 

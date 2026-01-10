@@ -8,7 +8,7 @@ import { WhatsappConfig } from '../../../../../core/services/notification.servic
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './whatsapp-config-form.component.html',
-  styleUrls: ['./whatsapp-config-form.component.scss']
+  styleUrls: ['./whatsapp-config-form.component.scss'],
 })
 export class WhatsappConfigFormComponent implements OnChanges {
   @Input() data: WhatsappConfig | null = null;
@@ -23,7 +23,7 @@ export class WhatsappConfigFormComponent implements OnChanges {
       id: [''],
       providerName: ['', Validators.required],
       phoneNumber: ['', Validators.required],
-      status: ['Active', Validators.required]
+      status: ['Active', Validators.required],
     });
   }
 

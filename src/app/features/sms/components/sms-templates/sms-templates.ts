@@ -29,7 +29,7 @@ export class SmsTemplates implements OnInit {
 
   constructor(
     private notificationService: NotificationService,
-    private snackbar: SnackbarService
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit() {
@@ -42,7 +42,7 @@ export class SmsTemplates implements OnInit {
         this.items = data;
         if (showNotification) this.snackbar.success('Data refreshed');
       },
-      error: () => this.snackbar.error('Failed to load templates')
+      error: () => this.snackbar.error('Failed to load templates'),
     });
   }
 
@@ -60,15 +60,16 @@ export class SmsTemplates implements OnInit {
     if (this.isSubmitting) return;
     this.isSubmitting = true;
 
-    this.notificationService.saveSmsTemplate(item)
-      .pipe(finalize(() => this.isSubmitting = false))
+    this.notificationService
+      .saveSmsTemplate(item)
+      .pipe(finalize(() => (this.isSubmitting = false)))
       .subscribe({
         next: () => {
           this.loadData();
           this.closeForm();
           this.snackbar.success(item.id ? 'Template updated' : 'Template created');
         },
-        error: () => this.snackbar.error('Failed to save template')
+        error: () => this.snackbar.error('Failed to save template'),
       });
   }
 
@@ -78,7 +79,7 @@ export class SmsTemplates implements OnInit {
         this.loadData();
         this.snackbar.success('Template deleted');
       },
-      error: () => this.snackbar.error('Failed to delete template')
+      error: () => this.snackbar.error('Failed to delete template'),
     });
   }
 }

@@ -8,7 +8,7 @@ import { SmsConfig } from '../../../../../core/services/notification.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './sms-config-form.component.html',
-  styleUrls: ['./sms-config-form.component.scss']
+  styleUrls: ['./sms-config-form.component.scss'],
 })
 export class SmsConfigFormComponent implements OnChanges {
   @Input() data: SmsConfig | null = null;
@@ -23,7 +23,7 @@ export class SmsConfigFormComponent implements OnChanges {
       id: [''],
       provider: ['', Validators.required],
       senderId: ['', Validators.required],
-      status: ['Active', Validators.required]
+      status: ['Active', Validators.required],
     });
   }
 

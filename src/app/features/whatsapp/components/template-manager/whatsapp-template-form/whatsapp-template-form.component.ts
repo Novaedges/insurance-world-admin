@@ -8,7 +8,7 @@ import { WhatsappTemplate } from '../../../../../core/services/notification.serv
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './whatsapp-template-form.component.html',
-  styleUrls: ['./whatsapp-template-form.component.scss']
+  styleUrls: ['./whatsapp-template-form.component.scss'],
 })
 export class WhatsappTemplateFormComponent implements OnChanges {
   @Input() data: WhatsappTemplate | null = null;
@@ -23,7 +23,7 @@ export class WhatsappTemplateFormComponent implements OnChanges {
       id: [''],
       name: ['', Validators.required],
       content: ['', Validators.required],
-      status: ['Pending', Validators.required]
+      status: ['Pending', Validators.required],
     });
   }
 

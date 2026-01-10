@@ -2,7 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableComponent, Column } from '../../../../shared/components/table/table.component';
 import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';
-import { NotificationService, WhatsappTemplate } from '../../../../core/services/notification.service';
+import {
+  NotificationService,
+  WhatsappTemplate,
+} from '../../../../core/services/notification.service';
 import { WhatsappTemplateFormComponent } from './whatsapp-template-form/whatsapp-template-form.component';
 import { SnackbarService } from '../../../../core/services/snackbar.service';
 import { TooltipDirective } from '../../../../shared/directives/tooltip/tooltip.directive';
@@ -29,7 +32,7 @@ export class TemplateManager implements OnInit {
 
   constructor(
     private notificationService: NotificationService,
-    private snackbar: SnackbarService
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit() {
@@ -42,7 +45,7 @@ export class TemplateManager implements OnInit {
         this.items = data;
         if (showNotification) this.snackbar.success('Data refreshed');
       },
-      error: () => this.snackbar.error('Failed to load templates')
+      error: () => this.snackbar.error('Failed to load templates'),
     });
   }
 
@@ -60,15 +63,16 @@ export class TemplateManager implements OnInit {
     if (this.isSubmitting) return;
     this.isSubmitting = true;
 
-    this.notificationService.saveWhatsappTemplate(item)
-      .pipe(finalize(() => this.isSubmitting = false))
+    this.notificationService
+      .saveWhatsappTemplate(item)
+      .pipe(finalize(() => (this.isSubmitting = false)))
       .subscribe({
         next: () => {
           this.loadData();
           this.closeForm();
           this.snackbar.success(item.id ? 'Template updated' : 'Template created');
         },
-        error: () => this.snackbar.error('Failed to save template')
+        error: () => this.snackbar.error('Failed to save template'),
       });
   }
 
@@ -78,7 +82,7 @@ export class TemplateManager implements OnInit {
         this.loadData();
         this.snackbar.success('Template deleted');
       },
-      error: () => this.snackbar.error('Failed to delete template')
+      error: () => this.snackbar.error('Failed to delete template'),
     });
   }
 }

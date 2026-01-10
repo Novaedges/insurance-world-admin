@@ -1,6 +1,10 @@
 @if (state?.isOpen) {
   <div class="confirm-overlay" (click)="onCancel()">
-    <div class="confirm-container" (click)="$event.stopPropagation()" [class]="state?.options?.type">
+    <div
+      class="confirm-container"
+      (click)="$event.stopPropagation()"
+      [class]="state?.options?.type"
+    >
       <div class="icon-wrapper">
         <div class="icon-circle">
           @if (state?.options?.type === 'warning') {

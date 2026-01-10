@@ -23,7 +23,7 @@ export class RefundManager implements OnInit {
 
   constructor(
     private featureService: FeatureService,
-    private snackbar: SnackbarService
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit() {

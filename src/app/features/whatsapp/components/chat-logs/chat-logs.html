@@ -3,10 +3,5 @@
   <!-- No Add button for logs, naturally -->
 </div>
 
-<app-table
-  [data]="items"
-  [columns]="columns"
-  [actions]="false"
-  (refresh)="loadData(true)"
->
+<app-table [data]="items" [columns]="columns" [actions]="false" (refresh)="loadData(true)">
 </app-table>

@@ -2,7 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableComponent, Column } from '../../../../shared/components/table/table.component';
 import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';
-import { NotificationService, SmsConfig as SmsConfigModel } from '../../../../core/services/notification.service';
+import {
+  NotificationService,
+  SmsConfig as SmsConfigModel,
+} from '../../../../core/services/notification.service';
 import { SmsConfigFormComponent } from './sms-config-form/sms-config-form.component';
 import { SnackbarService } from '../../../../core/services/snackbar.service';
 import { TooltipDirective } from '../../../../shared/directives/tooltip/tooltip.directive';
@@ -29,7 +32,7 @@ export class SmsConfig implements OnInit {
 
   constructor(
     private notificationService: NotificationService,
-    private snackbar: SnackbarService
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit() {
@@ -42,7 +45,7 @@ export class SmsConfig implements OnInit {
         this.items = data;
         if (showNotification) this.snackbar.success('Data refreshed');
       },
-      error: () => this.snackbar.error('Failed to load configs')
+      error: () => this.snackbar.error('Failed to load configs'),
     });
   }
 
@@ -60,15 +63,16 @@ export class SmsConfig implements OnInit {
     if (this.isSubmitting) return;
     this.isSubmitting = true;
 
-    this.notificationService.saveSmsConfig(item)
-      .pipe(finalize(() => this.isSubmitting = false))
+    this.notificationService
+      .saveSmsConfig(item)
+      .pipe(finalize(() => (this.isSubmitting = false)))
       .subscribe({
         next: () => {
           this.loadData();
           this.closeForm();
           this.snackbar.success(item.id ? 'Config updated' : 'Config created');
         },
-        error: () => this.snackbar.error('Failed to save config')
+        error: () => this.snackbar.error('Failed to save config'),
       });
   }
 
@@ -78,7 +82,7 @@ export class SmsConfig implements OnInit {
         this.loadData();
         this.snackbar.success('Config deleted');
       },
-      error: () => this.snackbar.error('Failed to delete config')
+      error: () => this.snackbar.error('Failed to delete config'),
     });
   }
 }

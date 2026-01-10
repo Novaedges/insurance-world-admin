@@ -17,10 +17,11 @@
   [title]="selectedItem ? 'Edit SMS Template' : 'Add SMS Template'"
   (closeEvent)="closeForm()"
 >
-  <app-sms-template-form 
-    [data]="selectedItem" 
+  <app-sms-template-form
+    [data]="selectedItem"
     [isSubmitting]="isSubmitting"
-    (save)="onSave($event)" 
-    (cancel)="closeForm()">
+    (save)="onSave($event)"
+    (cancel)="closeForm()"
+  >
   </app-sms-template-form>
 </app-dialog>

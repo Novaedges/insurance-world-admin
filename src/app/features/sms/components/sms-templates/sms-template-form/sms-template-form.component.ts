@@ -8,7 +8,7 @@ import { SmsTemplate } from '../../../../../core/services/notification.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './sms-template-form.component.html',
-  styleUrls: ['./sms-template-form.component.scss']
+  styleUrls: ['./sms-template-form.component.scss'],
 })
 export class SmsTemplateFormComponent implements OnChanges {
   @Input() data: SmsTemplate | null = null;
@@ -23,7 +23,7 @@ export class SmsTemplateFormComponent implements OnChanges {
       id: [''],
       name: ['', Validators.required],
       content: ['', Validators.required],
-      status: ['Active', Validators.required]
+      status: ['Active', Validators.required],
     });
   }
 

@@ -23,7 +23,7 @@ export class SmsOutbox implements OnInit {
 
   constructor(
     private notificationService: NotificationService,
-    private snackbar: SnackbarService
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit() {
@@ -36,7 +36,7 @@ export class SmsOutbox implements OnInit {
         this.items = data;
         if (showNotification) this.snackbar.success('Outbox refreshed');
       },
-      error: () => this.snackbar.error('Failed to load outbox')
+      error: () => this.snackbar.error('Failed to load outbox'),
     });
   }
 }

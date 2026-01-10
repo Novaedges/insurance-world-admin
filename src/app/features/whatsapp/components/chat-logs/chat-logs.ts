@@ -23,7 +23,7 @@ export class ChatLogs implements OnInit {
 
   constructor(
     private notificationService: NotificationService,
-    private snackbar: SnackbarService
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit() {
@@ -36,7 +36,7 @@ export class ChatLogs implements OnInit {
         this.items = data;
         if (showNotification) this.snackbar.success('Logs refreshed');
       },
-      error: () => this.snackbar.error('Failed to load logs')
+      error: () => this.snackbar.error('Failed to load logs'),
     });
   }
 }

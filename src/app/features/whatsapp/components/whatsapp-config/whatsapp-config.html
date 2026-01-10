@@ -17,10 +17,11 @@
   [title]="selectedItem ? 'Edit Configuration' : 'Add Configuration'"
   (closeEvent)="closeForm()"
 >
-  <app-whatsapp-config-form 
-    [data]="selectedItem" 
+  <app-whatsapp-config-form
+    [data]="selectedItem"
     [isSubmitting]="isSubmitting"
-    (save)="onSave($event)" 
-    (cancel)="closeForm()">
+    (save)="onSave($event)"
+    (cancel)="closeForm()"
+  >
   </app-whatsapp-config-form>
 </app-dialog>

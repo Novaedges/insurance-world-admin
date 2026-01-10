@@ -17,10 +17,11 @@
   [title]="selectedItem ? 'Edit Template' : 'Add Template'"
   (closeEvent)="closeForm()"
 >
-  <app-whatsapp-template-form 
-    [data]="selectedItem" 
+  <app-whatsapp-template-form
+    [data]="selectedItem"
     [isSubmitting]="isSubmitting"
-    (save)="onSave($event)" 
-    (cancel)="closeForm()">
+    (save)="onSave($event)"
+    (cancel)="closeForm()"
+  >
   </app-whatsapp-template-form>
 </app-dialog>

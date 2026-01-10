@@ -17,10 +17,11 @@
   [title]="selectedItem ? 'Edit Configuration' : 'Add Configuration'"
   (closeEvent)="closeForm()"
 >
-  <app-sms-config-form 
-    [data]="selectedItem" 
+  <app-sms-config-form
+    [data]="selectedItem"
     [isSubmitting]="isSubmitting"
-    (save)="onSave($event)" 
-    (cancel)="closeForm()">
+    (save)="onSave($event)"
+    (cancel)="closeForm()"
+  >
   </app-sms-config-form>
 </app-dialog>

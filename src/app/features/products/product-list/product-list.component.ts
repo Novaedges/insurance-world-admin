@@ -33,7 +33,7 @@ export class ProductListComponent implements OnInit {
 
   constructor(
     private productService: ProductService,
-    private snackbarService: SnackbarService
+    private snackbarService: SnackbarService,
   ) {}
 
   ngOnInit() {
@@ -74,7 +74,7 @@ export class ProductListComponent implements OnInit {
           this.loadData();
           this.closeForm();
           this.snackbarService.success(
-            item.id ? 'Product updated successfully' : 'Product created successfully'
+            item.id ? 'Product updated successfully' : 'Product created successfully',
           );
         },
         error: (err) => {
