@@ -1,0 +1,129 @@
+<div class="tabs-header">
+  <button class="tab-btn" [class.active]="currentStep === 1" (click)="setStep(1)">
+    1. Details
+  </button>
+  <button class="tab-btn" [class.active]="currentStep === 2" (click)="setStep(2)">2. Config</button>
+  <button class="tab-btn" [class.active]="currentStep === 3" (click)="setStep(3)">
+    3. Pricing
+  </button>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
+  <!-- Step 1: Basic Details -->
+  <div class="step-content" *ngIf="currentStep === 1">
+    <div class="form-group">
+      <label>Product Name</label>
+      <input type="text" formControlName="name" placeholder="Enter Product Name" />
+    </div>
+
+    <div class="form-group full-width">
+      <label>Description</label>
+      <textarea formControlName="description" rows="3" placeholder="Product Description"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Insurance Category</label>
+      <select formControlName="insuranceCategoryId" (change)="onCategoryChange()">
+        <option value="" disabled>Select Category</option>
+        <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Child Category</label>
+      <select formControlName="childCategoryId">
+        <option value="" disabled>Select Child Category</option>
+        <option *ngFor="let cat of filteredChildCategories" [value]="cat.id">{{ cat.name }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Step 2: Configuration -->
+  <div class="step-content" *ngIf="currentStep === 2">
+    <div class="info-msg full-width" *ngIf="!isMotorInsurance">
+      <p>No specific configuration required for this category.</p>
+    </div>
+
+    <ng-container *ngIf="isMotorInsurance">
+      <div class="form-group">
+        <label>Make</label>
+        <select formControlName="makeId" (change)="onMakeChange()">
+          <option value="">Any Make</option>
+          <option *ngFor="let make of makes" [value]="make.id">{{ make.name }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Model</label>
+        <select formControlName="modelId">
+          <option value="">Any Model</option>
+          <option *ngFor="let model of filteredModels" [value]="model.id">{{ model.name }}</option>
+        </select>
+      </div>
+    </ng-container>
+
+    <div class="form-group">
+      <label>Policy Duration</label>
+      <select formControlName="policyDuration">
+        <option value="1 Year">1 Year</option>
+        <option value="3 Years">3 Years</option>
+        <option value="5 Years">5 Years</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Step 3: Pricing & Status -->
+  <div class="step-content" *ngIf="currentStep === 3">
+    <div class="form-group">
+      <label>Base Price</label>
+      <input type="number" formControlName="basePrice" placeholder="0.00" />
+    </div>
+
+    <div class="form-group">
+      <label>Discount Type</label>
+      <select formControlName="discountType">
+        <option value="Flat">Flat Amount</option>
+        <option value="Percentage">Percentage</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Discount Value</label>
+      <input type="number" formControlName="discountValue" placeholder="0" />
+    </div>
+
+    <div class="form-group">
+      <label>Final Price (Auto)</label>
+      <input type="text" [value]="finalPrice | currency: 'INR'" disabled class="disabled-input" />
+    </div>
+
+    <div class="form-group">
+      <label>Status</label>
+      <select formControlName="status">
+        <option value="Active">Active</option>
+        <option value="Inactive">Inactive</option>
+      </select>
+    </div>
+
+    <div class="form-group full-width">
+      <label>Terms & Conditions</label>
+      <textarea formControlName="termsAndConditions" rows="2" placeholder="Enter T&C"></textarea>
+    </div>
+  </div>
+
+  <hr class="separator full-width" />
+
+  <div class="form-actions">
+    <button type="button" class="btn-secondary" (click)="prevStep()" *ngIf="currentStep > 1">
+      Back
+    </button>
+    <button type="button" class="btn-primary" (click)="nextStep()" *ngIf="currentStep < 3">
+      Next
+    </button>
+
+    <button type="submit" class="btn-success" *ngIf="currentStep === 3" [disabled]="form.invalid">
+      Submit Product
+    </button>
+    <button type="button" class="btn-text" (click)="onCancel()">Cancel</button>
+  </div>
+</form>

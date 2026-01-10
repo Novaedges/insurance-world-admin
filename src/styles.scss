@@ -1,0 +1,76 @@
+/* Global Styles */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Premium Color Palette (Dark/Modern Tech Feel) */
+  --primary-color: #3f5e96; /* Requested Blue */
+  --primary-hover: #2c4470; /* Darker shade for hover */
+  --secondary-color: #ec4899; /* Pink-500 */
+  --accent-color: #8b5cf6; /* Violet-500 */
+
+  --bg-dark: #141e30; /* Requested Dark Blue/Gray */
+  --bg-card: #141e30; /* using same dark theme base */
+  --bg-light: #f8fafc; /* Slate-50 */
+
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --text-light: #f1f5f9;
+
+  --border-color: #e2e8f0;
+  --border-dark: #334155;
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+
+  --font-sans: 'Poppins', sans-serif;
+  --font-heading: 'Poppins', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-light);
+  color: var(--text-main);
+  height: 100vh;
+  overflow: hidden; /* App-like feel */
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.025em;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

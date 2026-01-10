@@ -1,0 +1,22 @@
+<div class="page-header">
+  <h2>Insurance Categories</h2>
+  <button class="btn-primary" (click)="openForm()">+ Add Category</button>
+</div>
+
+<app-table
+  [data]="items"
+  [columns]="columns"
+  (edit)="openForm($event)"
+  (delete)="onDelete($event)"
+  (refresh)="loadData()"
+>
+</app-table>
+
+<app-dialog
+  [isOpen]="isModalOpen"
+  [title]="selectedItem ? 'Edit Category' : 'Add Category'"
+  (closeEvent)="closeForm()"
+>
+  <app-insurance-category-form [data]="selectedItem" (save)="onSave($event)" (cancel)="closeForm()">
+  </app-insurance-category-form>
+</app-dialog>

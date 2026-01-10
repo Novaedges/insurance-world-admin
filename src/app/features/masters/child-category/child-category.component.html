@@ -1,0 +1,22 @@
+<div class="page-header">
+  <h2>Child Categories</h2>
+  <button class="btn-primary" (click)="openForm()">+ Add Child Category</button>
+</div>
+
+<app-table
+  [data]="items"
+  [columns]="columns"
+  (edit)="openForm($event)"
+  (delete)="onDelete($event)"
+  (refresh)="loadData()"
+>
+</app-table>
+
+<app-dialog
+  [isOpen]="isModalOpen"
+  [title]="selectedItem ? 'Edit Child Category' : 'Add Child Category'"
+  (closeEvent)="closeForm()"
+>
+  <app-child-category-form [data]="selectedItem" (save)="onSave($event)" (cancel)="closeForm()">
+  </app-child-category-form>
+</app-dialog>

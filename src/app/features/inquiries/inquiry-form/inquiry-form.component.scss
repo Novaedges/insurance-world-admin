@@ -1,0 +1,37 @@
+.details-section {
+  background: #f8fafc;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #1e293b;
+
+    strong {
+      color: #64748b;
+    }
+  }
+}
+
+.separator {
+  border: 0;
+  border-top: 1px solid #e2e8f0;
+  margin: 1rem 0;
+}

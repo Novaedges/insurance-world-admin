@@ -1,0 +1,42 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
+  <div class="form-group">
+    <label>Model Name</label>
+    <input type="text" formControlName="name" placeholder="Enter Model Name" />
+  </div>
+
+  <div class="form-group">
+    <label>Make</label>
+    <select formControlName="makeId">
+      <option value="" disabled>Select Make</option>
+      <option *ngFor="let make of makes" [value]="make.id">{{ make.name }}</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Engine CC (Optional)</label>
+    <input type="text" formControlName="engineCC" placeholder="e.g. 1500" />
+  </div>
+
+  <div class="form-group">
+    <label>Fuel Type</label>
+    <select formControlName="fuelType">
+      <option value="Petrol">Petrol</option>
+      <option value="Diesel">Diesel</option>
+      <option value="Electric">Electric</option>
+      <option value="CNG">CNG</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Status</label>
+    <select formControlName="status">
+      <option value="Active">Active</option>
+      <option value="Inactive">Inactive</option>
+    </select>
+  </div>
+
+  <div class="form-actions">
+    <button type="button" class="btn-secondary" (click)="onCancel()">Cancel</button>
+    <button type="submit" class="btn-primary" [disabled]="form.invalid">Save</button>
+  </div>
+</form>

@@ -1,0 +1,22 @@
+<div class="page-header">
+  <h2>Admin Management</h2>
+  <button class="btn-primary" (click)="openForm()">+ Create Admin</button>
+</div>
+
+<app-table
+  [data]="admins"
+  [columns]="columns"
+  (edit)="openForm($event)"
+  (delete)="onDelete($event)"
+  (refresh)="loadData()"
+>
+</app-table>
+
+<app-dialog
+  [isOpen]="isModalOpen"
+  [title]="selectedAdmin ? 'Edit Admin' : 'Create Admin'"
+  (closeEvent)="closeForm()"
+>
+  <app-admin-form [admin]="selectedAdmin" (save)="onSave($event)" (cancel)="closeForm()">
+  </app-admin-form>
+</app-dialog>

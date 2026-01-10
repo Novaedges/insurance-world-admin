@@ -1,0 +1,70 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h2>Insure<span>World</span></h2>
+      <p>Sign in to access your dashboard</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <!-- Phone Number -->
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <div class="input-wrapper">
+          <i class="ri-smartphone-line icon"></i>
+          <input
+            id="phone"
+            type="text"
+            formControlName="phoneNumber"
+            placeholder="Enter your number"
+          />
+        </div>
+        <div
+          *ngIf="
+            loginForm.get('phoneNumber')?.touched &&
+            loginForm.get('phoneNumber')?.errors?.['pattern']
+          "
+          class="error-msg"
+        >
+          Enter a valid 10-digit phone number
+        </div>
+      </div>
+
+      <!-- Password Mode -->
+      <div class="form-group" *ngIf="!isOtpMode()">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <i class="ri-lock-password-line icon"></i>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            placeholder="Enter your password"
+          />
+        </div>
+      </div>
+
+      <!-- OTP Mode -->
+      <div class="form-group" *ngIf="isOtpMode()">
+        <div class="label-row">
+          <label for="otp">OTP</label>
+          <button type="button" class="btn-text">Send OTP</button>
+        </div>
+        <div class="input-wrapper">
+          <i class="ri-shield-keyhole-line icon"></i>
+          <input id="otp" type="text" formControlName="otp" placeholder="Enter OTP" />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <a href="javascript:void(0)" (click)="toggleMode()" class="toggle-link">
+          {{ isOtpMode() ? 'Use Password' : 'Login with OTP' }}
+        </a>
+      </div>
+
+      <button type="submit" class="btn-submit" [disabled]="loginForm.invalid || isLoading()">
+        <span *ngIf="isLoading()" class="loader"></span>
+        <span *ngIf="!isLoading()">Sign In</span>
+      </button>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,25 @@
+<div class="confirm-overlay" *ngIf="state?.isOpen" (click)="onCancel()">
+  <div class="confirm-container" (click)="$event.stopPropagation()" [class]="state?.options?.type">
+    <div class="icon-wrapper">
+      <div class="icon-circle">
+        <i class="ri-alert-fill" *ngIf="state?.options?.type === 'warning'"></i>
+        <i class="ri-delete-bin-line" *ngIf="state?.options?.type === 'danger'"></i>
+        <i class="ri-information-fill" *ngIf="state?.options?.type === 'info'"></i>
+      </div>
+    </div>
+
+    <div class="content space-y-2">
+      <h3>{{ state?.options?.title }}</h3>
+      <p>{{ state?.options?.message }}</p>
+    </div>
+
+    <div class="actions">
+      <button class="btn-cancel" (click)="onCancel()">
+        {{ state?.options?.cancelText }}
+      </button>
+      <button class="btn-confirm" (click)="onConfirm()" [class]="state?.options?.type">
+        {{ state?.options?.confirmText }}
+      </button>
+    </div>
+  </div>
+</div>

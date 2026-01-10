@@ -1,0 +1,16 @@
+<div class="page-header">
+  <h2>Inquiry Management</h2>
+  <!-- Optional Filters could go here -->
+</div>
+
+<app-table [data]="items" [columns]="columns" (edit)="openForm($event)" (refresh)="loadData()">
+</app-table>
+
+<app-dialog
+  [isOpen]="isModalOpen"
+  [title]="'Inquiry Details - #' + (selectedItem?.id || '')"
+  (closeEvent)="closeForm()"
+>
+  <app-inquiry-form [data]="selectedItem" (save)="onSave($event)" (cancel)="closeForm()">
+  </app-inquiry-form>
+</app-dialog>

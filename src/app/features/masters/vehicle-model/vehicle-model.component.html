@@ -1,0 +1,22 @@
+<div class="page-header">
+  <h2>Vehicle Model Management</h2>
+  <button class="btn-primary" (click)="openForm()">+ Add Model</button>
+</div>
+
+<app-table
+  [data]="items"
+  [columns]="columns"
+  (edit)="openForm($event)"
+  (delete)="onDelete($event)"
+  (refresh)="loadData()"
+>
+</app-table>
+
+<app-dialog
+  [isOpen]="isModalOpen"
+  [title]="selectedItem ? 'Edit Model' : 'Add Model'"
+  (closeEvent)="closeForm()"
+>
+  <app-vehicle-model-form [data]="selectedItem" (save)="onSave($event)" (cancel)="closeForm()">
+  </app-vehicle-model-form>
+</app-dialog>

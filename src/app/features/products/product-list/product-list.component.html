@@ -1,0 +1,22 @@
+<div class="page-header">
+  <h2>Product Management</h2>
+  <button class="btn-primary" (click)="openForm()">+ Add Product</button>
+</div>
+
+<app-table
+  [data]="items"
+  [columns]="columns"
+  (edit)="openForm($event)"
+  (delete)="onDelete($event)"
+  (refresh)="loadData()"
+>
+</app-table>
+
+<app-dialog
+  [isOpen]="isModalOpen"
+  [title]="selectedItem ? 'Edit Product' : 'Add Product'"
+  (closeEvent)="closeForm()"
+>
+  <app-product-form [data]="selectedItem" (save)="onSave($event)" (cancel)="closeForm()">
+  </app-product-form>
+</app-dialog>

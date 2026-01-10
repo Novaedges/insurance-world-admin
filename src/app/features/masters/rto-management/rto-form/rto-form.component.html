@@ -1,0 +1,34 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
+  <div class="form-group">
+    <label>RTO Code</label>
+    <input type="text" formControlName="code" placeholder="e.g. TR01" />
+  </div>
+
+  <div class="form-group">
+    <label>RTO Name</label>
+    <input type="text" formControlName="name" placeholder="Enter RTO Name" />
+  </div>
+
+  <div class="form-group">
+    <label>City</label>
+    <input type="text" formControlName="city" placeholder="Enter City" />
+  </div>
+
+  <div class="form-group">
+    <label>State</label>
+    <input type="text" formControlName="state" placeholder="Enter State" />
+  </div>
+
+  <div class="form-group">
+    <label>Status</label>
+    <select formControlName="status">
+      <option value="Active">Active</option>
+      <option value="Inactive">Inactive</option>
+    </select>
+  </div>
+
+  <div class="form-actions">
+    <button type="button" class="btn-secondary" (click)="onCancel()">Cancel</button>
+    <button type="submit" class="btn-primary" [disabled]="form.invalid">Save</button>
+  </div>
+</form>

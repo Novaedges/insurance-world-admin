@@ -1,0 +1,99 @@
+<div class="page-header">
+  <h2>Sales Reports</h2>
+  <div class="export-actions">
+    <button class="btn-secondary" (click)="exportData('csv')">
+      <i class="ri-file-excel-2-line"></i> Export CSV
+    </button>
+    <button class="btn-secondary" (click)="exportData('pdf')">
+      <i class="ri-file-pdf-line"></i> Export PDF
+    </button>
+  </div>
+</div>
+
+<!-- Filters Section -->
+<div class="filters-panel glass-panel">
+  <div class="filter-group">
+    <label>Start Date</label>
+    <input type="date" [(ngModel)]="filters.startDate" />
+  </div>
+  <div class="filter-group">
+    <label>End Date</label>
+    <input type="date" [(ngModel)]="filters.endDate" />
+  </div>
+  <div class="filter-group">
+    <label>Category</label>
+    <select [(ngModel)]="filters.category">
+      <option value="">All Categories</option>
+      <option value="Motor Insurance">Motor Insurance</option>
+      <option value="Health Insurance">Health Insurance</option>
+      <option value="Travel Insurance">Travel Insurance</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label>Agent</label>
+    <select [(ngModel)]="filters.agent">
+      <option value="">All Agents</option>
+      <option value="Mike Johnson">Mike Johnson</option>
+      <option value="Sarah Wilson">Sarah Wilson</option>
+    </select>
+  </div>
+  <div class="filter-group filter-actions">
+    <button class="btn-primary" (click)="applyFilters()">Apply</button>
+    <button class="btn-text" (click)="resetFilters()" *ngIf="isFilterApplied">Reset</button>
+  </div>
+</div>
+
+<!-- Sales Table -->
+<div class="table-container glass-panel">
+  <div class="table-actions-header">
+    <div class="search-box">
+      <i class="ri-search-line"></i>
+      <input type="text" placeholder="Search sales..." (input)="onSearch($event)" />
+    </div>
+    <button class="btn-refresh" (click)="onRefresh()" title="Refresh Data">
+      <i class="ri-refresh-line"></i>
+    </button>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Policy No</th>
+        <th>Customer</th>
+        <th>Product</th>
+        <th>Premium</th>
+        <th>Discount</th>
+        <th>Final Amount</th>
+        <th>Status</th>
+        <th>Sale Date</th>
+        <th>Agent</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let sale of filteredItems">
+        <td>{{ sale.policyNumber }}</td>
+        <td>{{ sale.customerName }}</td>
+        <td>
+          {{ sale.productName }} <br />
+          <small class="text-muted">{{ sale.categoryName }}</small>
+        </td>
+        <td>{{ sale.premiumAmount | currency: 'INR' }}</td>
+        <td class="text-danger">-{{ sale.discountApplied | currency: 'INR' }}</td>
+        <td class="text-success font-bold">{{ sale.finalAmount | currency: 'INR' }}</td>
+        <td>
+          <span
+            class="badge"
+            [class.success]="sale.paymentStatus === 'Paid'"
+            [class.warning]="sale.paymentStatus === 'Pending'"
+          >
+            {{ sale.paymentStatus }}
+          </span>
+        </td>
+        <td>{{ sale.saleDate | date: 'mediumDate' }}</td>
+        <td>{{ sale.agentName }}</td>
+      </tr>
+      <tr *ngIf="filteredItems.length === 0">
+        <td colspan="9" class="text-center">No sales records found.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

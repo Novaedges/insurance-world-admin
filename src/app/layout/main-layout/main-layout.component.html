@@ -1,0 +1,170 @@
+<div class="app-container">
+  <!-- Mobile Sidebar Backdrop -->
+  <div
+    class="sidebar-backdrop"
+    [class.show]="isMobileSidebarOpen"
+    (click)="closeMobileSidebar()"
+  ></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.collapsed]="isCollapsed" [class.open-mobile]="isMobileSidebarOpen">
+    <div class="logo">
+      <h2 *ngIf="!isCollapsed">Insure<span>World</span></h2>
+      <h2 *ngIf="isCollapsed">IW</h2>
+
+      <!-- Desktop Toggle -->
+      <button class="toggle-btn hidden-mobile" (click)="toggleSidebar()">
+        <i class="ri-menu-fold-line" *ngIf="!isCollapsed"></i>
+        <i class="ri-menu-unfold-line" *ngIf="isCollapsed"></i>
+      </button>
+
+      <!-- Mobile Close Button -->
+      <button class="toggle-btn close-mobile-btn" (click)="closeMobileSidebar()">
+        <i class="ri-close-line"></i>
+      </button>
+    </div>
+
+    <nav class="nav-links">
+      <a
+        routerLink="/dashboard"
+        routerLinkActive="active"
+        class="nav-item"
+        (click)="closeMobileSidebar()"
+      >
+        <i class="icon ri-dashboard-line"></i>
+        <span class="label">Dashboard</span>
+      </a>
+
+      <div class="nav-section-label">Core</div>
+      <a
+        routerLink="/products"
+        routerLinkActive="active"
+        class="nav-item"
+        (click)="closeMobileSidebar()"
+      >
+        <i class="icon ri-box-3-line"></i>
+        <span class="label">Products</span>
+      </a>
+      <a
+        routerLink="/inquiries"
+        routerLinkActive="active"
+        class="nav-item"
+        (click)="closeMobileSidebar()"
+      >
+        <i class="icon ri-mail-send-line"></i>
+        <span class="label">Inquiries</span>
+      </a>
+      <a
+        routerLink="/sales-reports"
+        routerLinkActive="active"
+        class="nav-item"
+        (click)="closeMobileSidebar()"
+      >
+        <i class="icon ri-line-chart-line"></i>
+        <span class="label">Sales Reports</span>
+      </a>
+
+      <div class="nav-section-label">Masters</div>
+
+      <a
+        routerLink="/admin-creation"
+        routerLinkActive="active"
+        class="nav-item"
+        (click)="closeMobileSidebar()"
+      >
+        <i class="icon ri-shield-user-line"></i>
+        <span class="label">Admin Creation</span>
+      </a>
+      <a
+        routerLink="/rto-management"
+        routerLinkActive="active"
+        class="nav-item"
+        (click)="closeMobileSidebar()"
+      >
+        <i class="icon ri-map-pin-line"></i>
+        <span class="label">RTO Management</span>
+      </a>
+      <a
+        routerLink="/vehicle-make"
+        routerLinkActive="active"
+        class="nav-item"
+        (click)="closeMobileSidebar()"
+      >
+        <i class="icon ri-building-2-line"></i>
+        <span class="label">Vehicle Make</span>
+      </a>
+      <a
+        routerLink="/vehicle-model"
+        routerLinkActive="active"
+        class="nav-item"
+        (click)="closeMobileSidebar()"
+      >
+        <i class="icon ri-roadster-line"></i>
+        <span class="label">Vehicle Model</span>
+      </a>
+      <a
+        routerLink="/insurance-category"
+        routerLinkActive="active"
+        class="nav-item"
+        (click)="closeMobileSidebar()"
+      >
+        <i class="icon ri-file-list-3-line"></i>
+        <span class="label">Categories</span>
+      </a>
+      <a
+        routerLink="/child-category"
+        routerLinkActive="active"
+        class="nav-item"
+        (click)="closeMobileSidebar()"
+      >
+        <i class="icon ri-price-tag-3-line"></i>
+        <span class="label">Sub-Categories</span>
+      </a>
+    </nav>
+
+    <div class="user-profile">
+      <div class="avatar">
+        <i class="ri-user-line"></i>
+      </div>
+      <div class="info" *ngIf="!isCollapsed">
+        <span class="name">Super Admin</span>
+        <span class="role">Logged In</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="top-bar">
+      <!-- Mobile Menu Button -->
+      <button class="btn-icon show-mobile mr-2" (click)="toggleMobileSidebar()">
+        <i class="ri-menu-3-fill"></i>
+      </button>
+
+      <div class="breadcrumbs">
+        <span class="prefix">Admin Portal / </span><span>{{ pageTitle }}</span>
+      </div>
+      <div class="actions">
+        <button class="btn-icon">
+          <i class="ri-notification-3-line"></i>
+        </button>
+        <div class="settings-wrapper" style="position: relative">
+          <button class="btn-icon" (click)="toggleSettings()">
+            <i class="ri-settings-4-line"></i>
+          </button>
+
+          <div class="dropdown-menu" *ngIf="isSettingsOpen">
+            <button class="dropdown-item" (click)="logout()">
+              <i class="ri-logout-box-line"></i> Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-area">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>
+<app-confirmation-dialog></app-confirmation-dialog>
