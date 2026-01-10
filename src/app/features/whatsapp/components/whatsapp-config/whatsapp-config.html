@@ -1,0 +1,26 @@
+<div class="page-header">
+  <h2>WhatsApp Configuration</h2>
+  <button class="btn-primary" (click)="openForm()">+ Create Config</button>
+</div>
+
+<app-table
+  [data]="items"
+  [columns]="columns"
+  (edit)="openForm($event)"
+  (delete)="onDelete($event)"
+  (refresh)="loadData(true)"
+>
+</app-table>
+
+<app-dialog
+  [isOpen]="isModalOpen"
+  [title]="selectedItem ? 'Edit Configuration' : 'Add Configuration'"
+  (closeEvent)="closeForm()"
+>
+  <app-whatsapp-config-form 
+    [data]="selectedItem" 
+    [isSubmitting]="isSubmitting"
+    (save)="onSave($event)" 
+    (cancel)="closeForm()">
+  </app-whatsapp-config-form>
+</app-dialog>

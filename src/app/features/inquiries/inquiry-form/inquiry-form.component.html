@@ -1,47 +1,51 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid" *ngIf="data">
-  <!-- Read Only Details -->
-  <div class="details-section full-width">
-    <h3>Customer Info</h3>
-    <div class="info-grid">
-      <p><strong>Name:</strong> {{ data.customerName }}</p>
-      <p><strong>Email:</strong> {{ data.customerEmail }}</p>
-      <p><strong>Phone:</strong> {{ data.customerPhone }}</p>
-      <p><strong>Source:</strong> {{ data.source }}</p>
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
+  @if (data) {
+    <!-- Read Only Details -->
+    <div class="details-section full-width">
+      <h3>Customer Info</h3>
+      <div class="info-grid">
+        <p><strong>Name:</strong> {{ data.customerName }}</p>
+        <p><strong>Email:</strong> {{ data.customerEmail }}</p>
+        <p><strong>Phone:</strong> {{ data.customerPhone }}</p>
+        <p><strong>Source:</strong> {{ data.source }}</p>
+      </div>
     </div>
-  </div>
 
-  <div class="details-section full-width">
-    <h3>Requirement</h3>
-    <div class="info-grid">
-      <p><strong>Product:</strong> {{ data.productName }}</p>
-      <p><strong>Category:</strong> {{ data.categoryName }}</p>
-      <p><strong>Details:</strong> {{ data.vehicleDetails || data.healthDetails || 'N/A' }}</p>
-      <p><strong>Preferred Time:</strong> {{ data.preferredTime }}</p>
+    <div class="details-section full-width">
+      <h3>Requirement</h3>
+      <div class="info-grid">
+        <p><strong>Product:</strong> {{ data.productName }}</p>
+        <p><strong>Category:</strong> {{ data.categoryName }}</p>
+        <p><strong>Details:</strong> {{ data.vehicleDetails || data.healthDetails || 'N/A' }}</p>
+        <p><strong>Preferred Time:</strong> {{ data.preferredTime }}</p>
+      </div>
     </div>
-  </div>
 
-  <hr class="full-width separator" />
+    <hr class="full-width separator" />
 
-  <!-- Action Fields -->
-  <div class="form-group">
-    <label>Assign To (Agent)</label>
-    <select formControlName="assignedTo">
-      <option value="">Unassigned</option>
-      <option *ngFor="let agent of agents" [value]="agent">{{ agent }}</option>
-    </select>
-  </div>
+    <!-- Action Fields -->
+    <div class="form-group">
+      <label>Assign To (Agent)</label>
+      <select formControlName="assignedTo">
+        <option value="">Unassigned</option>
+        @for (agent of agents; track agent) {
+          <option [value]="agent">{{ agent }}</option>
+        }
+      </select>
+    </div>
 
-  <div class="form-group">
-    <label>Current Status</label>
-    <select formControlName="status">
-      <option value="New">New</option>
-      <option value="Contacted">Contacted</option>
-      <option value="Quotation Sent">Quotation Sent</option>
-      <option value="Negotiation">Negotiation</option>
-      <option value="Converted">Converted</option>
-      <option value="Lost">Lost</option>
-    </select>
-  </div>
+    <div class="form-group">
+      <label>Current Status</label>
+      <select formControlName="status">
+        <option value="New">New</option>
+        <option value="Contacted">Contacted</option>
+        <option value="Quotation Sent">Quotation Sent</option>
+        <option value="Negotiation">Negotiation</option>
+        <option value="Converted">Converted</option>
+        <option value="Lost">Lost</option>
+      </select>
+    </div>
+  }
 
   <div class="form-actions">
     <button type="button" class="btn-secondary" (click)="onCancel()">Close</button>

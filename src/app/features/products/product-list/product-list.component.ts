@@ -3,13 +3,16 @@ import { CommonModule } from '@angular/common';
 import { TableComponent, Column } from '../../../shared/components/table/table.component';
 import { DialogComponent } from '../../../shared/components/dialog/dialog.component';
 import { ProductFormComponent } from '../product-form/product-form.component';
+import { TooltipDirective } from '../../../shared/directives/tooltip/tooltip.directive';
 import { ProductService } from '../../../core/services/product.service';
 import { Product } from '../../../core/models/product.models';
+import { SnackbarService } from '../../../core/services/snackbar.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, TableComponent, DialogComponent, ProductFormComponent],
+  imports: [CommonModule, TableComponent, DialogComponent, ProductFormComponent, TooltipDirective],
   templateUrl: './product-list.component.html',
   styleUrls: ['../../masters/admin-creation/admin-creation.component.scss'],
 })
@@ -25,16 +28,28 @@ export class ProductListComponent implements OnInit {
   ];
 
   isModalOpen = false;
+  isSubmitting = false;
   selectedItem: Product | null = null;
 
-  constructor(private productService: ProductService) {}
+  constructor(
+    private productService: ProductService,
+    private snackbarService: SnackbarService
+  ) {}
 
   ngOnInit() {
     this.loadData();
   }
 
-  loadData() {
-    this.productService.getProducts().subscribe((data) => (this.items = data));
+  loadData(showNotification = false) {
+    this.productService.getProducts().subscribe({
+      next: (data) => {
+        this.items = data;
+        if (showNotification) {
+          this.snackbarService.success('Data refreshed successfully');
+        }
+      },
+      error: () => this.snackbarService.error('Failed to load products'),
+    });
   }
 
   openForm(item: Product | null = null) {
@@ -48,13 +63,34 @@ export class ProductListComponent implements OnInit {
   }
 
   onSave(item: Product) {
-    this.productService.saveProduct(item).subscribe(() => {
-      this.loadData();
-      this.closeForm();
-    });
+    if (this.isSubmitting) return;
+    this.isSubmitting = true;
+
+    this.productService
+      .saveProduct(item)
+      .pipe(finalize(() => (this.isSubmitting = false)))
+      .subscribe({
+        next: () => {
+          this.loadData();
+          this.closeForm();
+          this.snackbarService.success(
+            item.id ? 'Product updated successfully' : 'Product created successfully'
+          );
+        },
+        error: (err) => {
+          console.error('Save error:', err);
+          this.snackbarService.error('Failed to save product');
+        },
+      });
   }
 
   onDelete(item: Product) {
-    this.productService.deleteProduct(item.id).subscribe(() => this.loadData());
+    this.productService.deleteProduct(item.id).subscribe({
+      next: () => {
+        this.loadData();
+        this.snackbarService.success('Product deleted successfully');
+      },
+      error: () => this.snackbarService.error('Failed to delete product'),
+    });
   }
 }

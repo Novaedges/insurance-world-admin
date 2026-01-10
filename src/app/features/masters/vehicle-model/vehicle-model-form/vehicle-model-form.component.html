@@ -8,7 +8,9 @@
     <label>Make</label>
     <select formControlName="makeId">
       <option value="" disabled>Select Make</option>
-      <option *ngFor="let make of makes" [value]="make.id">{{ make.name }}</option>
+      @for (make of makes; track make.id) {
+        <option [value]="make.id">{{ make.name }}</option>
+      }
     </select>
   </div>
 

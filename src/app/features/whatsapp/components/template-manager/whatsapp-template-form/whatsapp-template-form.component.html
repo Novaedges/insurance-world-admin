@@ -1,0 +1,39 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
+  <div class="form-group">
+    <label>Template Name</label>
+    <input
+      type="text"
+      formControlName="name"
+      placeholder="e.g., Welcome Message"
+    />
+  </div>
+
+  <div class="form-group full-width">
+    <label>Content</label>
+    <textarea
+      formControlName="content"
+      rows="4"
+      [placeholder]="'Hello {{1}}, welcome...'"
+    ></textarea>
+    <p class="text-xs text-muted mt-1">Use <code>{{ '{' + '{' }}1{{ '}' + '}' }}</code>, <code>{{ '{' + '{' }}2{{ '}' + '}' }}</code> for variables.</p>
+  </div>
+
+  <div class="form-group">
+    <label>Status</label>
+    <select formControlName="status">
+      <option value="Approved">Approved</option>
+      <option value="Pending">Pending</option>
+      <option value="Rejected">Rejected</option>
+    </select>
+  </div>
+
+  <div class="form-actions">
+    <button type="button" class="btn-secondary" (click)="onCancel()">Cancel</button>
+    <button type="submit" class="btn-primary" [disabled]="form.invalid || isSubmitting">
+      @if (isSubmitting) {
+        <i class="ri-loader-4-line animate-spin"></i>
+      }
+      {{ isSubmitting ? 'Saving...' : 'Save Template' }}
+    </button>
+  </div>
+</form>

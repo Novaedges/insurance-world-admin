@@ -1,6 +1,6 @@
 <div class="page-header">
   <h2>Product Management</h2>
-  <button class="btn-primary" (click)="openForm()">+ Add Product</button>
+  <button class="btn-primary" (click)="openForm()" appTooltip="Add New Product">+ Add Product</button>
 </div>
 
 <app-table
@@ -8,7 +8,7 @@
   [columns]="columns"
   (edit)="openForm($event)"
   (delete)="onDelete($event)"
-  (refresh)="loadData()"
+  (refresh)="loadData(true)"
 >
 </app-table>
 
@@ -17,6 +17,11 @@
   [title]="selectedItem ? 'Edit Product' : 'Add Product'"
   (closeEvent)="closeForm()"
 >
-  <app-product-form [data]="selectedItem" (save)="onSave($event)" (cancel)="closeForm()">
+  <app-product-form
+    [data]="selectedItem"
+    [isSubmitting]="isSubmitting"
+    (save)="onSave($event)"
+    (cancel)="closeForm()"
+  >
   </app-product-form>
 </app-dialog>

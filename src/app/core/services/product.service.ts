@@ -60,7 +60,7 @@ export class ProductService {
       product.id = (this.products.length + 1).toString();
       this.products.push(product);
     }
-    return of(product).pipe(delay(500));
+    return of(product);
   }
 
   deleteProduct(id: string): Observable<boolean> {

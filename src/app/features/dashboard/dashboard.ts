@@ -43,7 +43,7 @@ export class DashboardComponent {
       label: 'Total Premium',
       value: '₹45L',
       trend: 8,
-      icon: 'ri-money-rupee-circle-line',
+      icon: 'ri-wallet-2-line',
       colorClass: 'orange-icon',
     },
   ];

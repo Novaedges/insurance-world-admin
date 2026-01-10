@@ -1,0 +1,11 @@
+<div class="page-header">
+  <h2>Commission Structure</h2>
+  <button class="btn-primary" appTooltip="Add New Rule">+ Add Rule</button>
+</div>
+
+<app-table
+  [data]="items"
+  [columns]="columns"
+  (refresh)="loadData(true)"
+>
+</app-table>

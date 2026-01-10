@@ -1,18 +1,20 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TooltipDirective } from '../../directives/tooltip/tooltip.directive';
 import { ConfirmationService } from '../../services/confirmation.service';
 
 export interface Column {
   field: string;
   header: string;
-  type?: 'text' | 'status' | 'currency';
+  type?: 'text' | 'status' | 'currency' | 'date';
   currencyCode?: string;
 }
 
 @Component({
   selector: 'app-table',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, TooltipDirective],
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss'],
 })

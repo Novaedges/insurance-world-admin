@@ -8,9 +8,11 @@
     <label>Parent Category</label>
     <select formControlName="parentCategoryId">
       <option value="" disabled>Select Parent Category</option>
-      <option *ngFor="let cat of parentCategories" [value]="cat.id">
-        {{ cat.name }} ({{ cat.type }})
-      </option>
+      @for (cat of parentCategories; track cat.id) {
+        <option [value]="cat.id">
+          {{ cat.name }} ({{ cat.type }})
+        </option>
+      }
     </select>
   </div>
 

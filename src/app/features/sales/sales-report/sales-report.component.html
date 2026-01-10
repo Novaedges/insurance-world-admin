@@ -39,7 +39,9 @@
   </div>
   <div class="filter-group filter-actions">
     <button class="btn-primary" (click)="applyFilters()">Apply</button>
-    <button class="btn-text" (click)="resetFilters()" *ngIf="isFilterApplied">Reset</button>
+    @if (isFilterApplied) {
+      <button class="btn-text" (click)="resetFilters()">Reset</button>
+    }
   </div>
 </div>
 
@@ -69,31 +71,35 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let sale of filteredItems">
-        <td>{{ sale.policyNumber }}</td>
-        <td>{{ sale.customerName }}</td>
-        <td>
-          {{ sale.productName }} <br />
-          <small class="text-muted">{{ sale.categoryName }}</small>
-        </td>
-        <td>{{ sale.premiumAmount | currency: 'INR' }}</td>
-        <td class="text-danger">-{{ sale.discountApplied | currency: 'INR' }}</td>
-        <td class="text-success font-bold">{{ sale.finalAmount | currency: 'INR' }}</td>
-        <td>
-          <span
-            class="badge"
-            [class.success]="sale.paymentStatus === 'Paid'"
-            [class.warning]="sale.paymentStatus === 'Pending'"
-          >
-            {{ sale.paymentStatus }}
-          </span>
-        </td>
-        <td>{{ sale.saleDate | date: 'mediumDate' }}</td>
-        <td>{{ sale.agentName }}</td>
-      </tr>
-      <tr *ngIf="filteredItems.length === 0">
-        <td colspan="9" class="text-center">No sales records found.</td>
-      </tr>
+      @for (sale of filteredItems; track sale.id) {
+        <tr>
+          <td>{{ sale.policyNumber }}</td>
+          <td>{{ sale.customerName }}</td>
+          <td>
+            {{ sale.productName }} <br />
+            <small class="text-muted">{{ sale.categoryName }}</small>
+          </td>
+          <td>{{ sale.premiumAmount | currency: 'INR' }}</td>
+          <td class="text-danger">-{{ sale.discountApplied | currency: 'INR' }}</td>
+          <td class="text-success font-bold">{{ sale.finalAmount | currency: 'INR' }}</td>
+          <td>
+            <span
+              class="badge"
+              [class.success]="sale.paymentStatus === 'Paid'"
+              [class.warning]="sale.paymentStatus === 'Pending'"
+            >
+              {{ sale.paymentStatus }}
+            </span>
+          </td>
+          <td>{{ sale.saleDate | date: 'mediumDate' }}</td>
+          <td>{{ sale.agentName }}</td>
+        </tr>
+      }
+      @if (filteredItems.length === 0) {
+        <tr>
+          <td colspan="9" class="text-center">No sales records found.</td>
+        </tr>
+      }
     </tbody>
   </table>
 </div>

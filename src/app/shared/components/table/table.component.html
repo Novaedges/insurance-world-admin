@@ -4,46 +4,67 @@
       <i class="ri-search-line"></i>
       <input type="text" placeholder="Search..." (input)="onSearch($event)" />
     </div>
-    <button class="btn-refresh" (click)="onRefresh()" title="Refresh Data">
+    <button class="btn-refresh" (click)="onRefresh()" appTooltip="Refresh Data">
       <i class="ri-refresh-line"></i>
     </button>
   </div>
   <table class="data-table">
     <thead>
       <tr>
-        <th *ngFor="let col of columns">{{ col.header }}</th>
-        <th *ngIf="actions" class="actions-col">Actions</th>
+        @for (col of columns; track col.field) {
+          <th>{{ col.header }}</th>
+        }
+        @if (actions) {
+          <th class="actions-col">Actions</th>
+        }
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let row of filteredData">
-        <td *ngFor="let col of columns">
-          <ng-container *ngIf="col.type === 'status'">
-            <span class="status-badge" [ngClass]="row[col.field]?.toLowerCase()">
-              {{ row[col.field] }}
-            </span>
-          </ng-container>
-          <span *ngIf="col.type === 'currency'">
-            {{ row[col.field] | currency: col.currencyCode }}
-          </span>
-          <span *ngIf="!col.type || col.type === 'text'">
-            {{ row[col.field] }}
-          </span>
-        </td>
-        <td *ngIf="actions" class="actions-cell">
-          <button class="btn-action edit" (click)="onEdit(row)">
-            <i class="ri-pencil-line"></i>
-          </button>
-          <button class="btn-action delete" (click)="onDelete(row)">
-            <i class="ri-delete-bin-line"></i>
-          </button>
-        </td>
-      </tr>
-      <tr *ngIf="filteredData.length === 0">
-        <td [attr.colspan]="columns.length + (actions ? 1 : 0)" class="no-data">
-          No data available.
-        </td>
-      </tr>
+      @for (row of filteredData; track row) {
+        <tr>
+          @for (col of columns; track col.field) {
+            <td>
+              @if (col.type === 'status') {
+                <span class="status-badge" [ngClass]="row[col.field]?.toLowerCase()">
+                  {{ row[col.field] }}
+                </span>
+              }
+              @if (col.type === 'currency') {
+                <span>
+                  {{ row[col.field] | currency: col.currencyCode }}
+                </span>
+              }
+              @if (col.type === 'date') {
+                <span>
+                  {{ row[col.field] | date: 'mediumDate' }}
+                </span>
+              }
+              @if (!col.type || col.type === 'text') {
+                <span>
+                  {{ row[col.field] }}
+                </span>
+              }
+            </td>
+          }
+          @if (actions) {
+            <td class="actions-cell">
+              <button class="btn-action edit" (click)="onEdit(row)" appTooltip="Edit">
+                <i class="ri-pencil-line"></i>
+              </button>
+              <button class="btn-action delete" (click)="onDelete(row)" appTooltip="Delete">
+                <i class="ri-delete-bin-line"></i>
+              </button>
+            </td>
+          }
+        </tr>
+      }
+      @if (filteredData.length === 0) {
+        <tr>
+          <td [attr.colspan]="columns.length + (actions ? 1 : 0)" class="no-data">
+            No data available.
+          </td>
+        </tr>
+      }
     </tbody>
   </table>
 </div>

@@ -9,13 +9,21 @@
   <!-- Sidebar -->
   <aside class="sidebar" [class.collapsed]="isCollapsed" [class.open-mobile]="isMobileSidebarOpen">
     <div class="logo">
-      <h2 *ngIf="!isCollapsed">Insure<span>World</span></h2>
-      <h2 *ngIf="isCollapsed">IW</h2>
+      @if (!isCollapsed) {
+        <h2>Insure<span>World</span></h2>
+      }
+      @if (isCollapsed) {
+        <h2>IW</h2>
+      }
 
       <!-- Desktop Toggle -->
       <button class="toggle-btn hidden-mobile" (click)="toggleSidebar()">
-        <i class="ri-menu-fold-line" *ngIf="!isCollapsed"></i>
-        <i class="ri-menu-unfold-line" *ngIf="isCollapsed"></i>
+        @if (!isCollapsed) {
+          <i class="ri-menu-fold-line"></i>
+        }
+        @if (isCollapsed) {
+          <i class="ri-menu-unfold-line"></i>
+        }
       </button>
 
       <!-- Mobile Close Button -->
@@ -120,16 +128,96 @@
         <i class="icon ri-price-tag-3-line"></i>
         <span class="label">Sub-Categories</span>
       </a>
+
+      <div class="nav-section-label">Communication</div>
+      <a
+        routerLink="/whatsapp"
+        routerLinkActive="active"
+        class="nav-item"
+        (click)="closeMobileSidebar()"
+      >
+        <i class="icon ri-whatsapp-line"></i>
+        <span class="label">WhatsApp</span>
+      </a>
+      <a
+        routerLink="/sms"
+        routerLinkActive="active"
+        class="nav-item"
+        (click)="closeMobileSidebar()"
+      >
+        <i class="icon ri-message-2-line"></i>
+        <span class="label">SMS</span>
+      </a>
+
+      <div class="nav-section-label">Finance</div>
+      <a
+        routerLink="/payments"
+        routerLinkActive="active"
+        class="nav-item"
+        (click)="closeMobileSidebar()"
+      >
+        <i class="icon ri-bank-card-line"></i>
+        <span class="label">Payments</span>
+      </a>
+      <a
+        routerLink="/commissions"
+        routerLinkActive="active"
+        class="nav-item"
+        (click)="closeMobileSidebar()"
+      >
+        <i class="icon ri-hand-coin-line"></i>
+        <span class="label">Commissions</span>
+      </a>
+
+      <div class="nav-section-label">Growth</div>
+      <a
+        routerLink="/renewals"
+        routerLinkActive="active"
+        class="nav-item"
+        (click)="closeMobileSidebar()"
+      >
+        <i class="icon ri-refresh-line"></i>
+        <span class="label">Renewals</span>
+      </a>
+      <a
+        routerLink="/crm"
+        routerLinkActive="active"
+        class="nav-item"
+        (click)="closeMobileSidebar()"
+      >
+        <i class="icon ri-customer-service-2-line"></i>
+        <span class="label">CRM Sync</span>
+      </a>
+      <a
+        routerLink="/marketing"
+        routerLinkActive="active"
+        class="nav-item"
+        (click)="closeMobileSidebar()"
+      >
+        <i class="icon ri-megaphone-line"></i>
+        <span class="label">Marketing</span>
+      </a>
+      <a
+        routerLink="/ai-engine"
+        routerLinkActive="active"
+        class="nav-item"
+        (click)="closeMobileSidebar()"
+      >
+        <i class="icon ri-brain-line"></i>
+        <span class="label">AI Engine</span>
+      </a>
     </nav>
 
     <div class="user-profile">
       <div class="avatar">
         <i class="ri-user-line"></i>
       </div>
-      <div class="info" *ngIf="!isCollapsed">
-        <span class="name">Super Admin</span>
-        <span class="role">Logged In</span>
-      </div>
+      @if (!isCollapsed) {
+        <div class="info">
+          <span class="name">Super Admin</span>
+          <span class="role">Logged In</span>
+        </div>
+      }
     </div>
   </aside>
 
@@ -153,11 +241,13 @@
             <i class="ri-settings-4-line"></i>
           </button>
 
-          <div class="dropdown-menu" *ngIf="isSettingsOpen">
-            <button class="dropdown-item" (click)="logout()">
-              <i class="ri-logout-box-line"></i> Logout
-            </button>
-          </div>
+          @if (isSettingsOpen) {
+            <div class="dropdown-menu">
+              <button class="dropdown-item" (click)="logout()">
+                <i class="ri-logout-box-line"></i> Logout
+              </button>
+            </div>
+          }
         </div>
       </div>
     </header>
@@ -168,3 +258,4 @@
   </main>
 </div>
 <app-confirmation-dialog></app-confirmation-dialog>
+<app-snackbar></app-snackbar>

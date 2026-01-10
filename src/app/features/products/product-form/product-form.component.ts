@@ -27,6 +27,7 @@ import {
 })
 export class ProductFormComponent implements OnChanges, OnInit {
   @Input() data: Product | null = null;
+  @Input() isSubmitting: boolean = false;
   @Output() save = new EventEmitter<Product>();
   @Output() cancel = new EventEmitter<void>();
 
@@ -79,21 +80,23 @@ export class ProductFormComponent implements OnChanges, OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['data'] && this.data) {
-      this.form.patchValue(this.data);
-      this.onCategoryChange(false);
-      this.onMakeChange();
-      this.calculateFinalPrice();
-    } else {
-      this.form.reset({
-        basePrice: 0,
-        discountType: 'Flat',
-        discountValue: 0,
-        policyDuration: '1 Year',
-        status: 'Active',
-      });
-      this.finalPrice = 0;
-      this.currentStep = 1;
+    if (changes['data']) {
+      if (this.data) {
+        this.form.patchValue(this.data);
+        this.onCategoryChange(false);
+        this.onMakeChange();
+        this.calculateFinalPrice();
+      } else {
+        this.form.reset({
+          basePrice: 0,
+          discountType: 'Flat',
+          discountValue: 0,
+          policyDuration: '1 Year',
+          status: 'Active',
+        });
+        this.finalPrice = 0;
+        this.currentStep = 1;
+      }
     }
   }
 

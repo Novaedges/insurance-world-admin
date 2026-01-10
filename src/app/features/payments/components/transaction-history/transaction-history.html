@@ -1,0 +1,11 @@
+<div class="page-header">
+  <h2>Transaction History</h2>
+  <button class="btn-primary" appTooltip="Export Transactions">Export CSV</button>
+</div>
+
+<app-table
+  [data]="items"
+  [columns]="columns"
+  (refresh)="loadData(true)"
+>
+</app-table>

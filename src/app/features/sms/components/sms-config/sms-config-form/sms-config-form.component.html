@@ -1,0 +1,29 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
+  <div class="form-group">
+    <label>Provider</label>
+    <input type="text" formControlName="provider" placeholder="e.g., AWS SNS" />
+  </div>
+
+  <div class="form-group">
+    <label>Sender ID</label>
+    <input type="text" formControlName="senderId" placeholder="e.g., INSURE" />
+  </div>
+
+  <div class="form-group">
+    <label>Status</label>
+    <select formControlName="status">
+      <option value="Active">Active</option>
+      <option value="Inactive">Inactive</option>
+    </select>
+  </div>
+
+  <div class="form-actions">
+    <button type="button" class="btn-secondary" (click)="onCancel()">Cancel</button>
+    <button type="submit" class="btn-primary" [disabled]="form.invalid || isSubmitting">
+      @if (isSubmitting) {
+        <i class="ri-loader-4-line animate-spin"></i>
+      }
+      {{ isSubmitting ? 'Saving...' : 'Save Config' }}
+    </button>
+  </div>
+</form>

@@ -1,13 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule, NavigationEnd } from '@angular/router';
+import { RouterOutlet, RouterModule, Router, NavigationEnd } from '@angular/router';
+import { SnackbarComponent } from '../../shared/components/snackbar/snackbar.component';
 import { filter } from 'rxjs/operators';
 import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule, ConfirmationDialogComponent],
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    RouterModule,
+    SnackbarComponent,
+    ConfirmationDialogComponent,
+  ],
   templateUrl: './main-layout.component.html',
   styleUrls: ['./main-layout.component.scss'],
 })
@@ -26,6 +33,14 @@ export class MainLayoutComponent {
     '/vehicle-model': 'Vehicle Model',
     '/insurance-category': 'Insurance Categories',
     '/child-category': 'Sub-Categories',
+    '/whatsapp': 'WhatsApp Automation',
+    '/sms': 'SMS Notifications',
+    '/renewals': 'Renewal Management',
+    '/payments': 'Payment Gateway',
+    '/commissions': 'Commission Management',
+    '/crm': 'CRM Integration',
+    '/ai-engine': 'AI Premium Suggestions',
+    '/marketing': 'Marketing Automation',
   };
 
   constructor(private router: Router) {
