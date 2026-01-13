@@ -1,0 +1,46 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
+  <div class="form-group">
+    <label>Company Name</label>
+    <input type="text" formControlName="name" placeholder="Enter company name" />
+  </div>
+
+  <div class="form-group">
+    <label>Contact Number</label>
+    <input type="text" formControlName="contactNumber" placeholder="Enter contact number" />
+  </div>
+
+  <div class="form-group">
+    <label>Email Address</label>
+    <input type="email" formControlName="email" placeholder="Enter email" />
+  </div>
+
+  <div class="form-group">
+    <label>Helpline Number</label>
+    <input type="text" formControlName="helplineNumber" placeholder="Enter helpline number" />
+  </div>
+
+  <div class="form-group full-width">
+    <label>Website (Optional)</label>
+    <input type="text" formControlName="website" placeholder="https://example.com" />
+  </div>
+
+  <div class="form-group full-width">
+    <label>Address</label>
+    <textarea formControlName="address" rows="3" placeholder="Enter physical address"></textarea>
+  </div>
+
+  <div class="form-group">
+    <label>Status</label>
+    <select formControlName="status">
+      <option value="Active">Active</option>
+      <option value="Inactive">Inactive</option>
+    </select>
+  </div>
+
+  <div class="form-actions full-width">
+    <button type="button" class="btn-secondary" (click)="onCancel()">Cancel</button>
+    <button type="submit" class="btn-primary" [disabled]="form.invalid">
+      {{ company ? 'Update Company' : 'Add Company' }}
+    </button>
+  </div>
+</form>

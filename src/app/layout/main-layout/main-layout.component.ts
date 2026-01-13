@@ -1,9 +1,10 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterModule, Router, NavigationEnd } from '@angular/router';
 import { SnackbarComponent } from '../../shared/components/snackbar/snackbar.component';
 import { filter } from 'rxjs/operators';
 import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
+import { AuthService } from '../../core/services/auth';
 
 @Component({
   selector: 'app-main-layout',
@@ -19,6 +20,9 @@ import { ConfirmationDialogComponent } from '../../shared/components/confirmatio
   styleUrls: ['./main-layout.component.scss'],
 })
 export class MainLayoutComponent {
+  public authService = inject(AuthService);
+  private router = inject(Router);
+
   isCollapsed = false;
   pageTitle = 'Dashboard';
 
@@ -33,6 +37,8 @@ export class MainLayoutComponent {
     '/vehicle-model': 'Vehicle Model',
     '/insurance-category': 'Insurance Categories',
     '/child-category': 'Sub-Categories',
+    '/insurance-company': 'Insurance Companies',
+    '/agent-management': 'Agent Management',
     '/whatsapp': 'WhatsApp Automation',
     '/sms': 'SMS Notifications',
     '/renewals': 'Renewal Management',
@@ -43,7 +49,7 @@ export class MainLayoutComponent {
     '/marketing': 'Marketing Automation',
   };
 
-  constructor(private router: Router) {
+  constructor() {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: any) => {
@@ -57,6 +63,17 @@ export class MainLayoutComponent {
     // Find matching route
     const match = Object.keys(this.routeMap).find((route) => path.startsWith(route));
     this.pageTitle = match ? this.routeMap[match] : 'Dashboard';
+  }
+
+  hasAccess(moduleId: string): boolean {
+    const user = this.authService.currentUser();
+    if (!user) return false;
+    if (user.role === 'Super Admin') return true;
+    return (user.permissions || []).includes(moduleId);
+  }
+
+  hasSectionAccess(modules: string[]): boolean {
+    return modules.some((m) => this.hasAccess(m));
   }
 
   toggleSidebar() {
@@ -81,9 +98,6 @@ export class MainLayoutComponent {
   }
 
   logout() {
-    // Basic logout - clear token and redirect
-    // Ideally inject AuthService here, but for now direct removal to match simple auth
-    localStorage.removeItem('token');
-    this.router.navigate(['/login']);
+    this.authService.logout();
   }
 }

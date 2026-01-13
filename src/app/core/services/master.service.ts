@@ -8,6 +8,8 @@ import {
   VehicleModel,
   InsuranceCategory,
   ChildCategory,
+  InsuranceCompany,
+  Agent,
 } from '../models/master.models';
 
 @Injectable({
@@ -16,8 +18,22 @@ import {
 export class MasterService {
   // Mock Data
   private admins: Admin[] = [
-    { id: '1', name: 'John Doe', email: 'john@admin.com', role: 'Super Admin', status: 'Active' },
-    { id: '2', name: 'Jane Smith', email: 'jane@sales.com', role: 'Sales Admin', status: 'Active' },
+    {
+      id: '1',
+      name: 'John Doe',
+      email: 'john@admin.com',
+      role: 'Super Admin',
+      status: 'Active',
+      permissions: [],
+    },
+    {
+      id: '2',
+      name: 'Jane Smith',
+      email: 'jane@sales.com',
+      role: 'Sales',
+      status: 'Active',
+      permissions: ['products', 'whatsapp'],
+    },
   ];
 
   private rtoList: RTO[] = [
@@ -86,6 +102,38 @@ export class MasterService {
       name: 'Car Insurance',
       parentCategoryId: '1',
       parentCategoryName: 'Motor Insurance',
+      status: 'Active',
+    },
+  ];
+
+  private insuranceCompanies: InsuranceCompany[] = [
+    {
+      id: '1',
+      name: 'HDFC ERGO',
+      address: 'Mumbai, India',
+      email: 'contact@hdfcergo.com',
+      contactNumber: '1800-2660-340',
+      helplineNumber: '1800-2666-400',
+      status: 'Active',
+    },
+    {
+      id: '2',
+      name: 'Digit Insurance',
+      address: 'Bangalore, India',
+      email: 'hello@godigit.com',
+      contactNumber: '1800-258-5956',
+      helplineNumber: '1800-258-4444',
+      status: 'Active',
+    },
+  ];
+
+  private agents: Agent[] = [
+    {
+      id: '1',
+      fullName: 'Rahul Sharma',
+      contactNumber: '9876543210',
+      address: 'New Delhi, India',
+      agentCode: 'AG001',
       status: 'Active',
     },
   ];
@@ -219,6 +267,44 @@ export class MasterService {
   }
   deleteChildCategory(id: string): Observable<boolean> {
     this.childCategories = this.childCategories.filter((x) => x.id !== id);
+    return of(true).pipe(delay(500));
+  }
+
+  // --- Insurance Company ---
+  getInsuranceCompanies(): Observable<InsuranceCompany[]> {
+    return of([...this.insuranceCompanies]).pipe(delay(500));
+  }
+  saveInsuranceCompany(item: InsuranceCompany): Observable<InsuranceCompany> {
+    if (item.id) {
+      const index = this.insuranceCompanies.findIndex((x) => x.id === item.id);
+      if (index !== -1) this.insuranceCompanies[index] = item;
+    } else {
+      item.id = this.generateId();
+      this.insuranceCompanies.push(item);
+    }
+    return of(item).pipe(delay(500));
+  }
+  deleteInsuranceCompany(id: string): Observable<boolean> {
+    this.insuranceCompanies = this.insuranceCompanies.filter((x) => x.id !== id);
+    return of(true).pipe(delay(500));
+  }
+
+  // --- Agent ---
+  getAgents(): Observable<Agent[]> {
+    return of([...this.agents]).pipe(delay(500));
+  }
+  saveAgent(item: Agent): Observable<Agent> {
+    if (item.id) {
+      const index = this.agents.findIndex((x) => x.id === item.id);
+      if (index !== -1) this.agents[index] = item;
+    } else {
+      item.id = this.generateId();
+      this.agents.push(item);
+    }
+    return of(item).pipe(delay(500));
+  }
+  deleteAgent(id: string): Observable<boolean> {
+    this.agents = this.agents.filter((x) => x.id !== id);
     return of(true).pipe(delay(500));
   }
 }

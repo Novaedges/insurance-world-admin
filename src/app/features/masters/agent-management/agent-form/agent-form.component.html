@@ -1,0 +1,41 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
+  <div class="form-group">
+    <label>Full Name</label>
+    <input type="text" formControlName="fullName" placeholder="Enter full name" />
+  </div>
+
+  <div class="form-group">
+    <label>Agent Code</label>
+    <input type="text" formControlName="agentCode" placeholder="Enter agent code" />
+  </div>
+
+  <div class="form-group">
+    <label>Contact Number</label>
+    <input type="text" formControlName="contactNumber" placeholder="Enter contact number" />
+  </div>
+
+  <div class="form-group">
+    <label>Email (Optional)</label>
+    <input type="email" formControlName="email" placeholder="Enter email" />
+  </div>
+
+  <div class="form-group full-width">
+    <label>Address</label>
+    <textarea formControlName="address" rows="3" placeholder="Enter residential address"></textarea>
+  </div>
+
+  <div class="form-group">
+    <label>Status</label>
+    <select formControlName="status">
+      <option value="Active">Active</option>
+      <option value="Inactive">Inactive</option>
+    </select>
+  </div>
+
+  <div class="form-actions full-width">
+    <button type="button" class="btn-secondary" (click)="onCancel()">Cancel</button>
+    <button type="submit" class="btn-primary" [disabled]="form.invalid">
+      {{ agent ? 'Update Agent' : 'Add Agent' }}
+    </button>
+  </div>
+</form>

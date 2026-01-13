@@ -57,6 +57,20 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'insurance-company',
+        loadChildren: () =>
+          import('./features/masters/insurance-company/insurance-company.routes').then(
+            (m) => m.INSURANCE_COMPANY_ROUTES,
+          ),
+      },
+      {
+        path: 'agent-management',
+        loadChildren: () =>
+          import('./features/masters/agent-management/agent-management.routes').then(
+            (m) => m.AGENT_MANAGEMENT_ROUTES,
+          ),
+      },
+      {
         path: 'products',
         loadChildren: () =>
           import('./features/products/products.routes').then((m) => m.PRODUCTS_ROUTES),

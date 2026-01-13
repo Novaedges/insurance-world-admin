@@ -1,0 +1,32 @@
+<div class="page-header">
+  <div class="header-content">
+    <h1>Insurance Companies</h1>
+    <p>Manage insurance partner companies</p>
+  </div>
+  <div class="header-actions">
+    <button class="btn-primary" (click)="openForm()">
+      <i class="ri-add-line"></i> Add Company
+    </button>
+  </div>
+</div>
+
+<div class="card">
+  <app-table
+    [data]="companies"
+    [columns]="columns"
+    (edit)="openForm($event)"
+    (delete)="onDelete($event)"
+  ></app-table>
+</div>
+
+<app-dialog
+  [isOpen]="isDialogOpen"
+  [title]="selectedItem ? 'Edit Company' : 'Add Company'"
+  (closeEvent)="closeForm()"
+>
+  <app-company-form
+    [company]="selectedItem"
+    (save)="onSave($event)"
+    (cancel)="closeForm()"
+  ></app-company-form>
+</app-dialog>

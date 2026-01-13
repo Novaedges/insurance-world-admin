@@ -13,8 +13,8 @@
     <label>Role</label>
     <select formControlName="role">
       <option value="Super Admin">Super Admin</option>
-      <option value="Sales Admin">Sales Admin</option>
-      <option value="Read-Only Admin">Read-Only Admin</option>
+      <option value="Admin">Admin</option>
+      <option value="Sales">Sales</option>
     </select>
   </div>
 
@@ -25,6 +25,24 @@
       <option value="Inactive">Inactive</option>
     </select>
   </div>
+
+  @if (form.get('role')?.value !== 'Super Admin') {
+    <div class="form-group full-width">
+      <label>Module Access Permissions</label>
+      <div class="permissions-grid">
+        @for (module of availableModules; track module.id) {
+          <label class="checkbox-item">
+            <input
+              type="checkbox"
+              [checked]="isPermissionSelected(module.id)"
+              (change)="togglePermission(module.id)"
+            />
+            <span>{{ module.name }}</span>
+          </label>
+        }
+      </div>
+    </div>
+  }
 
   <div class="form-actions">
     <button type="button" class="btn-secondary" (click)="onCancel()">Cancel</button>

@@ -10,7 +10,7 @@
   <aside class="sidebar" [class.collapsed]="isCollapsed" [class.open-mobile]="isMobileSidebarOpen">
     <div class="logo">
       @if (!isCollapsed) {
-        <h2>Insure<span>World</span></h2>
+        <h2>Good<span>World</span></h2>
       }
       @if (isCollapsed) {
         <h2>IW</h2>
@@ -43,169 +43,246 @@
         <span class="label">Dashboard</span>
       </a>
 
-      <div class="nav-section-label">Core</div>
-      <a
-        routerLink="/products"
-        routerLinkActive="active"
-        class="nav-item"
-        (click)="closeMobileSidebar()"
-      >
-        <i class="icon ri-box-3-line"></i>
-        <span class="label">Products</span>
-      </a>
-      <a
-        routerLink="/inquiries"
-        routerLinkActive="active"
-        class="nav-item"
-        (click)="closeMobileSidebar()"
-      >
-        <i class="icon ri-mail-send-line"></i>
-        <span class="label">Inquiries</span>
-      </a>
-      <a
-        routerLink="/sales-reports"
-        routerLinkActive="active"
-        class="nav-item"
-        (click)="closeMobileSidebar()"
-      >
-        <i class="icon ri-line-chart-line"></i>
-        <span class="label">Sales Reports</span>
-      </a>
+      @if (hasSectionAccess(['products', 'inquiries', 'sales-reports'])) {
+        <div class="nav-section-label">Core</div>
+      }
+      @if (hasAccess('products')) {
+        <a
+          routerLink="/products"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="icon ri-box-3-line"></i>
+          <span class="label">Products</span>
+        </a>
+      }
+      @if (hasAccess('inquiries')) {
+        <a
+          routerLink="/inquiries"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="icon ri-mail-send-line"></i>
+          <span class="label">Inquiries</span>
+        </a>
+      }
+      @if (hasAccess('sales-reports')) {
+        <a
+          routerLink="/sales-reports"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="icon ri-line-chart-line"></i>
+          <span class="label">Sales Reports</span>
+        </a>
+      }
 
-      <div class="nav-section-label">Masters</div>
+      @if (
+        hasSectionAccess([
+          'admin-creation',
+          'rto-management',
+          'vehicle-make',
+          'vehicle-model',
+          'insurance-category',
+          'child-category',
+          'insurance-company',
+          'agent-management',
+        ])
+      ) {
+        <div class="nav-section-label">Masters</div>
+      }
 
-      <a
-        routerLink="/admin-creation"
-        routerLinkActive="active"
-        class="nav-item"
-        (click)="closeMobileSidebar()"
-      >
-        <i class="icon ri-shield-user-line"></i>
-        <span class="label">Admin Creation</span>
-      </a>
-      <a
-        routerLink="/rto-management"
-        routerLinkActive="active"
-        class="nav-item"
-        (click)="closeMobileSidebar()"
-      >
-        <i class="icon ri-map-pin-line"></i>
-        <span class="label">RTO Management</span>
-      </a>
-      <a
-        routerLink="/vehicle-make"
-        routerLinkActive="active"
-        class="nav-item"
-        (click)="closeMobileSidebar()"
-      >
-        <i class="icon ri-building-2-line"></i>
-        <span class="label">Vehicle Make</span>
-      </a>
-      <a
-        routerLink="/vehicle-model"
-        routerLinkActive="active"
-        class="nav-item"
-        (click)="closeMobileSidebar()"
-      >
-        <i class="icon ri-roadster-line"></i>
-        <span class="label">Vehicle Model</span>
-      </a>
-      <a
-        routerLink="/insurance-category"
-        routerLinkActive="active"
-        class="nav-item"
-        (click)="closeMobileSidebar()"
-      >
-        <i class="icon ri-file-list-3-line"></i>
-        <span class="label">Categories</span>
-      </a>
-      <a
-        routerLink="/child-category"
-        routerLinkActive="active"
-        class="nav-item"
-        (click)="closeMobileSidebar()"
-      >
-        <i class="icon ri-price-tag-3-line"></i>
-        <span class="label">Sub-Categories</span>
-      </a>
+      @if (hasAccess('admin-creation')) {
+        <a
+          routerLink="/admin-creation"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="icon ri-shield-user-line"></i>
+          <span class="label">Admin Creation</span>
+        </a>
+      }
+      @if (hasAccess('insurance-company')) {
+        <a
+          routerLink="/insurance-company"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="icon ri-building-line"></i>
+          <span class="label">Insurance Companies</span>
+        </a>
+      }
+      @if (hasAccess('agent-management')) {
+        <a
+          routerLink="/agent-management"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="icon ri-user-star-line"></i>
+          <span class="label">Agent Management</span>
+        </a>
+      }
+      @if (hasAccess('rto-management')) {
+        <a
+          routerLink="/rto-management"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="icon ri-map-pin-line"></i>
+          <span class="label">RTO Management</span>
+        </a>
+      }
+      @if (hasAccess('vehicle-make')) {
+        <a
+          routerLink="/vehicle-make"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="icon ri-building-2-line"></i>
+          <span class="label">Vehicle Make</span>
+        </a>
+      }
+      @if (hasAccess('vehicle-model')) {
+        <a
+          routerLink="/vehicle-model"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="icon ri-roadster-line"></i>
+          <span class="label">Vehicle Model</span>
+        </a>
+      }
+      @if (hasAccess('insurance-category')) {
+        <a
+          routerLink="/insurance-category"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="icon ri-file-list-3-line"></i>
+          <span class="label">Categories</span>
+        </a>
+      }
+      @if (hasAccess('child-category')) {
+        <a
+          routerLink="/child-category"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="icon ri-price-tag-3-line"></i>
+          <span class="label">Sub-Categories</span>
+        </a>
+      }
 
-      <div class="nav-section-label">Communication</div>
-      <a
-        routerLink="/whatsapp"
-        routerLinkActive="active"
-        class="nav-item"
-        (click)="closeMobileSidebar()"
-      >
-        <i class="icon ri-whatsapp-line"></i>
-        <span class="label">WhatsApp</span>
-      </a>
-      <a
-        routerLink="/sms"
-        routerLinkActive="active"
-        class="nav-item"
-        (click)="closeMobileSidebar()"
-      >
-        <i class="icon ri-message-2-line"></i>
-        <span class="label">SMS</span>
-      </a>
+      @if (hasSectionAccess(['whatsapp', 'sms'])) {
+        <div class="nav-section-label">Communication</div>
+      }
+      @if (hasAccess('whatsapp')) {
+        <a
+          routerLink="/whatsapp"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="icon ri-whatsapp-line"></i>
+          <span class="label">WhatsApp</span>
+        </a>
+      }
+      @if (hasAccess('sms')) {
+        <a
+          routerLink="/sms"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="icon ri-message-2-line"></i>
+          <span class="label">SMS</span>
+        </a>
+      }
 
-      <div class="nav-section-label">Finance</div>
-      <a
-        routerLink="/payments"
-        routerLinkActive="active"
-        class="nav-item"
-        (click)="closeMobileSidebar()"
-      >
-        <i class="icon ri-bank-card-line"></i>
-        <span class="label">Payments</span>
-      </a>
-      <a
-        routerLink="/commissions"
-        routerLinkActive="active"
-        class="nav-item"
-        (click)="closeMobileSidebar()"
-      >
-        <i class="icon ri-hand-coin-line"></i>
-        <span class="label">Commissions</span>
-      </a>
+      @if (hasSectionAccess(['payments', 'commissions'])) {
+        <div class="nav-section-label">Finance</div>
+      }
+      @if (hasAccess('payments')) {
+        <a
+          routerLink="/payments"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="icon ri-bank-card-line"></i>
+          <span class="label">Payments</span>
+        </a>
+      }
+      @if (hasAccess('commissions')) {
+        <a
+          routerLink="/commissions"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="icon ri-hand-coin-line"></i>
+          <span class="label">Commissions</span>
+        </a>
+      }
 
-      <div class="nav-section-label">Growth</div>
-      <a
-        routerLink="/renewals"
-        routerLinkActive="active"
-        class="nav-item"
-        (click)="closeMobileSidebar()"
-      >
-        <i class="icon ri-refresh-line"></i>
-        <span class="label">Renewals</span>
-      </a>
-      <a
-        routerLink="/crm"
-        routerLinkActive="active"
-        class="nav-item"
-        (click)="closeMobileSidebar()"
-      >
-        <i class="icon ri-customer-service-2-line"></i>
-        <span class="label">CRM Sync</span>
-      </a>
-      <a
-        routerLink="/marketing"
-        routerLinkActive="active"
-        class="nav-item"
-        (click)="closeMobileSidebar()"
-      >
-        <i class="icon ri-megaphone-line"></i>
-        <span class="label">Marketing</span>
-      </a>
-      <a
-        routerLink="/ai-engine"
-        routerLinkActive="active"
-        class="nav-item"
-        (click)="closeMobileSidebar()"
-      >
-        <i class="icon ri-brain-line"></i>
-        <span class="label">AI Engine</span>
-      </a>
+      @if (hasSectionAccess(['renewals', 'crm', 'marketing', 'ai-engine'])) {
+        <div class="nav-section-label">Growth</div>
+      }
+      @if (hasAccess('renewals')) {
+        <a
+          routerLink="/renewals"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="icon ri-refresh-line"></i>
+          <span class="label">Renewals</span>
+        </a>
+      }
+      @if (hasAccess('crm')) {
+        <a
+          routerLink="/crm"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="icon ri-customer-service-2-line"></i>
+          <span class="label">CRM Sync</span>
+        </a>
+      }
+      @if (hasAccess('marketing')) {
+        <a
+          routerLink="/marketing"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="icon ri-megaphone-line"></i>
+          <span class="label">Marketing</span>
+        </a>
+      }
+      @if (hasAccess('ai-engine')) {
+        <a
+          routerLink="/ai-engine"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="icon ri-brain-line"></i>
+          <span class="label">AI Engine</span>
+        </a>
+      }
     </nav>
 
     <div class="user-profile">
@@ -214,8 +291,8 @@
       </div>
       @if (!isCollapsed) {
         <div class="info">
-          <span class="name">Super Admin</span>
-          <span class="role">Logged In</span>
+          <span class="name">{{ authService.currentUser()?.name || 'User' }}</span>
+          <span class="role">{{ authService.currentUser()?.role || 'Guest' }}</span>
         </div>
       }
     </div>

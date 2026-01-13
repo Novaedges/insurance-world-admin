@@ -2,8 +2,9 @@ export interface Admin {
   id: string;
   name: string;
   email: string;
-  role: 'Super Admin' | 'Sales Admin' | 'Read-Only Admin';
+  role: 'Super Admin' | 'Admin' | 'Sales';
   status: 'Active' | 'Inactive';
+  permissions?: string[];
 }
 
 export interface RTO {
@@ -45,5 +46,26 @@ export interface ChildCategory {
   name: string;
   parentCategoryId: string;
   parentCategoryName?: string; // For display
+  status: 'Active' | 'Inactive';
+}
+
+export interface InsuranceCompany {
+  id: string;
+  name: string;
+  address: string;
+  email: string;
+  contactNumber: string;
+  helplineNumber: string;
+  website?: string;
+  status: 'Active' | 'Inactive';
+}
+
+export interface Agent {
+  id: string;
+  fullName: string;
+  contactNumber: string;
+  address: string;
+  email?: string;
+  agentCode: string;
   status: 'Active' | 'Inactive';
 }

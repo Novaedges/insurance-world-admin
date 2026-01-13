@@ -4,8 +4,9 @@ import { Router } from '@angular/router';
 export interface User {
   id: string;
   name: string;
-  role: 'SUPER_ADMIN' | 'ADMIN' | 'SALES';
+  role: 'Super Admin' | 'Admin' | 'Sales';
   phoneNumber: string;
+  permissions?: string[];
 }
 
 @Injectable({
@@ -27,8 +28,9 @@ export class AuthService {
         const mockUser: User = {
           id: '1',
           name: 'Admin User',
-          role: 'SUPER_ADMIN',
+          role: 'Super Admin',
           phoneNumber: phoneNumber,
+          permissions: [], // All permissions for Super Admin
         };
 
         this.storeUser(mockUser, 'mock-jwt-token');

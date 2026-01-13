@@ -1,0 +1,32 @@
+<div class="page-header">
+  <div class="header-content">
+    <h1>Agent Management</h1>
+    <p>Manage insurance agents and codes</p>
+  </div>
+  <div class="header-actions">
+    <button class="btn-primary" (click)="openForm()">
+      <i class="ri-add-line"></i> Add Agent
+    </button>
+  </div>
+</div>
+
+<div class="card">
+  <app-table
+    [data]="agents"
+    [columns]="columns"
+    (edit)="openForm($event)"
+    (delete)="onDelete($event)"
+  ></app-table>
+</div>
+
+<app-dialog
+  [isOpen]="isDialogOpen"
+  [title]="selectedItem ? 'Edit Agent' : 'Add Agent'"
+  (closeEvent)="closeForm()"
+>
+  <app-agent-form
+    [agent]="selectedItem"
+    (save)="onSave($event)"
+    (cancel)="closeForm()"
+  ></app-agent-form>
+</app-dialog>

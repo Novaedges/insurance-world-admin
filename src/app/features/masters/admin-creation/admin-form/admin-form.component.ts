@@ -17,13 +17,36 @@ export class AdminFormComponent implements OnChanges {
 
   form: FormGroup;
 
+  availableModules = [
+    { id: 'products', name: 'Product Management' },
+    { id: 'inquiries', name: 'Inquiry Management' },
+    { id: 'sales-reports', name: 'Sales Reports' },
+    { id: 'admin-creation', name: 'Admin Creation' },
+    { id: 'rto-management', name: 'RTO Management' },
+    { id: 'vehicle-make', name: 'Vehicle Make' },
+    { id: 'vehicle-model', name: 'Vehicle Model' },
+    { id: 'insurance-category', name: 'Categories' },
+    { id: 'child-category', name: 'Sub-Categories' },
+    { id: 'insurance-company', name: 'Insurance Companies' },
+    { id: 'agent-management', name: 'Agent Management' },
+    { id: 'whatsapp', name: 'WhatsApp' },
+    { id: 'sms', name: 'SMS' },
+    { id: 'payments', name: 'Payments' },
+    { id: 'commissions', name: 'Commissions' },
+    { id: 'renewals', name: 'Renewals' },
+    { id: 'crm', name: 'CRM Sync' },
+    { id: 'marketing', name: 'Marketing' },
+    { id: 'ai-engine', name: 'AI Engine' },
+  ];
+
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
       id: [''],
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      role: ['Read-Only Admin', Validators.required],
+      role: ['Sales', Validators.required],
       status: ['Active', Validators.required],
+      permissions: [[]],
     });
   }
 
@@ -31,8 +54,21 @@ export class AdminFormComponent implements OnChanges {
     if (changes['admin'] && this.admin) {
       this.form.patchValue(this.admin);
     } else {
-      this.form.reset({ role: 'Read-Only Admin', status: 'Active' });
+      this.form.reset({ role: 'Sales', status: 'Active', permissions: [] });
     }
+  }
+
+  togglePermission(moduleId: string) {
+    const current = this.form.get('permissions')?.value || [];
+    if (current.includes(moduleId)) {
+      this.form.patchValue({ permissions: current.filter((id: string) => id !== moduleId) });
+    } else {
+      this.form.patchValue({ permissions: [...current, moduleId] });
+    }
+  }
+
+  isPermissionSelected(moduleId: string): boolean {
+    return (this.form.get('permissions')?.value || []).includes(moduleId);
   }
 
   onSubmit() {

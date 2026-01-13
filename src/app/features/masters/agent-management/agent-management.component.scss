@@ -1,0 +1,51 @@
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+
+  .header-content {
+    h1 {
+      font-size: 1.875rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.25rem;
+    }
+
+    p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+  }
+}
+
+.card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+  }
+
+  i {
+    font-size: 1.2rem;
+  }
+}
