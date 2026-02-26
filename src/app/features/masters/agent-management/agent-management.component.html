@@ -4,9 +4,7 @@
     <p>Manage insurance agents and codes</p>
   </div>
   <div class="header-actions">
-    <button class="btn-primary" (click)="openForm()">
-      <i class="ri-add-line"></i> Add Agent
-    </button>
+    <button class="btn-primary" (click)="openForm()"><i class="ri-add-line"></i> Add Agent</button>
   </div>
 </div>
 
@@ -14,8 +12,13 @@
   <app-table
     [data]="agents"
     [columns]="columns"
+    [isLoading]="loading"
+    [hiddenActions]="['view']"
+    [showStatusFilter]="true"
+    (statusFilterChange)="onStatusFilterChange($event)"
     (edit)="openForm($event)"
     (delete)="onDelete($event)"
+    (refresh)="loadData()"
   ></app-table>
 </div>
 

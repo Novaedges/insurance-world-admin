@@ -42,33 +42,40 @@ export class AdminFormComponent implements OnChanges {
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
       id: [''],
-      name: ['', Validators.required],
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      role: ['Sales', Validators.required],
+      phoneNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
+      password: [''],
+      roleType: ['SALES', Validators.required],
       status: ['Active', Validators.required],
-      permissions: [[]],
+      componentAccess: [[]],
     });
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['admin'] && this.admin) {
       this.form.patchValue(this.admin);
+      this.form.get('password')?.clearValidators();
+      this.form.get('password')?.updateValueAndValidity();
     } else {
-      this.form.reset({ role: 'Sales', status: 'Active', permissions: [] });
+      this.form.reset({ roleType: 'SALES', status: 'Active', componentAccess: [] });
+      this.form.get('password')?.setValidators([Validators.required, Validators.minLength(8)]);
+      this.form.get('password')?.updateValueAndValidity();
     }
   }
 
   togglePermission(moduleId: string) {
-    const current = this.form.get('permissions')?.value || [];
+    const current = this.form.get('componentAccess')?.value || [];
     if (current.includes(moduleId)) {
-      this.form.patchValue({ permissions: current.filter((id: string) => id !== moduleId) });
+      this.form.patchValue({ componentAccess: current.filter((id: string) => id !== moduleId) });
     } else {
-      this.form.patchValue({ permissions: [...current, moduleId] });
+      this.form.patchValue({ componentAccess: [...current, moduleId] });
     }
   }
 
   isPermissionSelected(moduleId: string): boolean {
-    return (this.form.get('permissions')?.value || []).includes(moduleId);
+    return (this.form.get('componentAccess')?.value || []).includes(moduleId);
   }
 
   onSubmit() {

@@ -1,44 +1,65 @@
 export interface Admin {
-  id: string;
-  name: string;
+  id?: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  role: 'Super Admin' | 'Admin' | 'Sales';
+  roleType: 'ADMIN' | 'SALES' | 'SUPER_ADMIN'; // Adjust based on actual API enum values if known, starting with user provided 'ADMIN'
+  phoneNumber: string;
+  password?: string; // Optional for updates maybe?
   status: 'Active' | 'Inactive';
-  permissions?: string[];
+  componentAccess?: string[];
+  createdAt?: string;
+  isActive?: boolean;
+  _id?: string;
 }
 
 export interface RTO {
-  id: string;
-  code: string; // e.g., TR01
-  name: string;
-  city: string;
-  state: string;
-  status: 'Active' | 'Inactive';
+  id?: string;
+  rtoCode: string; // e.g., TR01
+  rtoName: string;
+  city?: string; // Kept as optional if needed for legacy support, or can be removed if strictly following API
+  state?: string; // Kept as optional
+  isActive?: boolean;
+  _id?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  status?: string; // For UI display
 }
 
 export interface VehicleMake {
-  id: string;
+  id?: string;
   name: string;
-  category: 'Bike' | 'Car';
-  status: 'Active' | 'Inactive';
+  vehicleTypeId: string;
+  vehicleTypeName?: string; // For display
+  category?: 'Bike' | 'Car'; // Legacy, might be removed later if strictly using types
+  isActive?: boolean;
+  status?: string; // For UI display
+  _id?: string;
 }
 
 export interface VehicleModel {
-  id: string;
+  id?: string;
   name: string;
-  makeId: string;
-  makeName?: string; // For display
-  engineCC?: string;
-  fuelType: 'Petrol' | 'Diesel' | 'Electric' | 'CNG';
-  status: 'Active' | 'Inactive';
+  vehicleTypeId: string;
+  manufacturerId: string;
+  vehicleTypeName?: string; // For display
+  manufacturerName?: string; // For display
+  fuelType?: string; // Optional if not in API but in UI
+  engineCC?: string; // Optional
+  isActive?: boolean;
+  status?: string; // For UI display
+  _id?: string;
 }
 
 export interface InsuranceCategory {
-  id: string;
+  id?: string;
   name: string;
   type: 'Motor' | 'Health';
   description?: string;
-  status: 'Active' | 'Inactive';
+  logo?: string;
+  isActive?: boolean;
+  _id?: string;
+  status?: string; // For UI display
 }
 
 export interface ChildCategory {
@@ -50,22 +71,44 @@ export interface ChildCategory {
 }
 
 export interface InsuranceCompany {
-  id: string;
-  name: string;
-  address: string;
-  email: string;
-  contactNumber: string;
-  helplineNumber: string;
+  _id?: string;
+  id?: string;
+  companyName: string;
+  description?: string;
+  address?: string;
+  email?: string;
+  contactNumber?: string;
+  helplineNumber?: string;
   website?: string;
-  status: 'Active' | 'Inactive';
+  status?: 'Active' | 'Inactive'; // UI status
+  isActive?: boolean; // API status
+  createdAt?: string;
+  updatedAt?: string;
+
+  // Legacy mappings for shared components if needed
+  name?: string;
 }
 
 export interface Agent {
   id: string;
-  fullName: string;
-  contactNumber: string;
-  address: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  password?: string;
   email?: string;
-  agentCode: string;
+  agentCode: string; // Readonly in edit, but part of model
   status: 'Active' | 'Inactive';
+  isActive?: boolean;
+  _id?: string;
+}
+
+export interface PolicyType {
+  _id?: string;
+  policyType: string;
+  tag: string;
+  description?: string;
+  coverage?: string[];
+  isActive?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }

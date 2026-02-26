@@ -1,26 +1,42 @@
-export interface Inquiry {
-  id: string;
-  source: 'Web' | 'App';
-  customerName: string;
-  customerEmail: string;
-  customerPhone: string;
-
-  // Product Details
-  productId: string;
-  productName: string;
-  categoryName: string;
-
-  // Specific Details (JSON string or specific fields)
-  vehicleDetails?: string; // e.g. "Honda City, 2022"
-  healthDetails?: string; // e.g. "Age 35, No pre-existing details"
-
-  preferredTime: string;
-
-  // Lifecycle
-  status: 'New' | 'Contacted' | 'Quotation Sent' | 'Negotiation' | 'Converted' | 'Lost';
-  assignedTo?: string; // Agent Name or ID
-  assignedToInitials?: string;
-
-  createdAt: Date;
-  updatedAt: Date;
+export interface InquiryReportItem {
+  _id: string;
+  regNumber: string;
+  name: string;
+  phoneNumber: string;
+  createdAt: string;
+  policyName: string;
+  agentName: string;
+  status: string;
+  rtoDetails?: {
+    rtoName: string;
+    rtoId: string;
+  };
+  policyDetails?: {
+    policyName: string;
+    policyCode: string;
+    insuranceCompany: string;
+    minPrice: number;
+    maxPrice: number;
+    discount: number;
+    gst: number;
+    commission: number;
+  };
+  vehicleTypeDetails?: {
+    name: string;
+    _id: string;
+  };
+  manufacturerDetails?: {
+    name: string;
+    _id: string;
+  };
+  vehicleModelDetails?: {
+    name: string;
+    _id: string;
+  };
+  policyTypeDetails?: {
+    policyType: string;
+    coverage: string[];
+    _id: string;
+  };
+  salesExecutiveDetails?: any;
 }

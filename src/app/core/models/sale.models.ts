@@ -1,15 +1,41 @@
-export interface Sale {
-  id: string;
-  policyNumber: string;
-  customerName: string;
-  productName: string;
-  categoryName: string;
-  premiumAmount: number;
-  discountApplied: number;
-  finalAmount: number;
-  paymentStatus: 'Paid' | 'Pending' | 'Failed';
-  policyStartDate: Date;
-  policyEndDate: Date;
+export interface SaleReportItem {
+  _id: string;
+  regNumber: string;
+  name: string;
+  phoneNumber: string;
+  createdAt: string;
+  policyName: string;
   agentName: string;
-  saleDate: Date;
+  rtoDetails: {
+    rtoName: string;
+    rtoId: string;
+  };
+  policyDetails: {
+    policyName: string;
+    policyCode: string;
+    insuranceCompany: string;
+    minPrice: number;
+    maxPrice: number;
+    discount: number;
+    gst: number;
+    commission: number;
+  };
+  vehicleTypeDetails: {
+    name: string;
+    _id: string;
+  };
+  manufacturerDetails: {
+    name: string;
+    _id: string;
+  };
+  vehicleModelDetails: {
+    name: string;
+    _id: string;
+  };
+  policyTypeDetails: {
+    policyType: string;
+    coverage: string[];
+    _id: string;
+  };
+  salesExecutiveDetails: any; // Or specific interface if known
 }

@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MasterService } from '../../../core/services/master.service';
 import { Agent } from '../../../core/models/master.models';
 import { TableComponent, Column } from '../../../shared/components/table/table.component';
 import { DialogComponent } from '../../../shared/components/dialog/dialog.component';
 import { AgentFormComponent } from './agent-form/agent-form.component';
 import { SnackbarService } from '../../../core/services/snackbar.service';
 import { finalize } from 'rxjs/operators';
+import { AgentService } from './agent.service';
 
 @Component({
   selector: 'app-agent-management',
@@ -19,18 +19,21 @@ export class AgentManagementComponent implements OnInit {
   agents: Agent[] = [];
   loading = false;
   isDialogOpen = false;
+  isActiveFilter: boolean = true;
   selectedItem: Agent | null = null;
 
   columns: Column[] = [
-    { field: 'fullName', header: 'Full Name' },
+    { field: 'firstName', header: 'First Name' },
+    { field: 'lastName', header: 'Last Name' },
+    { field: 'phoneNumber', header: 'Phone Number' },
     { field: 'agentCode', header: 'Agent Code' },
-    { field: 'contactNumber', header: 'Contact' },
     { field: 'status', header: 'Status', type: 'status' },
   ];
 
   constructor(
-    private masterService: MasterService,
+    private agentService: AgentService,
     private snackbar: SnackbarService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -39,15 +42,48 @@ export class AgentManagementComponent implements OnInit {
 
   loadData() {
     this.loading = true;
-    this.masterService
-      .getAgents()
-      .pipe(finalize(() => (this.loading = false)))
-      .subscribe((data: Agent[]) => (this.agents = data));
+    this.agentService
+      .getAgents(this.isActiveFilter)
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+          this.cdr.detectChanges();
+        }),
+      )
+      .subscribe((success: any) => {
+        const data = success.result || [];
+        this.agents = data.map((item: any) => ({
+          ...item,
+          status: item.isActive ? 'Active' : 'Inactive',
+        }));
+      });
+  }
+
+  onStatusFilterChange(status: boolean) {
+    this.isActiveFilter = status;
+    this.loadData();
   }
 
   openForm(item: Agent | null = null) {
-    this.selectedItem = item;
-    this.isDialogOpen = true;
+    if (item) {
+      const id = item._id || item.id;
+      if (id) {
+        this.agentService.getAgentById(id).subscribe((success: any) => {
+          const data = success.result || success.data;
+          const agentDetails = Array.isArray(data) ? data[0] : data;
+          this.selectedItem = {
+            ...agentDetails,
+            status: agentDetails.isActive ? 'Active' : 'Inactive',
+            _id: agentDetails._id || agentDetails.id,
+          };
+          this.isDialogOpen = true;
+          this.cdr.detectChanges();
+        });
+      }
+    } else {
+      this.selectedItem = null;
+      this.isDialogOpen = true;
+    }
   }
 
   closeForm() {
@@ -56,20 +92,29 @@ export class AgentManagementComponent implements OnInit {
   }
 
   onSave(item: Agent) {
-    this.masterService.saveAgent(item).subscribe(() => {
-      this.snackbar.show(
-        `Agent ${item.id ? 'updated' : 'added'} successfully`,
-        'success'
-      );
-      this.loadData();
-      this.closeForm();
-    });
+    if (item._id) {
+      this.agentService.updateAgent(item).subscribe(() => {
+        this.snackbar.success('Agent updated successfully');
+        this.loadData();
+        this.closeForm();
+      });
+    } else {
+      this.agentService.createAgent(item).subscribe(() => {
+        this.snackbar.success('Agent added successfully');
+        this.loadData();
+        this.closeForm();
+      });
+    }
   }
 
   onDelete(item: Agent) {
-    this.masterService.deleteAgent(item.id).subscribe(() => {
-      this.snackbar.show('Agent deleted successfully', 'success');
-      this.loadData();
-    });
+    const id = item._id || item.id;
+    if (id) {
+      const payload = { _id: id, isActive: false };
+      this.agentService.deleteAgent(payload).subscribe((success: any) => {
+        this.snackbar.success(success.msg);
+        this.loadData();
+      });
+    }
   }
 }

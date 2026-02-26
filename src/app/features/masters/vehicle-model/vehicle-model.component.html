@@ -6,6 +6,10 @@
 <app-table
   [data]="items"
   [columns]="columns"
+  [isLoading]="isLoading"
+  [hiddenActions]="['password', 'view']"
+  [showStatusFilter]="true"
+  (statusFilterChange)="onStatusFilterChange($event)"
   (edit)="openForm($event)"
   (delete)="onDelete($event)"
   (refresh)="loadData()"

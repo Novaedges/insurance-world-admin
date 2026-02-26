@@ -6,8 +6,13 @@
 <app-table
   [data]="admins"
   [columns]="columns"
+  [isLoading]="isLoading"
+  [hiddenActions]="['view']"
+  [showStatusFilter]="true"
+  (statusFilterChange)="onStatusFilterChange($event)"
   (edit)="openForm($event)"
   (delete)="onDelete($event)"
+  (changePassword)="onChangePassword($event)"
   (refresh)="loadData()"
 >
 </app-table>
@@ -19,4 +24,35 @@
 >
   <app-admin-form [admin]="selectedAdmin" (save)="onSave($event)" (cancel)="closeForm()">
   </app-admin-form>
+</app-dialog>
+
+<app-dialog
+  [isOpen]="isPasswordModalOpen"
+  title="Update Password"
+  (closeEvent)="closePasswordModal()"
+>
+  <div class="password-form">
+    <div class="form-group">
+      <label>New Password</label>
+      <input
+        type="password"
+        [(ngModel)]="newPassword"
+        placeholder="Enter new password"
+        class="form-control"
+      />
+    </div>
+    <div
+      class="form-actions"
+      style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px"
+    >
+      <button class="btn-secondary" (click)="closePasswordModal()">Cancel</button>
+      <button
+        class="btn-primary"
+        (click)="onSavePassword()"
+        [disabled]="!newPassword || newPassword.length < 8"
+      >
+        Update
+      </button>
+    </div>
+  </div>
 </app-dialog>

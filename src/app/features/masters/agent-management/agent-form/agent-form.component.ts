@@ -19,27 +19,40 @@ export class AgentFormComponent implements OnChanges {
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
-      id: [''],
-      fullName: ['', Validators.required],
-      contactNumber: ['', Validators.required],
-      address: ['', Validators.required],
+      _id: [''],
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
+      phoneNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
       email: ['', [Validators.email]],
+      password: ['', Validators.required],
       agentCode: ['', Validators.required],
-      status: ['Active', Validators.required],
+      isActive: [true, Validators.required],
     });
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['agent'] && this.agent) {
       this.form.patchValue(this.agent);
+      this.form.get('password')?.clearValidators();
+      this.form.get('password')?.updateValueAndValidity();
+      this.form.get('agentCode')?.setValidators(Validators.required); // Must exist in edit
     } else {
-      this.form.reset({ status: 'Active' });
+      this.form.reset({ isActive: true });
+      this.form.get('password')?.setValidators([Validators.required, Validators.minLength(8)]);
+      this.form.get('password')?.updateValueAndValidity();
+      this.form.get('agentCode')?.clearValidators(); // Not needed in create (backend generated?)
+      this.form.get('agentCode')?.updateValueAndValidity();
     }
   }
 
   onSubmit() {
     if (this.form.valid) {
-      this.save.emit(this.form.value);
+      const payload = { ...this.form.value };
+      if (!this.agent) {
+        delete payload._id;
+        delete payload.agentCode;
+      }
+      this.save.emit(payload);
     }
   }
 

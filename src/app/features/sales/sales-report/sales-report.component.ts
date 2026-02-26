@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, DatePipe, CurrencyPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SalesService } from '../../../core/services/sales.service';
-import { Sale } from '../../../core/models/sale.models';
+import { SaleReportItem } from '../../../core/models/sale.models';
+import { DialogComponent } from '../../../shared/components/dialog/dialog.component';
+import { SaleInfoDialogComponent } from './sale-info-dialog/sale-info-dialog.component';
 
 @Component({
   selector: 'app-sales-report',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatePipe, CurrencyPipe],
+  imports: [CommonModule, FormsModule, DialogComponent, SaleInfoDialogComponent],
   templateUrl: './sales-report.component.html',
   styleUrls: [
     '../../masters/admin-creation/admin-creation.component.scss',
@@ -15,18 +17,18 @@ import { Sale } from '../../../core/models/sale.models';
   ],
 })
 export class SalesReportComponent implements OnInit {
-  items: Sale[] = [];
-  filteredItems: Sale[] = [];
+  items: SaleReportItem[] = [];
 
-  filters = {
-    startDate: '',
-    endDate: '',
-    category: '',
-    agent: '',
-  };
+  // API Pagination & Filters
+  limit = 10;
+  skip = 0;
+  searchTerm = '';
+  salesExecutiveId = ''; // Adjust if you have a dropdown for this later
 
-  searchTerm: string = '';
-  isFilterApplied = false;
+  isLoading = false;
+
+  isInfoModalOpen = false;
+  selectedSaleId: string | null = null;
 
   constructor(private salesService: SalesService) {}
 
@@ -35,61 +37,58 @@ export class SalesReportComponent implements OnInit {
   }
 
   loadData() {
-    this.salesService.getSales().subscribe((data) => {
-      this.items = data;
-      this.applyFilters(); // Re-apply filters including search
-    });
+    this.isLoading = true;
+    this.salesService
+      .getSales(this.limit, this.skip, this.searchTerm, this.salesExecutiveId)
+      .subscribe({
+        next: (res) => {
+          if (res.status && res.result) {
+            this.items = res.result;
+          } else {
+            this.items = [];
+          }
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Failed to load sales report', err);
+          this.items = [];
+          this.isLoading = false;
+        },
+      });
   }
 
   onRefresh() {
+    this.skip = 0;
     this.loadData();
   }
 
   onSearch(event: any) {
-    this.searchTerm = event.target.value.toLowerCase();
-    this.applyFilters();
+    this.searchTerm = event.target.value;
+    this.skip = 0; // Reset pagination on search
+    this.loadData();
   }
 
-  applyFilters() {
-    this.filteredItems = this.items.filter((item) => {
-      const matchCategory = !this.filters.category || item.categoryName === this.filters.category;
-      const matchAgent = !this.filters.agent || item.agentName === this.filters.agent;
-
-      let matchDate = true;
-      if (this.filters.startDate) {
-        matchDate = matchDate && new Date(item.saleDate) >= new Date(this.filters.startDate);
-      }
-      if (this.filters.endDate) {
-        matchDate = matchDate && new Date(item.saleDate) <= new Date(this.filters.endDate);
-      }
-
-      const matchSearch =
-        !this.searchTerm ||
-        item.policyNumber.toLowerCase().includes(this.searchTerm) ||
-        item.customerName.toLowerCase().includes(this.searchTerm) ||
-        item.productName.toLowerCase().includes(this.searchTerm);
-
-      return matchCategory && matchAgent && matchDate && matchSearch;
-    });
-
-    // Check if any filter is active (excluding search which is handled separately usually, but here included)
-    this.isFilterApplied = !!(
-      this.filters.category ||
-      this.filters.agent ||
-      this.filters.startDate ||
-      this.filters.endDate
-    );
+  openInfo(item: SaleReportItem) {
+    this.selectedSaleId = item._id;
+    this.isInfoModalOpen = true;
   }
 
-  resetFilters() {
-    this.filters = {
-      startDate: '',
-      endDate: '',
-      category: '',
-      agent: '',
-    };
-    this.isFilterApplied = false;
-    this.filteredItems = [...this.items];
+  closeInfo() {
+    this.isInfoModalOpen = false;
+    this.selectedSaleId = null;
+  }
+
+  // Next Page / Prev Page helpers
+  nextPage() {
+    this.skip += this.limit;
+    this.loadData();
+  }
+
+  prevPage() {
+    if (this.skip >= this.limit) {
+      this.skip -= this.limit;
+      this.loadData();
+    }
   }
 
   exportData(format: 'csv' | 'pdf' | 'excel') {
