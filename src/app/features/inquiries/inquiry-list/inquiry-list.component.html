@@ -68,27 +68,13 @@
       @if (isLoading) {
         <tr>
           <td colspan="9" class="text-center p-5">
-            <div
-              class="loading-state"
-              style="
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                min-height: 200px;
-                color: var(--text-secondary);
-              "
-            >
-              <i
-                class="ri-loader-4-line"
-                style="
-                  font-size: 2.5rem;
-                  margin-bottom: 1rem;
-                  color: #6366f1;
-                  animation: spin-anim 1s linear infinite;
-                "
-              ></i>
-              <p style="font-size: 1.1rem">Loading inquiries...</p>
+            <div class="fancy-loader-container">
+              <div class="fancy-loader">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+              </div>
+              <p class="fancy-loader-text">Loading inquiries...</p>
             </div>
           </td>
         </tr>

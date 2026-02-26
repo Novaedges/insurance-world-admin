@@ -35,9 +35,13 @@
 
 <app-dialog [isOpen]="isInfoModalOpen" title="Policy Information" (closeEvent)="closeInfoModal()">
   <div class="info-content" *ngIf="isLoadingInfo">
-    <div class="loading-state text-center p-5">
-      <i class="ri-loader-4-line spin-anim" style="font-size: 2.5rem; color: #6366f1"></i>
-      <p>Loading details...</p>
+    <div class="fancy-loader-container">
+      <div class="fancy-loader">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+      <p class="fancy-loader-text">Loading details...</p>
     </div>
   </div>
 

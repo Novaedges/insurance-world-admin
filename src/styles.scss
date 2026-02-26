@@ -74,3 +74,71 @@ button {
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+/* Premium Animated Loader */
+.fancy-loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: var(--text-muted);
+}
+
+.fancy-loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1.5rem;
+
+  .dot {
+    width: 12px;
+    height: 12px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    animation: bounce-loader 1.4s infinite ease-in-out both;
+
+    &:nth-child(1) {
+      animation-delay: -0.32s;
+    }
+    &:nth-child(2) {
+      animation-delay: -0.16s;
+      background-color: var(--secondary-color);
+    }
+    &:nth-child(3) {
+      animation-delay: 0s;
+      background-color: var(--accent-color);
+    }
+  }
+}
+
+.fancy-loader-text {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  animation: pulse-text 2s infinite ease-in-out;
+}
+
+@keyframes bounce-loader {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-text {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
