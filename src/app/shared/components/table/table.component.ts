@@ -29,14 +29,26 @@ export class TableComponent {
 
   @Input() columns: Column[] = [];
   @Input() actions: boolean = true;
+  @Input() hiddenActions: string[] = []; // 'edit', 'delete', 'password', 'view'
+  @Input() isLoading: boolean = false;
+  @Input() showStatusFilter: boolean = false;
+  @Input() statusFilterValue: 'true' | 'false' = 'true';
 
   @Output() edit = new EventEmitter<any>();
   @Output() delete = new EventEmitter<any>();
+  @Output() changePassword = new EventEmitter<any>();
+  @Output() view = new EventEmitter<any>();
   @Output() refresh = new EventEmitter<void>();
+  @Output() statusFilterChange = new EventEmitter<boolean>();
 
   _data: any[] = [];
   filteredData: any[] = [];
   searchTerm: string = '';
+
+  onStatusFilterChange(event: any) {
+    const isActive = event.target.value === 'true';
+    this.statusFilterChange.emit(isActive);
+  }
 
   onSearch(event: any) {
     this.searchTerm = event.target.value.toLowerCase();
@@ -67,6 +79,10 @@ export class TableComponent {
     this.edit.emit(row);
   }
 
+  onView(row: any) {
+    this.view.emit(row);
+  }
+
   async onDelete(row: any) {
     const confirmed = await this.confirmationService.confirm({
       title: 'Delete Item',
@@ -79,5 +95,9 @@ export class TableComponent {
     if (confirmed) {
       this.delete.emit(row);
     }
+  }
+
+  onChangePassword(row: any) {
+    this.changePassword.emit(row);
   }
 }

@@ -1,2 +1,91 @@
-// Custom animations can be added here if needed
-// Tailwind is handling most styles
+.snackbar {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.15),
+    0 4px 6px rgba(0, 0, 0, 0.05);
+  min-width: 300px;
+  max-width: 450px;
+  transform: translateX(120%);
+  transition:
+    transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+    opacity 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
+  border-left: 5px solid #2171cd;
+
+  &.show {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  &.success {
+    border-left-color: #10b981;
+    .snackbar-icon {
+      color: #10b981;
+      background: #ecfdf5;
+    }
+  }
+
+  &.error {
+    border-left-color: #ef4444;
+    .snackbar-icon {
+      color: #ef4444;
+      background: #fef2f2;
+    }
+  }
+
+  &.info {
+    border-left-color: #3b82f6;
+    .snackbar-icon {
+      color: #3b82f6;
+      background: #eff6ff;
+    }
+  }
+
+  .snackbar-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-size: 1.25rem;
+  }
+
+  .snackbar-content {
+    flex: 1;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #1e293b;
+    line-height: 1.4;
+  }
+
+  .snackbar-close {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 1.25rem;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    border-radius: 6px;
+
+    &:hover {
+      background: #f1f5f9;
+      color: #475569;
+    }
+  }
+}

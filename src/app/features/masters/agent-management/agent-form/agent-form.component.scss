@@ -1,7 +1,13 @@
 .form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.25rem;
+  gap: 1.5rem;
 }
 
 .form-group {
@@ -56,10 +62,17 @@
     border: none;
     transition: opacity 0.2s;
 
-    &:disabled {
-      opacity: 0.6;
+    &[disabled] {
+      opacity: 0.5;
       cursor: not-allowed;
     }
+  }
+
+  .error-text {
+    color: #dc3545;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    display: block;
   }
 
   .btn-secondary {

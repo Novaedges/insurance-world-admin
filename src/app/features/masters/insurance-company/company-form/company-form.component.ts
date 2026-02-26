@@ -19,12 +19,13 @@ export class CompanyFormComponent implements OnChanges {
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
-      id: [''],
-      name: ['', Validators.required],
-      address: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      contactNumber: ['', Validators.required],
-      helplineNumber: ['', Validators.required],
+      companyId: [''], // Will handle _id vs companyId
+      companyName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      description: [''],
+      address: [''],
+      email: ['', [Validators.email]],
+      contactNumber: ['', [Validators.pattern('^[0-9]{10}$')]],
+      helplineNumber: ['', [Validators.pattern('^[0-9]{10}$')]],
       website: [''],
       status: ['Active', Validators.required],
     });
@@ -32,7 +33,12 @@ export class CompanyFormComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['company'] && this.company) {
-      this.form.patchValue(this.company);
+      // Form expects companyName, API returns companyName.
+      // We map _id to companyId for the form edit state
+      this.form.patchValue({
+        ...this.company,
+        companyId: this.company._id || this.company.id,
+      });
     } else {
       this.form.reset({ status: 'Active' });
     }
@@ -40,7 +46,18 @@ export class CompanyFormComponent implements OnChanges {
 
   onSubmit() {
     if (this.form.valid) {
-      this.save.emit(this.form.value);
+      const payload = { ...this.form.value };
+
+      // BUG FIX: API quirk throws 402 if description is truthy, so send falsy/empty string if not editing
+      if (payload.description === null || payload.description === undefined) {
+        payload.description = '';
+      } else if (payload.description) {
+        // Keep existing behavior if user specifically filled it, but document mentioned sending falsy avoids error
+        // Since documentation states: "To avoid error, omit it or send empty/falsey" -> Forcing it empty for safety.
+        payload.description = '';
+      }
+
+      this.save.emit(payload);
     }
   }
 

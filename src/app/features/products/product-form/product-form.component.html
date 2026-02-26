@@ -13,8 +13,57 @@
   @if (currentStep === 1) {
     <div class="step-content">
       <div class="form-group">
-        <label>Product Name</label>
+        <label>Policy Code <span class="text-danger">*</span></label>
+        <input type="text" formControlName="policyCode" placeholder="Enter Policy Code" />
+        @if (form.get('policyCode')?.invalid && form.get('policyCode')?.touched) {
+          <div class="error-msg">Policy Code is required</div>
+        }
+      </div>
+      <div class="form-group">
+        <label>Product Name <span class="text-danger">*</span></label>
         <input type="text" formControlName="name" placeholder="Enter Product Name" />
+        @if (form.get('name')?.invalid && form.get('name')?.touched) {
+          <div class="error-msg">Product Name is required</div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label>Insurance Company <span class="text-danger">*</span></label>
+        <select formControlName="insuranceCompany">
+          <option value="" disabled>Select Company</option>
+          @for (company of insuranceCompanies; track company._id || company.id) {
+            <!-- Using name as requested by User for this field -->
+            <option [value]="company.companyName">{{ company.companyName }}</option>
+          }
+        </select>
+        @if (form.get('insuranceCompany')?.invalid && form.get('insuranceCompany')?.touched) {
+          <div class="error-msg">Insurance Company is required</div>
+        }
+      </div>
+      <div class="form-group">
+        <label>Policy Type <span class="text-danger">*</span></label>
+        <select formControlName="policyTypeId">
+          <option value="" disabled>Select Policy Type</option>
+          @for (type of policyTypes; track type._id) {
+            <option [value]="type._id">{{ type.policyType }}</option>
+          }
+        </select>
+        @if (form.get('policyTypeId')?.invalid && form.get('policyTypeId')?.touched) {
+          <div class="error-msg">Policy Type is required</div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label>Vehicle/Insurance Category <span class="text-danger">*</span></label>
+        <select formControlName="insuranceCategoryId" (change)="onCategoryChange()">
+          <option value="" disabled>Select Category</option>
+          @for (cat of categories; track cat._id || cat.id) {
+            <option [value]="cat._id || cat.id || ''">{{ cat.name }}</option>
+          }
+        </select>
+        @if (form.get('insuranceCategoryId')?.invalid && form.get('insuranceCategoryId')?.touched) {
+          <div class="error-msg">Category is required</div>
+        }
       </div>
       <div class="form-group full-width">
         <label>Description</label>
@@ -24,66 +73,62 @@
           placeholder="Product Description"
         ></textarea>
       </div>
-      <div class="form-group">
-        <label>Insurance Category</label>
-        <select formControlName="insuranceCategoryId" (change)="onCategoryChange()">
-          <option value="" disabled>Select Category</option>
-          @for (cat of categories; track cat.id) {
-            <option [value]="cat.id">{{ cat.name }}</option>
-          }
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Child Category</label>
-        <select formControlName="childCategoryId">
-          <option value="" disabled>Select Child Category</option>
-          @for (cat of filteredChildCategories; track cat.id) {
-            <option [value]="cat.id">{{ cat.name }}</option>
-          }
-        </select>
-      </div>
     </div>
   }
 
   <!-- Step 2: Configuration -->
   @if (currentStep === 2) {
     <div class="step-content">
-      @if (!isMotorInsurance) {
-        <div class="info-msg full-width">
-          <p>No specific configuration required for this category.</p>
-        </div>
-      }
+      <div class="form-group">
+        <label>Manufacturer/Make</label>
+        <select formControlName="makeId" (change)="onMakeChange()">
+          <option value="">Any Make</option>
+          @for (make of filteredMakes; track make._id || make.id) {
+            <option [value]="make._id || make.id || ''">{{ make.name }}</option>
+          }
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Model</label>
+        <select formControlName="modelId">
+          <option value="">Any Model</option>
+          @for (model of filteredModels; track model._id || model.id) {
+            <option [value]="model._id || model.id || ''">{{ model.name }}</option>
+          }
+        </select>
+      </div>
 
-      @if (isMotorInsurance) {
-        <ng-container>
-          <div class="form-group">
-            <label>Make</label>
-            <select formControlName="makeId" (change)="onMakeChange()">
-              <option value="">Any Make</option>
-              @for (make of makes; track make.id) {
-                <option [value]="make.id">{{ make.name }}</option>
-              }
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Model</label>
-            <select formControlName="modelId">
-              <option value="">Any Model</option>
-              @for (model of filteredModels; track model.id) {
-                <option [value]="model.id">{{ model.name }}</option>
-              }
-            </select>
-          </div>
-        </ng-container>
-      }
+      <div class="form-group full-width">
+        <label>Applicable RTOs <span class="text-danger">*</span></label>
+        <div class="checkbox-group rto-grid">
+          @for (rto of rtos; track rto._id) {
+            <label class="checkbox-item">
+              <input
+                type="checkbox"
+                [value]="rto._id || ''"
+                (change)="onRtoCheckboxChange($event, rto._id || '')"
+                [checked]="isRtoSelected(rto._id || '')"
+              />
+              <span class="custom-checkbox"></span>
+              {{ rto.rtoCode }} - {{ rto.rtoName }}
+            </label>
+          }
+        </div>
+        @if (form.get('rtoIds')?.invalid && form.get('rtoIds')?.touched) {
+          <div class="error-msg">At least one RTO must be selected</div>
+        }
+      </div>
 
       <div class="form-group">
-        <label>Policy Duration</label>
+        <label>Policy Duration <span class="text-danger">*</span></label>
         <select formControlName="policyDuration">
           <option value="1 Year">1 Year</option>
           <option value="3 Years">3 Years</option>
           <option value="5 Years">5 Years</option>
         </select>
+        @if (form.get('policyDuration')?.invalid && form.get('policyDuration')?.touched) {
+          <div class="error-msg">Policy Duration is required</div>
+        }
       </div>
     </div>
   }
@@ -92,30 +137,55 @@
   @if (currentStep === 3) {
     <div class="step-content">
       <div class="form-group">
-        <label>Base Price</label>
+        <label>Min Price / Base Price <span class="text-danger">*</span></label>
         <input type="number" formControlName="basePrice" placeholder="0.00" />
+        @if (form.get('basePrice')?.invalid && form.get('basePrice')?.touched) {
+          <div class="error-msg">Base Price is required</div>
+        }
       </div>
       <div class="form-group">
+        <label>Max Price</label>
+        <input type="number" formControlName="maxPrice" placeholder="0.00" />
+      </div>
+
+      <div class="form-group">
+        <label>Discount Value (Flat)</label>
+        <input type="number" formControlName="discountValue" placeholder="0" />
+      </div>
+
+      <!-- Hidden/Deprecated fields required by frontend schema -->
+      <div class="form-group" style="display: none">
         <label>Discount Type</label>
         <select formControlName="discountType">
           <option value="Flat">Flat Amount</option>
-          <option value="Percentage">Percentage</option>
         </select>
       </div>
+
       <div class="form-group">
-        <label>Discount Value</label>
-        <input type="number" formControlName="discountValue" placeholder="0" />
+        <label>GST % <span class="text-danger">*</span></label>
+        <input type="number" formControlName="gst" placeholder="18" />
+        @if (form.get('gst')?.invalid && form.get('gst')?.touched) {
+          <div class="error-msg">GST is required</div>
+        }
       </div>
       <div class="form-group">
-        <label>Final Price (Auto)</label>
+        <label>Commission Amount</label>
+        <input type="number" formControlName="commission" placeholder="250" />
+      </div>
+
+      <div class="form-group">
+        <label>Final Net Price (Auto)</label>
         <input type="text" [value]="finalPrice | currency: 'INR'" disabled class="disabled-input" />
       </div>
       <div class="form-group">
-        <label>Status</label>
+        <label>Status <span class="text-danger">*</span></label>
         <select formControlName="status">
           <option value="Active">Active</option>
           <option value="Inactive">Inactive</option>
         </select>
+        @if (form.get('status')?.invalid && form.get('status')?.touched) {
+          <div class="error-msg">Status is required</div>
+        }
       </div>
       <div class="form-group full-width">
         <label>Terms & Conditions</label>

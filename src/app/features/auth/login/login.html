@@ -1,74 +1,150 @@
-<div class="login-container">
-  <div class="login-card">
-    <div class="login-header">
-      <h2>Good<span>World</span></h2>
-      <p>Sign in to access your dashboard</p>
+<div class="login-page">
+  <!-- Left Side: Illustration & Branding -->
+  <div class="side-illustration">
+    <div class="branding">
+      <div class="logos">
+        <svg class="logo-tata" viewBox="0 0 100 60">
+          <rect width="100" height="60" fill="#003366" rx="4" />
+          <text x="50" y="25" text-anchor="middle" fill="white" font-size="12" font-weight="bold">
+            INSURANCE
+          </text>
+          <text x="50" y="40" text-anchor="middle" fill="white" font-size="12" font-weight="bold">
+            WORLD
+          </text>
+          <!-- <text x="50" y="52" text-anchor="middle" fill="white" font-size="6">INSURANCE</text> -->
+        </svg>
+        <!-- <span class="divider"></span> -->
+      </div>
+      <div class="welcome-text">
+        <h1>Welcome to</h1>
+        <h2>INSURANCE WORLD <span> PORTAL</span></h2>
+      </div>
     </div>
 
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
-      <!-- Phone Number -->
-      <div class="form-group">
-        <label for="phone">Phone Number</label>
-        <div class="input-wrapper">
-          <i class="ri-smartphone-line icon"></i>
-          <input
-            id="phone"
-            type="text"
-            formControlName="phoneNumber"
-            placeholder="Enter your number"
-          />
-        </div>
-        @if (
-          loginForm.get('phoneNumber')?.touched && loginForm.get('phoneNumber')?.errors?.['pattern']
-        ) {
-          <div class="error-msg">Enter a valid 10-digit phone number</div>
-        }
-      </div>
+    <div class="video-background">
+      <video #bgVideo autoplay muted loop playsinline class="bg-video" onended="this.play()">
+        <source src="login_page_video.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  </div>
 
-      <!-- Password Mode -->
-      @if (!isOtpMode()) {
-        <div class="form-group">
-          <label for="password">Password</label>
-          <div class="input-wrapper">
-            <i class="ri-lock-password-line icon"></i>
+  <!-- Right Side: Login Form -->
+  <div class="side-form">
+    <div class="signin-container">
+      <h3 *ngIf="!isOtpMode()">SIGN IN</h3>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+        <ng-container *ngIf="!isOtpMode(); else otpView">
+          <div class="user-type-selection">
+            <p>Select your user type</p>
+            <div class="type-cards">
+              <button
+                type="button"
+                class="type-card"
+                [class.active]="userType() === 'producer'"
+                (click)="setUserType('producer')"
+              >
+                <i class="ri-user-star-line"></i>
+                <span>Super Admin</span>
+              </button>
+              <button
+                type="button"
+                class="type-card"
+                [class.active]="userType() === 'employee'"
+                (click)="setUserType('employee')"
+              >
+                <i class="ri-briefcase-line"></i>
+                <span>Admin</span>
+              </button>
+              <button
+                type="button"
+                class="type-card"
+                [class.active]="userType() === 'other'"
+                (click)="setUserType('other')"
+              >
+                <i class="ri-shield-user-line"></i>
+                <span>Employee</span>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="phoneNumber">Phone Number *</label>
             <input
-              id="password"
-              type="password"
-              formControlName="password"
-              placeholder="Enter your password"
+              id="phoneNumber"
+              type="tel"
+              formControlName="phoneNumber"
+              placeholder="Enter Phone Number"
+              maxlength="10"
             />
           </div>
-        </div>
-      }
 
-      <!-- OTP Mode -->
-      @if (isOtpMode()) {
-        <div class="form-group">
-          <div class="label-row">
-            <label for="otp">OTP</label>
-            <button type="button" class="btn-text">Send OTP</button>
+          <div class="form-group">
+            <label for="password">Password *</label>
+            <div class="password-wrapper">
+              <input
+                id="password"
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="password"
+                placeholder="Password"
+              />
+              <button
+                type="button"
+                class="password-toggle"
+                (click)="togglePasswordVisibility()"
+                tabindex="-1"
+              >
+                <i [class]="showPassword() ? 'ri-eye-off-line' : 'ri-eye-line'"></i>
+              </button>
+            </div>
           </div>
-          <div class="input-wrapper">
-            <i class="ri-shield-keyhole-line icon"></i>
-            <input id="otp" type="text" formControlName="otp" placeholder="Enter OTP" />
+
+          <div class="form-footer">
+            <a href="javascript:void(0)" (click)="toggleMode()" class="link-otp">Login with OTP</a>
           </div>
-        </div>
-      }
 
-      <div class="form-actions">
-        <a href="javascript:void(0)" (click)="toggleMode()" class="toggle-link">
-          {{ isOtpMode() ? 'Use Password' : 'Login with OTP' }}
-        </a>
-      </div>
+          <button type="submit" class="btn-submit" [disabled]="loginForm.invalid || isLoading()">
+            <span *ngIf="!isLoading()">Submit</span>
+            <span *ngIf="isLoading()" class="loader"></span>
+          </button>
+        </ng-container>
 
-      <button type="submit" class="btn-submit" [disabled]="loginForm.invalid || isLoading()">
-        @if (isLoading()) {
-          <span class="loader"></span>
-        }
-        @if (!isLoading()) {
-          <span>Sign In</span>
-        }
-      </button>
-    </form>
+        <ng-template #otpView>
+          <div class="otp-container">
+            <div class="otp-illustration">
+              <img src="login_graph.svg" alt="Login Graph" class="graph-svg" />
+            </div>
+
+            <div class="otp-header">
+              <h4>Verify OTP</h4>
+              <p>We've sent a 6-digit code to your phone</p>
+            </div>
+
+            <div class="form-group">
+              <label for="otp">Enter OTP *</label>
+              <input
+                id="otp"
+                type="text"
+                formControlName="otp"
+                placeholder="6-Digit OTP"
+                maxlength="6"
+                class="otp-input"
+              />
+            </div>
+
+            <div class="form-footer">
+              <a href="javascript:void(0)" (click)="toggleMode()" class="link-back"
+                >Back to Password</a
+              >
+            </div>
+
+            <button type="submit" class="btn-submit" [disabled]="loginForm.invalid || isLoading()">
+              <span *ngIf="!isLoading()">Verify & Login</span>
+              <span *ngIf="isLoading()" class="loader"></span>
+            </button>
+          </div>
+        </ng-template>
+      </form>
+    </div>
   </div>
 </div>

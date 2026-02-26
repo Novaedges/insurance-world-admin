@@ -12,19 +12,17 @@ import { RTO } from '../../../../core/models/master.models';
 })
 export class RtoFormComponent implements OnChanges {
   @Input() data: RTO | null = null;
-  @Output() save = new EventEmitter<RTO>();
+  @Output() save = new EventEmitter<any>(); // Changed to any to support new structure with _id
   @Output() cancel = new EventEmitter<void>();
 
   form: FormGroup;
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
-      id: [''],
-      code: ['', Validators.required],
-      name: ['', Validators.required],
-      city: ['', Validators.required],
-      state: ['', Validators.required],
-      status: ['Active', Validators.required],
+      _id: [''],
+      rtoCode: ['', Validators.required],
+      rtoName: ['', Validators.required],
+      isActive: [true, Validators.required],
     });
   }
 
@@ -32,7 +30,7 @@ export class RtoFormComponent implements OnChanges {
     if (changes['data'] && this.data) {
       this.form.patchValue(this.data);
     } else {
-      this.form.reset({ status: 'Active' });
+      this.form.reset({ isActive: true });
     }
   }
 

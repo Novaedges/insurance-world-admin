@@ -1,16 +1,225 @@
 <div class="page-header">
   <h2>Inquiry Management</h2>
-  <!-- Optional Filters could go here -->
 </div>
 
-<app-table [data]="items" [columns]="columns" (edit)="openForm($event)" (refresh)="loadData()">
-</app-table>
+<!-- Inquiry Table -->
+<div class="table-container glass-panel">
+  <div
+    class="table-actions-header"
+    style="
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    "
+  >
+    <div class="filters">
+      <div class="custom-select-container" (click)="$event.stopPropagation()">
+        <label class="select-label">Status <span class="text-danger">*</span></label>
+        <div
+          class="select-box"
+          [class.open]="isStatusDropdownOpen"
+          (click)="toggleStatusDropdown($event)"
+        >
+          <span class="selected-text">{{ getSelectedStatusText() }}</span>
+          <i class="ri-arrow-down-s-line"></i>
+        </div>
+        @if (isStatusDropdownOpen) {
+          <div class="select-dropdown">
+            @for (status of availableStatuses; track status) {
+              <label class="dropdown-item" [class.active-item]="selectedStatuses.includes(status)">
+                <input
+                  type="checkbox"
+                  [value]="status"
+                  [checked]="selectedStatuses.includes(status)"
+                  (change)="toggleStatus(status)"
+                />
+                <span class="item-text">{{ status }}</span>
+              </label>
+            }
+          </div>
+        }
+      </div>
+    </div>
+    <div class="action-buttons">
+      <button class="btn-refresh" (click)="onRefresh()" title="Refresh Data">
+        <i class="ri-refresh-line"></i>
+      </button>
+    </div>
+  </div>
 
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Reg No</th>
+        <th>Customer</th>
+        <th>Phone</th>
+        <th>Policy</th>
+        <th>Vehicle Info</th>
+        <th>Status</th>
+        <th>Assigned Agent</th>
+        <th>Date</th>
+        <th class="text-center">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      @if (isLoading) {
+        <tr>
+          <td colspan="9" class="text-center p-5">
+            <div
+              class="loading-state"
+              style="
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 200px;
+                color: var(--text-secondary);
+              "
+            >
+              <i
+                class="ri-loader-4-line"
+                style="
+                  font-size: 2.5rem;
+                  margin-bottom: 1rem;
+                  color: #6366f1;
+                  animation: spin-anim 1s linear infinite;
+                "
+              ></i>
+              <p style="font-size: 1.1rem">Loading inquiries...</p>
+            </div>
+          </td>
+        </tr>
+      } @else {
+        @for (inq of items; track inq._id) {
+          <tr>
+            <td class="font-bold text-primary">{{ inq.regNumber }}</td>
+            <td>{{ inq.name }}</td>
+            <td>{{ inq.phoneNumber }}</td>
+            <td>
+              {{ inq.policyName }} <br />
+              <small class="text-muted" *ngIf="inq.policyTypeDetails?.policyType">{{
+                inq.policyTypeDetails?.policyType
+              }}</small>
+            </td>
+            <td>
+              <span *ngIf="inq.manufacturerDetails?.name">{{ inq.manufacturerDetails?.name }}</span>
+              <span *ngIf="inq.vehicleModelDetails?.name"> {{ inq.vehicleModelDetails?.name }}</span
+              ><br />
+              <small class="text-muted" *ngIf="inq.vehicleTypeDetails?.name">{{
+                inq.vehicleTypeDetails?.name
+              }}</small>
+            </td>
+            <td>
+              <span
+                class="status-badge"
+                [ngClass]="{
+                  'status-pending': inq.status === 'Pending',
+                  'status-ongoing': inq.status === 'On Going',
+                  'status-completed': inq.status === 'Completed',
+                  'status-rejected': inq.status === 'Not Interested',
+                }"
+              >
+                {{ inq.status }}
+              </span>
+            </td>
+            <td>{{ inq.agentName || 'Unassigned' }}</td>
+            <td>{{ inq.createdAt | date: 'dd MMM yyyy, hh:mm a' }}</td>
+            <td class="text-center">
+              <div class="action-group" style="display: flex; gap: 0.5rem; justify-content: center">
+                <button class="btn-icon" (click)="openInfo(inq._id)" title="View Details">
+                  <i class="ri-information-line"></i>
+                </button>
+                <button
+                  class="btn-icon btn-primary-light"
+                  (click)="openAssign(inq._id)"
+                  title="Assign Sales Person"
+                >
+                  <i class="ri-user-add-line"></i>
+                </button>
+                <button
+                  class="btn-icon btn-secondary-light"
+                  (click)="openUpdate(inq)"
+                  title="Update Status"
+                >
+                  <i class="ri-edit-line"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+        @if (items.length === 0) {
+          <tr>
+            <td colspan="9" class="text-center p-5">
+              <div
+                class="empty-state"
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  color: var(--text-secondary);
+                "
+              >
+                <i
+                  class="ri-inbox-line"
+                  style="font-size: 2.5rem; margin-bottom: 0.5rem; opacity: 0.7"
+                ></i>
+                <p style="font-size: 1.1rem">{{ apiMessage || 'No inquiries found.' }}</p>
+              </div>
+            </td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+
+  <div
+    class="pagination-controls"
+    style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0"
+  >
+    <button class="btn-secondary" [disabled]="skip === 0 || isLoading" (click)="prevPage()">
+      <i class="ri-arrow-left-s-line"></i> Previous
+    </button>
+    <span class="text-muted">Showing {{ skip + 1 }} - {{ skip + items.length }}</span>
+    <button
+      class="btn-secondary"
+      [disabled]="items.length < limit || isLoading"
+      (click)="nextPage()"
+    >
+      Next <i class="ri-arrow-right-s-line"></i>
+    </button>
+  </div>
+</div>
+
+<!-- Info Modal -->
+<app-dialog [isOpen]="isInfoModalOpen" [title]="'Inquiry Details'" (closeEvent)="closeInfo()">
+  <app-inquiry-info-dialog
+    [inquiryId]="selectedInquiryId"
+    (cancel)="closeInfo()"
+  ></app-inquiry-info-dialog>
+</app-dialog>
+
+<!-- Assign Modal -->
 <app-dialog
-  [isOpen]="isModalOpen"
-  [title]="'Inquiry Details - #' + (selectedItem?.id || '')"
-  (closeEvent)="closeForm()"
+  [isOpen]="isAssignModalOpen"
+  [title]="'Assign Application'"
+  (closeEvent)="closeAssign()"
 >
-  <app-inquiry-form [data]="selectedItem" (save)="onSave($event)" (cancel)="closeForm()">
-  </app-inquiry-form>
+  <app-inquiry-assign-dialog
+    [inquiryId]="selectedInquiryId"
+    (save)="onAssignSaved()"
+    (cancel)="closeAssign()"
+  ></app-inquiry-assign-dialog>
+</app-dialog>
+
+<!-- Update Status Modal -->
+<app-dialog [isOpen]="isUpdateModalOpen" [title]="'Update Status'" (closeEvent)="closeUpdate()">
+  <app-inquiry-update-dialog
+    [inquiryId]="selectedInquiryId"
+    [currentStatus]="selectedInquiryStatus"
+    (save)="onUpdateSaved()"
+    (cancel)="closeUpdate()"
+  ></app-inquiry-update-dialog>
 </app-dialog>

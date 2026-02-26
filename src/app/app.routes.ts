@@ -57,6 +57,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'policy-type',
+        loadChildren: () =>
+          import('./features/masters/policy-type/policy-type.routes').then(
+            (m) => m.POLICY_TYPE_ROUTES,
+          ),
+      },
+      {
         path: 'insurance-company',
         loadChildren: () =>
           import('./features/masters/insurance-company/insurance-company.routes').then(
@@ -122,6 +129,10 @@ export const routes: Routes = [
         path: 'marketing',
         loadChildren: () =>
           import('./features/marketing/marketing.routes').then((m) => m.MARKETING_ROUTES),
+      },
+      {
+        path: 'profile',
+        loadComponent: () => import('./features/profile/profile').then((m) => m.Profile),
       },
     ],
   },

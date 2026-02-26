@@ -14,8 +14,13 @@
   <app-table
     [data]="companies"
     [columns]="columns"
+    [isLoading]="loading"
+    [hiddenActions]="['password', 'view']"
+    [showStatusFilter]="true"
+    (statusFilterChange)="onStatusFilterChange($event)"
     (edit)="openForm($event)"
     (delete)="onDelete($event)"
+    (refresh)="loadData()"
   ></app-table>
 </div>
 

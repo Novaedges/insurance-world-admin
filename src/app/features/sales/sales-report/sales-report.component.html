@@ -10,96 +10,111 @@
   </div>
 </div>
 
-<!-- Filters Section -->
-<div class="filters-panel glass-panel">
-  <div class="filter-group">
-    <label>Start Date</label>
-    <input type="date" [(ngModel)]="filters.startDate" />
-  </div>
-  <div class="filter-group">
-    <label>End Date</label>
-    <input type="date" [(ngModel)]="filters.endDate" />
-  </div>
-  <div class="filter-group">
-    <label>Category</label>
-    <select [(ngModel)]="filters.category">
-      <option value="">All Categories</option>
-      <option value="Motor Insurance">Motor Insurance</option>
-      <option value="Health Insurance">Health Insurance</option>
-      <option value="Travel Insurance">Travel Insurance</option>
-    </select>
-  </div>
-  <div class="filter-group">
-    <label>Agent</label>
-    <select [(ngModel)]="filters.agent">
-      <option value="">All Agents</option>
-      <option value="Mike Johnson">Mike Johnson</option>
-      <option value="Sarah Wilson">Sarah Wilson</option>
-    </select>
-  </div>
-  <div class="filter-group filter-actions">
-    <button class="btn-primary" (click)="applyFilters()">Apply</button>
-    @if (isFilterApplied) {
-      <button class="btn-text" (click)="resetFilters()">Reset</button>
-    }
-  </div>
-</div>
-
 <!-- Sales Table -->
 <div class="table-container glass-panel">
   <div class="table-actions-header">
     <div class="search-box">
       <i class="ri-search-line"></i>
-      <input type="text" placeholder="Search sales..." (input)="onSearch($event)" />
+      <input type="text" placeholder="Search by Reg No, Name..." (change)="onSearch($event)" />
     </div>
-    <button class="btn-refresh" (click)="onRefresh()" title="Refresh Data">
-      <i class="ri-refresh-line"></i>
-    </button>
+    <div class="action-buttons">
+      <button class="btn-refresh" (click)="onRefresh()" title="Refresh Data">
+        <i class="ri-refresh-line"></i>
+      </button>
+    </div>
   </div>
-  <table>
+
+  <table class="data-table">
     <thead>
       <tr>
-        <th>Policy No</th>
+        <th>Reg No</th>
         <th>Customer</th>
-        <th>Product</th>
-        <th>Premium</th>
-        <th>Discount</th>
-        <th>Final Amount</th>
-        <th>Status</th>
-        <th>Sale Date</th>
+        <th>Phone</th>
+        <th>Policy</th>
+        <th>Vehicle</th>
         <th>Agent</th>
+        <th>Date</th>
+        <th class="text-center">Action</th>
       </tr>
     </thead>
     <tbody>
-      @for (sale of filteredItems; track sale.id) {
+      @if (isLoading) {
         <tr>
-          <td>{{ sale.policyNumber }}</td>
-          <td>{{ sale.customerName }}</td>
-          <td>
-            {{ sale.productName }} <br />
-            <small class="text-muted">{{ sale.categoryName }}</small>
-          </td>
-          <td>{{ sale.premiumAmount | currency: 'INR' }}</td>
-          <td class="text-danger">-{{ sale.discountApplied | currency: 'INR' }}</td>
-          <td class="text-success font-bold">{{ sale.finalAmount | currency: 'INR' }}</td>
-          <td>
-            <span
-              class="badge"
-              [class.success]="sale.paymentStatus === 'Paid'"
-              [class.warning]="sale.paymentStatus === 'Pending'"
+          <td colspan="8" class="text-center p-5">
+            <div
+              class="loading-state"
+              style="
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 200px;
+                color: var(--text-secondary);
+              "
             >
-              {{ sale.paymentStatus }}
-            </span>
+              <i
+                class="ri-loader-4-line"
+                style="
+                  font-size: 2.5rem;
+                  margin-bottom: 1rem;
+                  color: #6366f1;
+                  animation: spin-anim 1s linear infinite;
+                "
+              ></i>
+              <p style="font-size: 1.1rem">Loading sales data...</p>
+            </div>
           </td>
-          <td>{{ sale.saleDate | date: 'mediumDate' }}</td>
-          <td>{{ sale.agentName }}</td>
         </tr>
-      }
-      @if (filteredItems.length === 0) {
-        <tr>
-          <td colspan="9" class="text-center">No sales records found.</td>
-        </tr>
+      } @else {
+        @for (sale of items; track sale._id) {
+          <tr>
+            <td class="font-bold text-primary">{{ sale.regNumber }}</td>
+            <td>{{ sale.name }}</td>
+            <td>{{ sale.phoneNumber }}</td>
+            <td>
+              {{ sale.policyName || sale.policyDetails.policyName }} <br />
+              <small class="text-muted">{{ sale.policyDetails.insuranceCompany }}</small>
+            </td>
+            <td>
+              {{ sale.manufacturerDetails.name }} {{ sale.vehicleModelDetails.name }}<br />
+              <small class="text-muted">{{ sale.vehicleTypeDetails.name }}</small>
+            </td>
+            <td>{{ sale.agentName }}</td>
+            <td>{{ sale.createdAt }}</td>
+            <td class="text-center">
+              <button class="btn-icon" (click)="openInfo(sale)" title="View Details">
+                <i class="ri-information-line"></i>
+              </button>
+            </td>
+          </tr>
+        }
+        @if (items.length === 0) {
+          <tr>
+            <td colspan="8" class="text-center">No sales records found.</td>
+          </tr>
+        }
       }
     </tbody>
   </table>
+
+  <div
+    class="pagination-controls"
+    style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0"
+  >
+    <button class="btn-secondary" [disabled]="skip === 0 || isLoading" (click)="prevPage()">
+      <i class="ri-arrow-left-s-line"></i> Previous
+    </button>
+    <span class="text-muted">Showing {{ skip + 1 }} - {{ skip + items.length }}</span>
+    <button
+      class="btn-secondary"
+      [disabled]="items.length < limit || isLoading"
+      (click)="nextPage()"
+    >
+      Next <i class="ri-arrow-right-s-line"></i>
+    </button>
+  </div>
 </div>
+
+<app-dialog [isOpen]="isInfoModalOpen" [title]="'Sale Details'" (closeEvent)="closeInfo()">
+  <app-sale-info-dialog [saleId]="selectedSaleId" (cancel)="closeInfo()"></app-sale-info-dialog>
+</app-dialog>

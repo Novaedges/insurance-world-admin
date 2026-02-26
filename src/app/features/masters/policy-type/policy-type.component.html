@@ -1,0 +1,26 @@
+<div class="page-header">
+  <h2>Policy Types</h2>
+  <button class="btn-primary" (click)="openForm()">+ Add Policy Type</button>
+</div>
+
+<app-table
+  [data]="items"
+  [columns]="columns"
+  [isLoading]="isLoading"
+  [hiddenActions]="['password', 'view']"
+  [showStatusFilter]="true"
+  (statusFilterChange)="onStatusFilterChange($event)"
+  (edit)="openForm($event)"
+  (delete)="onDelete($event)"
+  (refresh)="loadData()"
+>
+</app-table>
+
+<app-dialog
+  [isOpen]="isModalOpen"
+  [title]="selectedItem ? 'Edit Policy Type' : 'Add Policy Type'"
+  (closeEvent)="closeForm()"
+>
+  <app-policy-type-form [data]="selectedItem" (save)="onSave($event)" (cancel)="closeForm()">
+  </app-policy-type-form>
+</app-dialog>

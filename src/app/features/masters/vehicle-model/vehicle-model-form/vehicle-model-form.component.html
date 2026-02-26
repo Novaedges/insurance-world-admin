@@ -5,13 +5,25 @@
   </div>
 
   <div class="form-group">
-    <label>Make</label>
-    <select formControlName="makeId">
-      <option value="" disabled>Select Make</option>
-      @for (make of makes; track make.id) {
-        <option [value]="make.id">{{ make.name }}</option>
-      }
+    <label>Category</label>
+    <select formControlName="vehicleTypeId">
+      <option value="" disabled>Select Category</option>
+      <option *ngFor="let cat of categories" [value]="cat._id">{{ cat.name }}</option>
     </select>
+  </div>
+
+  <div class="form-group">
+    <label>Make</label>
+    <select formControlName="manufacturerId">
+      <option value="" disabled>Select Make</option>
+      <option *ngFor="let make of filteredMakes" [value]="make._id">{{ make.name }}</option>
+    </select>
+    <small
+      *ngIf="filteredMakes.length === 0 && form.get('vehicleTypeId')?.value"
+      class="text-muted"
+    >
+      No makes found for selected category
+    </small>
   </div>
 
   <div class="form-group">
@@ -31,9 +43,9 @@
 
   <div class="form-group">
     <label>Status</label>
-    <select formControlName="status">
-      <option value="Active">Active</option>
-      <option value="Inactive">Inactive</option>
+    <select formControlName="isActive">
+      <option [ngValue]="true">Active</option>
+      <option [ngValue]="false">Inactive</option>
     </select>
   </div>
 

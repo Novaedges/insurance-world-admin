@@ -1,34 +1,17 @@
-<div
-  class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center w-full max-w-xs p-4 space-x-4 text-gray-500 bg-white divide-x rtl:divide-x-reverse divide-gray-200 rounded-lg shadow-sm dark:text-gray-400 dark:divide-gray-700 space-x dark:bg-gray-800 transition-opacity duration-300"
-  [ngClass]="{ 'opacity-100': show, 'opacity-0 pointer-events-none': !show }"
-  role="alert"
->
-  <div
-    class="inline-flex items-center justify-center shrink-0 w-8 h-8 rounded-lg"
-    [ngClass]="{
-      'text-green-500 bg-green-100 dark:bg-green-800 dark:text-green-200': type === 'success',
-      'text-red-500 bg-red-100 dark:bg-red-800 dark:text-red-200': type === 'error',
-      'text-blue-500 bg-blue-100 dark:bg-blue-800 dark:text-blue-200': type === 'info',
-    }"
-  >
-    @if (type === 'success') {
-      <i class="ri-checkbox-circle-fill text-lg"></i>
+<div class="snackbar" [ngClass]="[type(), show() ? 'show' : '']" role="alert">
+  <div class="snackbar-icon">
+    @if (type() === 'success') {
+      <i class="ri-checkbox-circle-fill"></i>
     }
-    @if (type === 'error') {
-      <i class="ri-error-warning-fill text-lg"></i>
+    @if (type() === 'error') {
+      <i class="ri-error-warning-fill"></i>
     }
-    @if (type === 'info') {
-      <i class="ri-information-fill text-lg"></i>
+    @if (type() === 'info') {
+      <i class="ri-information-fill"></i>
     }
   </div>
-  <div class="ps-4 text-sm font-normal">{{ message }}</div>
-  <button
-    type="button"
-    class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700"
-    (click)="close()"
-    aria-label="Close"
-  >
-    <span class="sr-only">Close</span>
-    <i class="ri-close-line text-lg"></i>
+  <div class="snackbar-content">{{ message() }}</div>
+  <button type="button" class="snackbar-close" (click)="close()" aria-label="Close">
+    <i class="ri-close-line"></i>
   </button>
 </div>

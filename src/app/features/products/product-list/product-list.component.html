@@ -8,6 +8,11 @@
 <app-table
   [data]="items"
   [columns]="columns"
+  [isLoading]="isLoading"
+  [hiddenActions]="['password']"
+  [showStatusFilter]="true"
+  (statusFilterChange)="onStatusFilterChange($event)"
+  (view)="onViewPolicy($event)"
   (edit)="openForm($event)"
   (delete)="onDelete($event)"
   (refresh)="loadData(true)"
@@ -26,4 +31,219 @@
     (cancel)="closeForm()"
   >
   </app-product-form>
+</app-dialog>
+
+<app-dialog [isOpen]="isInfoModalOpen" title="Policy Information" (closeEvent)="closeInfoModal()">
+  <div class="info-content" *ngIf="isLoadingInfo">
+    <div class="loading-state text-center p-5">
+      <i class="ri-loader-4-line spin-anim" style="font-size: 2.5rem; color: #6366f1"></i>
+      <p>Loading details...</p>
+    </div>
+  </div>
+
+  <div class="modern-info-container" *ngIf="!isLoadingInfo && infoData">
+    <!-- Inline styles for the modern elegant look -->
+    <style>
+      .modern-info-container {
+        padding: 1rem;
+        font-family:
+          'Inter',
+          system-ui,
+          -apple-system,
+          sans-serif;
+        color: #1e293b;
+      }
+      .info-header-card {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+      }
+      .header-title-box h3 {
+        margin: 0 0 0.25rem 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #0f172a;
+      }
+      .header-title-box p {
+        margin: 0;
+        color: #64748b;
+        font-size: 0.875rem;
+      }
+      .badge-modern {
+        padding: 0.35rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .badge-modern.active {
+        background-color: #dcfce7;
+        color: #166534;
+      }
+      .badge-modern.inactive {
+        background-color: #fee2e2;
+        color: #991b1b;
+      }
+
+      .info-grid-modern {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.25rem;
+      }
+      .info-card {
+        background-color: #fff;
+        border: 1px solid #f1f5f9;
+        border-radius: 12px;
+        padding: 1.25rem;
+        box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+      .info-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+      }
+      .card-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #6366f1;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid #f1f5f9;
+        padding-bottom: 0.5rem;
+      }
+      .card-item {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 0.75rem;
+      }
+      .card-item:last-child {
+        margin-bottom: 0;
+      }
+      .card-label {
+        font-size: 0.75rem;
+        color: #64748b;
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+      }
+      .card-value {
+        font-size: 0.95rem;
+        color: #334155;
+        font-weight: 500;
+      }
+      .rto-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+      }
+      .rto-pill {
+        background-color: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        color: #475569;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+    </style>
+
+    <div class="info-header-card">
+      <div class="header-title-box">
+        <h3>{{ infoData.policyName || 'N/A' }}</h3>
+        <p>Managed by {{ infoData.insuranceCompany || 'Unknown' }}</p>
+      </div>
+      <div>
+        <span class="badge-modern" [ngClass]="infoData.isActive ? 'active' : 'inactive'">
+          {{ infoData.isActive ? 'Active' : 'Inactive' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="info-grid-modern">
+      <!-- Identity Card -->
+      <div class="info-card">
+        <div class="card-title"><i class="ri-file-info-line"></i> Identity Details</div>
+        <div class="card-item">
+          <span class="card-label">Policy Code</span>
+          <span class="card-value">{{ infoData.policyCode || 'N/A' }}</span>
+        </div>
+        <div class="card-item">
+          <span class="card-label">Policy Type</span>
+          <span class="card-value">{{ infoData.policyTypeName || 'N/A' }}</span>
+        </div>
+      </div>
+
+      <!-- Categorization Card -->
+      <div class="info-card">
+        <div class="card-title"><i class="ri-car-line"></i> Categorization</div>
+        <div class="card-item">
+          <span class="card-label">Vehicle Type</span>
+          <span class="card-value">{{ infoData.vehicleTypeName || 'N/A' }}</span>
+        </div>
+        <div class="card-item">
+          <span class="card-label">Manufacturer</span>
+          <span class="card-value">{{ infoData.manufacturerName || 'N/A' }}</span>
+        </div>
+        <div class="card-item">
+          <span class="card-label">Model</span>
+          <span class="card-value">{{ infoData.vehicleModelName || 'N/A' }}</span>
+        </div>
+      </div>
+
+      <!-- Financials Card -->
+      <div class="info-card">
+        <div class="card-title"><i class="ri-money-rupee-circle-line"></i> Financials</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem">
+          <div class="card-item">
+            <span class="card-label">Min Price</span>
+            <span class="card-value">{{ infoData.minPrice | currency: 'INR' }}</span>
+          </div>
+          <div class="card-item">
+            <span class="card-label">Max Price</span>
+            <span class="card-value">{{ infoData.maxPrice | currency: 'INR' }}</span>
+          </div>
+          <div class="card-item">
+            <span class="card-label">Discount</span>
+            <span class="card-value">{{ infoData.discount }}</span>
+          </div>
+          <div class="card-item">
+            <span class="card-label">GST</span>
+            <span class="card-value">{{ infoData.gst }}%</span>
+          </div>
+          <div class="card-item" style="grid-column: 1 / -1">
+            <span class="card-label">Commission</span>
+            <span class="card-value">{{ infoData.commission }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Locations Card -->
+      <div class="info-card" style="grid-column: 1 / -1">
+        <div class="card-title"><i class="ri-map-pin-line"></i> Eligible coverage (RTOs)</div>
+        <div class="rto-pills" *ngIf="infoData.rtos?.length; else noRtosTpl">
+          <span class="rto-pill" *ngFor="let rto of infoData.rtos">
+            {{ rto.rtoCode }} - {{ rto.rtoName }}
+          </span>
+        </div>
+        <ng-template #noRtosTpl>
+          <span class="card-value" style="color: #94a3b8; font-style: italic"
+            >No RTOs directly mapped.</span
+          >
+        </ng-template>
+      </div>
+    </div>
+  </div>
 </app-dialog>

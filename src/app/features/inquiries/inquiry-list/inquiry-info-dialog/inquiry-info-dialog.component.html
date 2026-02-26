@@ -1,0 +1,154 @@
+<div class="dialog-header">
+  <h3>Inquiry Details</h3>
+  <button class="btn-close" (click)="close()">
+    <i class="ri-close-line"></i>
+  </button>
+</div>
+
+<div class="dialog-content">
+  @if (isLoading) {
+    <div class="loading-state text-center p-4">Loading details...</div>
+  } @else if (inquiryDetails) {
+    <div class="info-grid">
+      <!-- General Info -->
+      <div class="info-section">
+        <h4>General Information</h4>
+        <div class="detail-row">
+          <span class="label">Registration No:</span>
+          <span class="value font-bold text-primary">{{ inquiryDetails.regNumber }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Customer Name:</span>
+          <span class="value">{{ inquiryDetails.name }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Phone Number:</span>
+          <span class="value">{{ inquiryDetails.phoneNumber }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Created Date:</span>
+          <span class="value">{{ inquiryDetails.createdAt }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Status:</span>
+          <span class="value" [class.text-success]="inquiryDetails.status === 'Completed'">{{
+            inquiryDetails.status
+          }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Agent Name:</span>
+          <span class="value">{{ inquiryDetails.agentName }}</span>
+        </div>
+        @if (inquiryDetails.rtoDetails) {
+          <div class="detail-row">
+            <span class="label">RTO:</span>
+            <span class="value">{{ inquiryDetails.rtoDetails.rtoName }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Vehicle Info -->
+      @if (
+        inquiryDetails.vehicleTypeDetails ||
+        inquiryDetails.manufacturerDetails ||
+        inquiryDetails.vehicleModelDetails
+      ) {
+        <div class="info-section">
+          <h4>Vehicle Information</h4>
+          @if (inquiryDetails.vehicleTypeDetails) {
+            <div class="detail-row">
+              <span class="label">Type:</span>
+              <span class="value">{{ inquiryDetails.vehicleTypeDetails.name }}</span>
+            </div>
+          }
+          @if (inquiryDetails.manufacturerDetails) {
+            <div class="detail-row">
+              <span class="label">Manufacturer:</span>
+              <span class="value">{{ inquiryDetails.manufacturerDetails.name }}</span>
+            </div>
+          }
+          @if (inquiryDetails.vehicleModelDetails) {
+            <div class="detail-row">
+              <span class="label">Model:</span>
+              <span class="value">{{ inquiryDetails.vehicleModelDetails.name }}</span>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Policy Info -->
+      @if (inquiryDetails.policyDetails) {
+        <div class="info-section">
+          <h4>Policy Information</h4>
+          <div class="detail-row">
+            <span class="label">Policy Name:</span>
+            <span class="value">{{ inquiryDetails.policyDetails.policyName }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Policy Code:</span>
+            <span class="value">{{ inquiryDetails.policyDetails.policyCode }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Insurance Company:</span>
+            <span class="value">{{ inquiryDetails.policyDetails.insuranceCompany }}</span>
+          </div>
+          @if (inquiryDetails.policyTypeDetails) {
+            <div class="detail-row">
+              <span class="label">Policy Type:</span>
+              <span class="value">{{ inquiryDetails.policyTypeDetails.policyType }}</span>
+            </div>
+            @if (
+              inquiryDetails.policyTypeDetails.coverage &&
+              inquiryDetails.policyTypeDetails.coverage.length
+            ) {
+              <div class="detail-row">
+                <span class="label">Coverage:</span>
+                <span class="value">
+                  <ul class="coverage-list">
+                    @for (cov of inquiryDetails.policyTypeDetails.coverage; track cov) {
+                      <li>{{ cov }}</li>
+                    }
+                  </ul>
+                </span>
+              </div>
+            }
+          }
+        </div>
+
+        <!-- Pricing Info -->
+        <div class="info-section">
+          <h4>Pricing Information</h4>
+          <div class="detail-row">
+            <span class="label">Price Range:</span>
+            <span class="value">
+              {{ inquiryDetails.policyDetails.minPrice | currency: 'INR' }} -
+              {{ inquiryDetails.policyDetails.maxPrice | currency: 'INR' }}
+            </span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Discount:</span>
+            <span class="value text-danger"
+              >-{{ inquiryDetails.policyDetails.discount | currency: 'INR' }}</span
+            >
+          </div>
+          <div class="detail-row">
+            <span class="label">GST:</span>
+            <span class="value">{{ inquiryDetails.policyDetails.gst }}%</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Commission:</span>
+            <span class="value text-success font-bold">{{
+              inquiryDetails.policyDetails.commission | currency: 'INR'
+            }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="error-msg p-4 text-center">Failed to load details.</div>
+  }
+</div>
+
+<div class="dialog-actions">
+  <button class="btn-secondary" (click)="close()">Close</button>
+</div>

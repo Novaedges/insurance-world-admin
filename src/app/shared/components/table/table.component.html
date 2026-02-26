@@ -4,9 +4,28 @@
       <i class="ri-search-line"></i>
       <input type="text" placeholder="Search..." (input)="onSearch($event)" />
     </div>
-    <button class="btn-refresh" (click)="onRefresh()" appTooltip="Refresh Data">
-      <i class="ri-refresh-line"></i>
-    </button>
+
+    <div class="header-actions-right">
+      <button class="btn-refresh" (click)="onRefresh()" appTooltip="Refresh Data">
+        <i class="ri-refresh-line"></i>
+      </button>
+
+      @if (showStatusFilter) {
+        <div class="status-filter-box">
+          <div class="custom-select-wrapper">
+            <select
+              class="modern-select"
+              [value]="statusFilterValue"
+              (change)="onStatusFilterChange($event)"
+            >
+              <option value="true">Active</option>
+              <option value="false">Disabled</option>
+            </select>
+            <i class="ri-arrow-down-s-line select-icon"></i>
+          </div>
+        </div>
+      }
+    </div>
   </div>
   <table class="data-table">
     <thead>
@@ -20,50 +39,109 @@
       </tr>
     </thead>
     <tbody>
-      @for (row of filteredData; track row) {
+      @if (isLoading) {
         <tr>
-          @for (col of columns; track col.field) {
-            <td>
-              @if (col.type === 'status') {
-                <span class="status-badge" [ngClass]="row[col.field]?.toLowerCase()">
-                  {{ row[col.field] }}
-                </span>
-              }
-              @if (col.type === 'currency') {
-                <span>
-                  {{ row[col.field] | currency: col.currencyCode }}
-                </span>
-              }
-              @if (col.type === 'date') {
-                <span>
-                  {{ row[col.field] | date: 'mediumDate' }}
-                </span>
-              }
-              @if (!col.type || col.type === 'text') {
-                <span>
-                  {{ row[col.field] }}
-                </span>
-              }
-            </td>
-          }
-          @if (actions) {
-            <td class="actions-cell">
-              <button class="btn-action edit" (click)="onEdit(row)" appTooltip="Edit">
-                <i class="ri-pencil-line"></i>
-              </button>
-              <button class="btn-action delete" (click)="onDelete(row)" appTooltip="Delete">
-                <i class="ri-delete-bin-line"></i>
-              </button>
-            </td>
-          }
-        </tr>
-      }
-      @if (filteredData.length === 0) {
-        <tr>
-          <td [attr.colspan]="columns.length + (actions ? 1 : 0)" class="no-data">
-            No data available.
+          <td [attr.colspan]="columns.length + (actions ? 1 : 0)" class="text-center p-5">
+            <div
+              class="loading-state"
+              style="
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 200px;
+                color: var(--text-secondary);
+              "
+            >
+              <i
+                class="ri-loader-4-line"
+                style="
+                  font-size: 2.5rem;
+                  margin-bottom: 1rem;
+                  color: #6366f1;
+                  animation: spin-anim 1s linear infinite;
+                "
+              ></i>
+              <p style="font-size: 1.1rem">Loading data...</p>
+            </div>
           </td>
         </tr>
+      } @else {
+        @for (row of filteredData; track row) {
+          <tr>
+            @for (col of columns; track col.field) {
+              <td>
+                @if (col.type === 'status') {
+                  <span class="status-badge" [ngClass]="row[col.field]?.toLowerCase()">
+                    {{ row[col.field] }}
+                  </span>
+                }
+                @if (col.type === 'currency') {
+                  <span>
+                    {{ row[col.field] | currency: col.currencyCode }}
+                  </span>
+                }
+                @if (col.type === 'date') {
+                  <span>
+                    {{ row[col.field] | date: 'dd-MM-yyyy' }}
+                  </span>
+                }
+                @if (!col.type || col.type === 'text') {
+                  <span>
+                    {{ row[col.field] }}
+                  </span>
+                }
+              </td>
+            }
+            @if (actions) {
+              <td class="actions-cell">
+                <button
+                  class="btn-action view"
+                  (click)="onView(row)"
+                  appTooltip="View Details"
+                  *ngIf="!hiddenActions.includes('view')"
+                >
+                  <i class="ri-eye-line"></i>
+                </button>
+                <button
+                  class="btn-action edit"
+                  (click)="onEdit(row)"
+                  appTooltip="Edit"
+                  *ngIf="!hiddenActions.includes('edit')"
+                >
+                  <i class="ri-pencil-line"></i>
+                </button>
+                <button
+                  class="btn-action password"
+                  (click)="onChangePassword(row)"
+                  appTooltip="Change Password"
+                  *ngIf="!hiddenActions.includes('password')"
+                >
+                  <i class="ri-lock-password-line"></i>
+                </button>
+                <button
+                  class="btn-action delete"
+                  (click)="onDelete(row)"
+                  appTooltip="Delete"
+                  *ngIf="!hiddenActions.includes('delete')"
+                >
+                  <i class="ri-delete-bin-line"></i>
+                </button>
+              </td>
+            }
+          </tr>
+        }
+        @if (filteredData.length === 0) {
+          <tr>
+            <td
+              [attr.colspan]="columns.length + (actions ? 1 : 0)"
+              class="no-data"
+              style="text-align: center; padding: 3rem; color: #94a3b8; font-style: italic"
+            >
+              No data available.
+            </td>
+          </tr>
+        }
       }
     </tbody>
   </table>

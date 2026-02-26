@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableComponent, Column } from '../../../shared/components/table/table.component';
 import { DialogComponent } from '../../../shared/components/dialog/dialog.component';
 import { VehicleMakeFormComponent } from './vehicle-make-form/vehicle-make-form.component';
-import { MasterService } from '../../../core/services/master.service';
+import { VehicleMakeService } from './vehicle-make.service';
 import { VehicleMake } from '../../../core/models/master.models';
+import { SnackbarService } from '../../../core/services/snackbar.service';
 
 @Component({
   selector: 'app-vehicle-make',
@@ -17,21 +18,50 @@ export class VehicleMakeComponent implements OnInit {
   items: VehicleMake[] = [];
   columns: Column[] = [
     { field: 'name', header: 'Make Name' },
-    { field: 'category', header: 'Category' },
+    { field: 'vehicleTypeName', header: 'Category' }, // Assuming backend returns populated or we map it
     { field: 'status', header: 'Status', type: 'status' },
   ];
 
   isModalOpen = false;
+  isLoading = false;
+  isActiveFilter: boolean = true;
   selectedItem: VehicleMake | null = null;
 
-  constructor(private masterService: MasterService) {}
+  constructor(
+    private makeService: VehicleMakeService,
+    private cdr: ChangeDetectorRef,
+    private snackbarService: SnackbarService,
+  ) {}
 
   ngOnInit() {
     this.loadData();
   }
 
   loadData() {
-    this.masterService.getMakes().subscribe((data) => (this.items = data));
+    this.isLoading = true;
+    this.makeService.getMakes(this.isActiveFilter).subscribe((response: any) => {
+      this.isLoading = false;
+      if (response.status && response.result) {
+        this.items = response.result.map((item: any) => ({
+          ...item,
+          status: item.isActive ? 'Active' : 'Inactive',
+          // If backend doesn't populate vehicleTypeName, we might need to fetch categories to map it,
+          // or rely on what's returned. For now assuming it's either in result or we just show ID/Type.
+          // Based on user request "show the category form the category GET API",
+          // we might need to join data if not provided.
+          // Let's assume for now we just display what we have or 'vehicleTypeId' if name is missing.
+          vehicleTypeName: item.vehicleType?.name || item.vehicleTypeName || 'N/A',
+        }));
+      } else {
+        this.items = [];
+      }
+      this.cdr.detectChanges();
+    });
+  }
+
+  onStatusFilterChange(status: boolean) {
+    this.isActiveFilter = status;
+    this.loadData();
   }
 
   openForm(item: VehicleMake | null = null) {
@@ -44,14 +74,37 @@ export class VehicleMakeComponent implements OnInit {
     this.selectedItem = null;
   }
 
-  onSave(item: VehicleMake) {
-    this.masterService.saveMake(item).subscribe(() => {
-      this.loadData();
-      this.closeForm();
+  onSave(item: any) {
+    const request = item._id
+      ? this.makeService.updateMake(item)
+      : this.makeService.createMake((({ _id, ...rest }) => rest)(item));
+
+    request.subscribe({
+      next: (response: any) => {
+        if (response.status) {
+          this.loadData();
+          this.snackbarService.success(response.msg);
+          this.closeForm();
+        } else {
+          this.snackbarService.error(response.msg || 'Operation failed');
+        }
+      },
+      error: (error) => {
+        console.error('Error saving make:', error);
+        this.snackbarService.error(error.error?.msg || 'Failed to save make');
+      },
     });
   }
 
-  onDelete(item: VehicleMake) {
-    this.masterService.deleteMake(item.id).subscribe(() => this.loadData());
+  onDelete(item: any) {
+    if (item._id) {
+      this.makeService.deleteMake(item._id).subscribe({
+        next: (response: any) => {
+          this.loadData();
+          this.snackbarService.success(response.msg || 'Make deleted successfully');
+        },
+        error: (error) => console.error('Error deleting make:', error),
+      });
+    }
   }
 }

@@ -22,6 +22,8 @@ export class ChildCategoryComponent implements OnInit {
   ];
 
   isModalOpen = false;
+  isLoading = false;
+  isActiveFilter: boolean = true;
   selectedItem: ChildCategory | null = null;
 
   constructor(private masterService: MasterService) {}
@@ -31,7 +33,16 @@ export class ChildCategoryComponent implements OnInit {
   }
 
   loadData() {
-    this.masterService.getChildCategories().subscribe((data) => (this.items = data));
+    this.isLoading = true;
+    this.masterService.getChildCategories(this.isActiveFilter).subscribe((data) => {
+      this.items = data;
+      this.isLoading = false;
+    });
+  }
+
+  onStatusFilterChange(status: boolean) {
+    this.isActiveFilter = status;
+    this.loadData();
   }
 
   openForm(item: ChildCategory | null = null) {

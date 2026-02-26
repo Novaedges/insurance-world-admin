@@ -10,7 +10,7 @@
   <aside class="sidebar" [class.collapsed]="isCollapsed" [class.open-mobile]="isMobileSidebarOpen">
     <div class="logo">
       @if (!isCollapsed) {
-        <h2>Good<span>World</span></h2>
+        <h2>IW<span>&nbsp;Portal</span></h2>
       }
       @if (isCollapsed) {
         <h2>IW</h2>
@@ -87,6 +87,7 @@
           'vehicle-make',
           'vehicle-model',
           'insurance-category',
+          'policy-type',
           'child-category',
           'insurance-company',
           'agent-management',
@@ -139,6 +140,28 @@
           <span class="label">RTO Management</span>
         </a>
       }
+      @if (hasAccess('insurance-category')) {
+        <a
+          routerLink="/insurance-category"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="icon ri-file-list-3-line"></i>
+          <span class="label">Categories</span>
+        </a>
+      }
+      @if (hasAccess('policy-type')) {
+        <a
+          routerLink="/policy-type"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="icon ri-shield-check-line"></i>
+          <span class="label">Policy Types</span>
+        </a>
+      }
       @if (hasAccess('vehicle-make')) {
         <a
           routerLink="/vehicle-make"
@@ -161,18 +184,8 @@
           <span class="label">Vehicle Model</span>
         </a>
       }
-      @if (hasAccess('insurance-category')) {
-        <a
-          routerLink="/insurance-category"
-          routerLinkActive="active"
-          class="nav-item"
-          (click)="closeMobileSidebar()"
-        >
-          <i class="icon ri-file-list-3-line"></i>
-          <span class="label">Categories</span>
-        </a>
-      }
-      @if (hasAccess('child-category')) {
+
+      <!-- @if (hasAccess('child-category')) {
         <a
           routerLink="/child-category"
           routerLinkActive="active"
@@ -182,9 +195,9 @@
           <i class="icon ri-price-tag-3-line"></i>
           <span class="label">Sub-Categories</span>
         </a>
-      }
+      } -->
 
-      @if (hasSectionAccess(['whatsapp', 'sms'])) {
+      <!-- @if (hasSectionAccess(['whatsapp', 'sms'])) {
         <div class="nav-section-label">Communication</div>
       }
       @if (hasAccess('whatsapp')) {
@@ -282,7 +295,7 @@
           <i class="icon ri-brain-line"></i>
           <span class="label">AI Engine</span>
         </a>
-      }
+      } -->
     </nav>
 
     <div class="user-profile">
@@ -310,7 +323,22 @@
         <span class="prefix">Admin Portal / </span><span>{{ pageTitle }}</span>
       </div>
       <div class="actions">
-        <button class="btn-icon">
+        <div
+          class="session-timer"
+          [class.warning]="
+            sessionTimeRemaining() === '00:00' ||
+            (sessionTimeRemaining().startsWith('00:') &&
+              sessionTimeRemaining().split(':')[1] < '60')
+          "
+        >
+          <i class="ri-timer-line"></i>
+          <span>{{ sessionTimeRemaining() }}</span>
+        </div>
+        <button
+          class="btn-icon"
+          [class.animating]="isCheckingNotification"
+          (click)="triggerNotificationAnimation()"
+        >
           <i class="ri-notification-3-line"></i>
         </button>
         <div class="settings-wrapper" style="position: relative">
@@ -320,7 +348,17 @@
 
           @if (isSettingsOpen) {
             <div class="dropdown-menu">
-              <button class="dropdown-item" (click)="logout()">
+              <div class="dropdown-header">
+                <strong>{{ authService.currentUser()?.name || 'Admin' }}</strong>
+                <span style="display: block; font-size: 0.8em; color: var(--text-secondary)">{{
+                  authService.currentUser()?.role || 'User'
+                }}</span>
+              </div>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" routerLink="/profile" (click)="closeSettingsMenu()">
+                <i class="ri-user-settings-line"></i> My Profile
+              </a>
+              <button class="dropdown-item text-danger" (click)="logout()">
                 <i class="ri-logout-box-line"></i> Logout
               </button>
             </div>
