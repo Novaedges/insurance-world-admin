@@ -7,9 +7,15 @@
   [data]="admins"
   [columns]="columns"
   [isLoading]="isLoading"
-  [hiddenActions]="['view']"
+  [hiddenActions]="[]"
   [showStatusFilter]="true"
+  [statusFilterValue]="isActiveFilter ? 'true' : 'false'"
+  [totalItems]="totalItems"
+  [pageSize]="pageSize"
+  [currentPage]="currentPage"
+  (pageChange)="onPageChange($event)"
   (statusFilterChange)="onStatusFilterChange($event)"
+  (view)="onView($event)"
   (edit)="openForm($event)"
   (delete)="onDelete($event)"
   (changePassword)="onChangePassword($event)"
@@ -53,6 +59,56 @@
       >
         Update
       </button>
+    </div>
+  </div>
+</app-dialog>
+
+<app-dialog [isOpen]="isInfoModalOpen" title="Admin Information" (closeEvent)="closeInfoModal()">
+  <div class="modern-info-container" *ngIf="infoData">
+    <div class="info-header-card">
+      <div class="header-title-box">
+        <h3>{{ infoData.firstName }} {{ infoData.lastName }}</h3>
+        <p>Role: {{ infoData.roleType }}</p>
+      </div>
+      <div>
+        <span class="badge-modern" [ngClass]="infoData.isActive ? 'active' : 'inactive'">
+          {{ infoData.isActive ? 'Active' : 'Inactive' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="info-grid-modern">
+      <div class="info-card">
+        <div class="card-title"><i class="ri-user-line"></i> Personal Details</div>
+        <div class="card-item">
+          <span class="card-label">Full Name</span>
+          <span class="card-value">{{ infoData.firstName }} {{ infoData.lastName }}</span>
+        </div>
+        <div class="card-item">
+          <span class="card-label">Phone Number</span>
+          <span class="card-value">{{ infoData.phoneNumber }}</span>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="card-title"><i class="ri-shield-user-line"></i> Account Details</div>
+        <div class="card-item">
+          <span class="card-label">Role Type</span>
+          <span class="card-value">{{ infoData.roleType }}</span>
+        </div>
+        <div class="card-item">
+          <span class="card-label">Admin ID</span>
+          <span class="card-value">{{ infoData._id }}</span>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="card-title"><i class="ri-history-line"></i> Metadata</div>
+        <div class="card-item">
+          <span class="card-label">Created At</span>
+          <span class="card-value">{{ infoData.createdAt | date: 'dd MMM yyyy, hh:mm a' }}</span>
+        </div>
+      </div>
     </div>
   </div>
 </app-dialog>

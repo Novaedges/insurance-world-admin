@@ -26,6 +26,11 @@ export class AgentFormComponent implements OnChanges {
       email: ['', [Validators.email]],
       password: ['', Validators.required],
       agentCode: ['', Validators.required],
+      bankName: [''],
+      accountNumber: [''],
+      ifscCode: [''],
+      branchName: [''],
+      panNumber: [''],
       isActive: [true, Validators.required],
     });
   }

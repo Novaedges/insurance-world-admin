@@ -162,13 +162,6 @@
       </div>
 
       <div class="form-group">
-        <label>GST % <span class="text-danger">*</span></label>
-        <input type="number" formControlName="gst" placeholder="18" />
-        @if (form.get('gst')?.invalid && form.get('gst')?.touched) {
-          <div class="error-msg">GST is required</div>
-        }
-      </div>
-      <div class="form-group">
         <label>Commission Amount</label>
         <input type="number" formControlName="commission" placeholder="250" />
       </div>

@@ -26,6 +26,13 @@ export class RtoManagementComponent implements OnInit {
   isLoading = false;
   isActiveFilter: boolean = true;
   selectedItem: RTO | null = null;
+  isInfoModalOpen = false;
+  infoData: any = null;
+
+  // Pagination
+  totalItems = 0;
+  pageSize = 10;
+  currentPage = 1;
 
   constructor(
     private rtoService: RtoService,
@@ -39,22 +46,34 @@ export class RtoManagementComponent implements OnInit {
 
   loadData() {
     this.isLoading = true;
-    this.rtoService.getRTOs(this.isActiveFilter).subscribe((response: any) => {
+    const limit = this.pageSize;
+    const skip = (this.currentPage - 1) * this.pageSize;
+
+    this.rtoService.getRTOs(this.isActiveFilter, limit, skip).subscribe((response: any) => {
       this.isLoading = false;
       if (response.status && response.result) {
         this.items = response.result.map((item: any) => ({
           ...item,
           status: item.isActive ? 'Active' : 'Inactive',
         }));
+        this.totalItems = response.totalCount || 0;
       } else {
         this.items = []; // Clear items if no data found
+        this.totalItems = 0;
       }
       this.cdr.detectChanges();
     });
   }
 
+  onPageChange(event: { page: number; limit: number }) {
+    this.currentPage = event.page;
+    this.pageSize = event.limit;
+    this.loadData();
+  }
+
   onStatusFilterChange(status: boolean) {
     this.isActiveFilter = status;
+    this.currentPage = 1;
     this.loadData();
   }
 
@@ -66,6 +85,16 @@ export class RtoManagementComponent implements OnInit {
   closeForm() {
     this.isModalOpen = false;
     this.selectedItem = null;
+  }
+
+  onView(item: any) {
+    this.infoData = item;
+    this.isInfoModalOpen = true;
+  }
+
+  closeInfoModal() {
+    this.isInfoModalOpen = false;
+    this.infoData = null;
   }
 
   onSave(item: any) {

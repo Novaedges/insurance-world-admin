@@ -83,22 +83,53 @@
     </tbody>
   </table>
 
-  <div
-    class="pagination-controls"
-    style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0"
-  >
-    <button class="btn-secondary" [disabled]="skip === 0 || isLoading" (click)="prevPage()">
-      <i class="ri-arrow-left-s-line"></i> Previous
-    </button>
-    <span class="text-muted">Showing {{ skip + 1 }} - {{ skip + items.length }}</span>
-    <button
-      class="btn-secondary"
-      [disabled]="items.length < limit || isLoading"
-      (click)="nextPage()"
-    >
-      Next <i class="ri-arrow-right-s-line"></i>
-    </button>
-  </div>
+  @if (items.length > 0) {
+    <div class="table-pagination">
+      <div class="pagination-info">
+        Showing <span>{{ startIndex }}</span> to <span>{{ endIndex }}</span>
+        @if (totalItems > 0) {
+          of <span>{{ totalItems }}</span>
+        }
+        entries
+      </div>
+
+      <div class="pagination-controls">
+        <div class="page-size-selector">
+          <label>Rows per page:</label>
+          <div class="pageSize-select-wrapper">
+            <select
+              [value]="pageSize"
+              (change)="onPageChange({ page: 1, limit: +$any($event.target).value })"
+            >
+              @for (size of pageSizeOptions; track size) {
+                <option [value]="size">{{ size }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="pagination-buttons">
+          <button
+            class="pagination-btn"
+            [disabled]="!hasPrev || isLoading"
+            (click)="onPageChange({ page: currentPage - 1, limit: pageSize })"
+            title="Previous Page"
+          >
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <span class="page-indicator">Page {{ currentPage }}</span>
+          <button
+            class="pagination-btn"
+            [disabled]="!hasNext || isLoading"
+            (click)="onPageChange({ page: currentPage + 1, limit: pageSize })"
+            title="Next Page"
+          >
+            <i class="ri-arrow-right-s-line"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>
 
 <app-dialog [isOpen]="isInfoModalOpen" [title]="'Sale Details'" (closeEvent)="closeInfo()">

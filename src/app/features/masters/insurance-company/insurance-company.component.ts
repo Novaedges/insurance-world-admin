@@ -20,6 +20,13 @@ export class InsuranceCompanyComponent implements OnInit {
   isDialogOpen = false;
   isActiveFilter: boolean = true;
   selectedItem: InsuranceCompany | null = null;
+  isInfoModalOpen = false;
+  infoData: any = null;
+
+  // Pagination
+  totalItems = 0;
+  pageSize = 10;
+  currentPage = 1;
 
   columns: Column[] = [
     { field: 'companyName', header: 'Company Name' },
@@ -41,7 +48,10 @@ export class InsuranceCompanyComponent implements OnInit {
   loadData() {
     this.loading = true;
     this.cdr.detectChanges();
-    this.companyService.getCompanies(undefined, undefined, this.isActiveFilter).subscribe({
+    const limit = this.pageSize;
+    const skip = (this.currentPage - 1) * this.pageSize;
+
+    this.companyService.getCompanies(this.isActiveFilter, limit, skip).subscribe({
       next: (res: any) => {
         this.loading = false;
         if (res.status && res.result) {
@@ -49,21 +59,31 @@ export class InsuranceCompanyComponent implements OnInit {
             ...company,
             status: company.isActive !== false ? 'Active' : 'Inactive',
           }));
+          this.totalItems = res.totalCount || 0;
         } else {
           this.companies = [];
+          this.totalItems = 0;
         }
         this.cdr.detectChanges();
       },
       error: () => {
         this.loading = false;
         this.companies = [];
+        this.totalItems = 0;
         this.cdr.detectChanges();
       },
     });
   }
 
+  onPageChange(event: { page: number; limit: number }) {
+    this.currentPage = event.page;
+    this.pageSize = event.limit;
+    this.loadData();
+  }
+
   onStatusFilterChange(status: boolean) {
     this.isActiveFilter = status;
+    this.currentPage = 1;
     this.loadData();
   }
 
@@ -75,6 +95,16 @@ export class InsuranceCompanyComponent implements OnInit {
   closeForm() {
     this.isDialogOpen = false;
     this.selectedItem = null;
+  }
+
+  onView(item: any) {
+    this.infoData = item;
+    this.isInfoModalOpen = true;
+  }
+
+  closeInfoModal() {
+    this.isInfoModalOpen = false;
+    this.infoData = null;
   }
 
   onSave(item: any) {

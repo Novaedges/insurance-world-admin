@@ -11,6 +11,10 @@
   [isLoading]="isLoading"
   [hiddenActions]="['password']"
   [showStatusFilter]="true"
+  [totalItems]="totalItems"
+  [pageSize]="pageSize"
+  [currentPage]="currentPage"
+  (pageChange)="onPageChange($event)"
   (statusFilterChange)="onStatusFilterChange($event)"
   (view)="onViewPolicy($event)"
   (edit)="openForm($event)"
@@ -221,15 +225,11 @@
           </div>
           <div class="card-item">
             <span class="card-label">Discount</span>
-            <span class="card-value">{{ infoData.discount }}</span>
+            <span class="card-value">{{ infoData.discount | currency: 'INR' }}</span>
           </div>
           <div class="card-item">
-            <span class="card-label">GST</span>
-            <span class="card-value">{{ infoData.gst }}%</span>
-          </div>
-          <div class="card-item" style="grid-column: 1 / -1">
             <span class="card-label">Commission</span>
-            <span class="card-value">{{ infoData.commission }}</span>
+            <span class="card-value">{{ infoData.commission | currency: 'INR' }}</span>
           </div>
         </div>
       </div>

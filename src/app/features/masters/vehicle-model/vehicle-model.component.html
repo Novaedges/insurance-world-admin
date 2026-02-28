@@ -7,9 +7,14 @@
   [data]="items"
   [columns]="columns"
   [isLoading]="isLoading"
-  [hiddenActions]="['password', 'view']"
+  [hiddenActions]="['password']"
   [showStatusFilter]="true"
+  [totalItems]="totalItems"
+  [pageSize]="pageSize"
+  [currentPage]="currentPage"
+  (pageChange)="onPageChange($event)"
   (statusFilterChange)="onStatusFilterChange($event)"
+  (view)="onView($event)"
   (edit)="openForm($event)"
   (delete)="onDelete($event)"
   (refresh)="loadData()"
@@ -23,4 +28,50 @@
 >
   <app-vehicle-model-form [data]="selectedItem" (save)="onSave($event)" (cancel)="closeForm()">
   </app-vehicle-model-form>
+</app-dialog>
+
+<app-dialog
+  [isOpen]="isInfoModalOpen"
+  title="Vehicle Model Information"
+  (closeEvent)="closeInfoModal()"
+>
+  <div class="modern-info-container" *ngIf="infoData">
+    <div class="info-header-card">
+      <div class="header-title-box">
+        <h3>{{ infoData.name }}</h3>
+        <p>{{ infoData.manufacturerName }} - {{ infoData.vehicleTypeName }}</p>
+      </div>
+      <div>
+        <span class="badge-modern" [ngClass]="infoData.isActive ? 'active' : 'inactive'">
+          {{ infoData.isActive ? 'Active' : 'Inactive' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="info-grid-modern">
+      <div class="info-card">
+        <div class="card-title"><i class="ri-car-line"></i> Vehicle Details</div>
+        <div class="card-item">
+          <span class="card-label">Category (Type)</span>
+          <span class="card-value">{{ infoData.vehicleTypeName || 'N/A' }}</span>
+        </div>
+        <div class="card-item">
+          <span class="card-label">Manufacturer (Make)</span>
+          <span class="card-value">{{ infoData.manufacturerName || 'N/A' }}</span>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="card-title"><i class="ri-settings-3-line"></i> Specifications</div>
+        <div class="card-item">
+          <span class="card-label">Fuel Type</span>
+          <span class="card-value">{{ infoData.fuelType || 'N/A' }}</span>
+        </div>
+        <div class="card-item">
+          <span class="card-label">Engine CC</span>
+          <span class="card-value">{{ infoData.engineCC || 'N/A' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </app-dialog>

@@ -127,13 +127,16 @@ export class InquiryListComponent implements OnInit {
   }
 
   nextPage() {
-    this.skip += this.limit;
-    this.loadData();
+    if (this.items.length === this.limit) {
+      this.skip += this.limit;
+      this.loadData();
+    }
   }
 
   prevPage() {
     if (this.skip >= this.limit) {
       this.skip -= this.limit;
+      if (this.skip < 0) this.skip = 0;
       this.loadData();
     }
   }

@@ -25,6 +25,8 @@ export class ChildCategoryComponent implements OnInit {
   isLoading = false;
   isActiveFilter: boolean = true;
   selectedItem: ChildCategory | null = null;
+  isInfoModalOpen = false;
+  infoData: any = null;
 
   constructor(private masterService: MasterService) {}
 
@@ -53,6 +55,16 @@ export class ChildCategoryComponent implements OnInit {
   closeForm() {
     this.isModalOpen = false;
     this.selectedItem = null;
+  }
+
+  onView(item: any) {
+    this.infoData = item;
+    this.isInfoModalOpen = true;
+  }
+
+  closeInfoModal() {
+    this.isInfoModalOpen = false;
+    this.infoData = null;
   }
 
   onSave(item: ChildCategory) {

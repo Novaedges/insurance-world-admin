@@ -21,6 +21,13 @@ export class AgentManagementComponent implements OnInit {
   isDialogOpen = false;
   isActiveFilter: boolean = true;
   selectedItem: Agent | null = null;
+  isInfoModalOpen = false;
+  infoData: any = null;
+
+  // Pagination
+  totalItems = 0;
+  pageSize = 10;
+  currentPage = 1;
 
   columns: Column[] = [
     { field: 'firstName', header: 'First Name' },
@@ -42,8 +49,11 @@ export class AgentManagementComponent implements OnInit {
 
   loadData() {
     this.loading = true;
+    const limit = this.pageSize;
+    const skip = (this.currentPage - 1) * this.pageSize;
+
     this.agentService
-      .getAgents(this.isActiveFilter)
+      .getAgents(this.isActiveFilter, limit, skip)
       .pipe(
         finalize(() => {
           this.loading = false;
@@ -56,11 +66,19 @@ export class AgentManagementComponent implements OnInit {
           ...item,
           status: item.isActive ? 'Active' : 'Inactive',
         }));
+        this.totalItems = success.totalCount || 0;
       });
+  }
+
+  onPageChange(event: { page: number; limit: number }) {
+    this.currentPage = event.page;
+    this.pageSize = event.limit;
+    this.loadData();
   }
 
   onStatusFilterChange(status: boolean) {
     this.isActiveFilter = status;
+    this.currentPage = 1;
     this.loadData();
   }
 
@@ -89,6 +107,16 @@ export class AgentManagementComponent implements OnInit {
   closeForm() {
     this.isDialogOpen = false;
     this.selectedItem = null;
+  }
+
+  onView(item: any) {
+    this.infoData = item;
+    this.isInfoModalOpen = true;
+  }
+
+  closeInfoModal() {
+    this.isInfoModalOpen = false;
+    this.infoData = null;
   }
 
   onSave(item: Agent) {

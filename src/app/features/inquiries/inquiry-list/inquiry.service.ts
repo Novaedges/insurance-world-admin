@@ -35,10 +35,13 @@ export class InquiryService {
 
   updateInquiryStatus(payload: {
     _id: string;
-    status: string;
+    status?: string;
     policyTypeId?: string;
     policyId?: string;
     sellingPrice?: number;
+    commission?: number;
+    discount?: number;
+    note?: string;
   }): Observable<any> {
     return this.http.patch<any>(this.apiUrl, payload);
   }

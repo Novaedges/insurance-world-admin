@@ -26,6 +26,13 @@ export class VehicleMakeComponent implements OnInit {
   isLoading = false;
   isActiveFilter: boolean = true;
   selectedItem: VehicleMake | null = null;
+  isInfoModalOpen = false;
+  infoData: any = null;
+
+  // Pagination
+  totalItems = 0;
+  pageSize = 10;
+  currentPage = 1;
 
   constructor(
     private makeService: VehicleMakeService,
@@ -39,7 +46,10 @@ export class VehicleMakeComponent implements OnInit {
 
   loadData() {
     this.isLoading = true;
-    this.makeService.getMakes(this.isActiveFilter).subscribe((response: any) => {
+    const limit = this.pageSize;
+    const skip = (this.currentPage - 1) * this.pageSize;
+
+    this.makeService.getMakes(this.isActiveFilter, limit, skip).subscribe((response: any) => {
       this.isLoading = false;
       if (response.status && response.result) {
         this.items = response.result.map((item: any) => ({
@@ -52,15 +62,24 @@ export class VehicleMakeComponent implements OnInit {
           // Let's assume for now we just display what we have or 'vehicleTypeId' if name is missing.
           vehicleTypeName: item.vehicleType?.name || item.vehicleTypeName || 'N/A',
         }));
+        this.totalItems = response.totalCount || 0;
       } else {
         this.items = [];
+        this.totalItems = 0;
       }
       this.cdr.detectChanges();
     });
   }
 
+  onPageChange(event: { page: number; limit: number }) {
+    this.currentPage = event.page;
+    this.pageSize = event.limit;
+    this.loadData();
+  }
+
   onStatusFilterChange(status: boolean) {
     this.isActiveFilter = status;
+    this.currentPage = 1;
     this.loadData();
   }
 
@@ -72,6 +91,16 @@ export class VehicleMakeComponent implements OnInit {
   closeForm() {
     this.isModalOpen = false;
     this.selectedItem = null;
+  }
+
+  onView(item: any) {
+    this.infoData = item;
+    this.isInfoModalOpen = true;
+  }
+
+  closeInfoModal() {
+    this.isInfoModalOpen = false;
+    this.infoData = null;
   }
 
   onSave(item: any) {

@@ -7,9 +7,14 @@
   [data]="items"
   [columns]="columns"
   [isLoading]="isLoading"
-  [hiddenActions]="['password', 'view']"
+  [hiddenActions]="['password']"
   [showStatusFilter]="true"
+  [totalItems]="totalItems"
+  [pageSize]="pageSize"
+  [currentPage]="currentPage"
+  (pageChange)="onPageChange($event)"
   (statusFilterChange)="onStatusFilterChange($event)"
+  (view)="onView($event)"
   (edit)="openForm($event)"
   (delete)="onDelete($event)"
   (refresh)="loadData()"
@@ -23,4 +28,46 @@
 >
   <app-vehicle-make-form [data]="selectedItem" (save)="onSave($event)" (cancel)="closeForm()">
   </app-vehicle-make-form>
+</app-dialog>
+
+<app-dialog
+  [isOpen]="isInfoModalOpen"
+  title="Vehicle Make Information"
+  (closeEvent)="closeInfoModal()"
+>
+  <div class="modern-info-container" *ngIf="infoData">
+    <div class="info-header-card">
+      <div class="header-title-box">
+        <h3>{{ infoData.name }}</h3>
+        <p>Category: {{ infoData.vehicleTypeName || 'N/A' }}</p>
+      </div>
+      <div>
+        <span class="badge-modern" [ngClass]="infoData.isActive ? 'active' : 'inactive'">
+          {{ infoData.isActive ? 'Active' : 'Inactive' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="info-grid-modern">
+      <div class="info-card">
+        <div class="card-title"><i class="ri-car-line"></i> Category Details</div>
+        <div class="card-item">
+          <span class="card-label">Category Name</span>
+          <span class="card-value">{{ infoData.vehicleTypeName || 'N/A' }}</span>
+        </div>
+        <div class="card-item">
+          <span class="card-label">Vehicle Type ID</span>
+          <span class="card-value">{{ infoData.vehicleTypeId || 'N/A' }}</span>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="card-title"><i class="ri-history-line"></i> Metadata</div>
+        <div class="card-item">
+          <span class="card-label">Created At</span>
+          <span class="card-value">{{ infoData.createdAt | date: 'dd MMM yyyy' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </app-dialog>

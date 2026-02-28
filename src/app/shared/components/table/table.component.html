@@ -27,108 +27,157 @@
       }
     </div>
   </div>
-  <table class="data-table">
-    <thead>
-      <tr>
-        @for (col of columns; track col.field) {
-          <th>{{ col.header }}</th>
-        }
-        @if (actions) {
-          <th class="actions-col">Actions</th>
-        }
-      </tr>
-    </thead>
-    <tbody>
-      @if (isLoading) {
+
+  <div class="table-scroll-wrapper">
+    <table class="data-table">
+      <thead>
         <tr>
-          <td [attr.colspan]="columns.length + (actions ? 1 : 0)" class="text-center p-5">
-            <div class="fancy-loader-container">
-              <div class="fancy-loader">
-                <div class="dot"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
-              </div>
-              <p class="fancy-loader-text">Loading data...</p>
-            </div>
-          </td>
+          @for (col of columns; track col.field) {
+            <th>{{ col.header }}</th>
+          }
+          @if (actions) {
+            <th class="actions-col">Actions</th>
+          }
         </tr>
-      } @else {
-        @for (row of filteredData; track row) {
+      </thead>
+      <tbody>
+        @if (isLoading) {
           <tr>
-            @for (col of columns; track col.field) {
-              <td>
-                @if (col.type === 'status') {
-                  <span class="status-badge" [ngClass]="row[col.field]?.toLowerCase()">
-                    {{ row[col.field] }}
-                  </span>
-                }
-                @if (col.type === 'currency') {
-                  <span>
-                    {{ row[col.field] | currency: col.currencyCode }}
-                  </span>
-                }
-                @if (col.type === 'date') {
-                  <span>
-                    {{ row[col.field] | date: 'dd-MM-yyyy' }}
-                  </span>
-                }
-                @if (!col.type || col.type === 'text') {
-                  <span>
-                    {{ row[col.field] }}
-                  </span>
-                }
-              </td>
-            }
-            @if (actions) {
-              <td class="actions-cell">
-                <button
-                  class="btn-action view"
-                  (click)="onView(row)"
-                  appTooltip="View Details"
-                  *ngIf="!hiddenActions.includes('view')"
-                >
-                  <i class="ri-eye-line"></i>
-                </button>
-                <button
-                  class="btn-action edit"
-                  (click)="onEdit(row)"
-                  appTooltip="Edit"
-                  *ngIf="!hiddenActions.includes('edit')"
-                >
-                  <i class="ri-pencil-line"></i>
-                </button>
-                <button
-                  class="btn-action password"
-                  (click)="onChangePassword(row)"
-                  appTooltip="Change Password"
-                  *ngIf="!hiddenActions.includes('password')"
-                >
-                  <i class="ri-lock-password-line"></i>
-                </button>
-                <button
-                  class="btn-action delete"
-                  (click)="onDelete(row)"
-                  appTooltip="Delete"
-                  *ngIf="!hiddenActions.includes('delete')"
-                >
-                  <i class="ri-delete-bin-line"></i>
-                </button>
-              </td>
-            }
-          </tr>
-        }
-        @if (filteredData.length === 0) {
-          <tr>
-            <td
-              [attr.colspan]="columns.length + (actions ? 1 : 0)"
-              class="no-data"
-              style="text-align: center; padding: 3rem; color: #94a3b8; font-style: italic"
-            >
-              No data available.
+            <td [attr.colspan]="columns.length + (actions ? 1 : 0)" class="text-center p-5">
+              <div class="fancy-loader-container">
+                <div class="fancy-loader">
+                  <div class="dot"></div>
+                  <div class="dot"></div>
+                  <div class="dot"></div>
+                </div>
+                <p class="fancy-loader-text">Loading data...</p>
+              </div>
             </td>
           </tr>
+        } @else {
+          @for (row of filteredData; track row) {
+            <tr>
+              @for (col of columns; track col.field) {
+                <td>
+                  @if (col.type === 'status') {
+                    <span class="status-badge" [ngClass]="row[col.field]?.toLowerCase()">
+                      {{ row[col.field] }}
+                    </span>
+                  }
+                  @if (col.type === 'currency') {
+                    <span>
+                      {{ row[col.field] | currency: col.currencyCode }}
+                    </span>
+                  }
+                  @if (col.type === 'date') {
+                    <span>
+                      {{ row[col.field] | date: 'dd-MM-yyyy' }}
+                    </span>
+                  }
+                  @if (!col.type || col.type === 'text') {
+                    <span>
+                      {{ row[col.field] }}
+                    </span>
+                  }
+                </td>
+              }
+              @if (actions) {
+                <td class="actions-cell">
+                  <div class="action-group">
+                    <button
+                      class="btn-icon btn-accent-light"
+                      (click)="onView(row)"
+                      appTooltip="View Details"
+                      *ngIf="!hiddenActions.includes('view')"
+                    >
+                      <i class="ri-information-fill"></i>
+                    </button>
+
+                    <button
+                      class="btn-icon btn-primary-light"
+                      (click)="onEdit(row)"
+                      appTooltip="Edit"
+                      *ngIf="!hiddenActions.includes('edit')"
+                    >
+                      <i class="ri-pencil-line"></i>
+                    </button>
+                    <button
+                      class="btn-icon btn-secondary-light"
+                      (click)="onChangePassword(row)"
+                      appTooltip="Change Password"
+                      *ngIf="!hiddenActions.includes('password')"
+                    >
+                      <i class="ri-lock-password-line"></i>
+                    </button>
+                    <button
+                      class="btn-icon btn-danger-light"
+                      (click)="onDelete(row)"
+                      appTooltip="Delete"
+                      *ngIf="!hiddenActions.includes('delete')"
+                    >
+                      <i class="ri-delete-bin-line"></i>
+                    </button>
+                  </div>
+                </td>
+              }
+            </tr>
+          }
+          @if (filteredData.length === 0) {
+            <tr>
+              <td
+                [attr.colspan]="columns.length + (actions ? 1 : 0)"
+                class="no-data"
+                style="text-align: center; padding: 3rem; color: #94a3b8; font-style: italic"
+              >
+                No data available.
+              </td>
+            </tr>
+          }
         }
-      }
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  </div>
+
+  @if (showPagination && filteredData.length > 0) {
+    <div class="table-pagination">
+      <div class="pagination-info">
+        Showing <span>{{ startIndex }}</span> to <span>{{ endIndex }}</span>
+        @if (totalItems > 0) {
+          of <span>{{ totalItems }}</span>
+        }
+        entries
+      </div>
+
+      <div class="pagination-controls">
+        <div class="page-size-selector">
+          <label>Rows per page:</label>
+          <select [value]="pageSize" (change)="onPageSizeChange($event)">
+            @for (size of pageSizeOptions; track size) {
+              <option [value]="size">{{ size }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="pagination-buttons">
+          <button
+            class="pagination-btn"
+            [disabled]="!hasPrev"
+            (click)="onPrevPage()"
+            appTooltip="Previous Page"
+          >
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <span class="page-indicator">Page {{ currentPage }}</span>
+          <button
+            class="pagination-btn"
+            [disabled]="!hasNext"
+            (click)="onNextPage()"
+            appTooltip="Next Page"
+          >
+            <i class="ri-arrow-right-s-line"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>

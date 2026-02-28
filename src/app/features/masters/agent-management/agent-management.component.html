@@ -13,9 +13,14 @@
     [data]="agents"
     [columns]="columns"
     [isLoading]="loading"
-    [hiddenActions]="['view']"
+    [hiddenActions]="['password']"
     [showStatusFilter]="true"
+    [totalItems]="totalItems"
+    [pageSize]="pageSize"
+    [currentPage]="currentPage"
+    (pageChange)="onPageChange($event)"
     (statusFilterChange)="onStatusFilterChange($event)"
+    (view)="onView($event)"
     (edit)="openForm($event)"
     (delete)="onDelete($event)"
     (refresh)="loadData()"
@@ -32,4 +37,62 @@
     (save)="onSave($event)"
     (cancel)="closeForm()"
   ></app-agent-form>
+</app-dialog>
+
+<app-dialog [isOpen]="isInfoModalOpen" title="Agent Information" (closeEvent)="closeInfoModal()">
+  <div class="modern-info-container" *ngIf="infoData">
+    <div class="info-header-card">
+      <div class="header-title-box">
+        <h3>{{ infoData.firstName }} {{ infoData.lastName }}</h3>
+        <p>Agent Code: {{ infoData.agentCode }}</p>
+      </div>
+      <div>
+        <span class="badge-modern" [ngClass]="infoData.isActive ? 'active' : 'inactive'">
+          {{ infoData.isActive ? 'Active' : 'Inactive' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="info-grid-modern">
+      <div class="info-card">
+        <div class="card-title"><i class="ri-user-line"></i> Contact Details</div>
+        <div class="card-item">
+          <span class="card-label">Email</span>
+          <span class="card-value">{{ infoData.email || 'N/A' }}</span>
+        </div>
+        <div class="card-item">
+          <span class="card-label">Phone Number</span>
+          <span class="card-value">{{ infoData.phoneNumber }}</span>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="card-title"><i class="ri-bank-line"></i> Bank Details</div>
+        <div class="card-item">
+          <span class="card-label">Bank Name</span>
+          <span class="card-value">{{ infoData.bankName || 'N/A' }}</span>
+        </div>
+        <div class="card-item">
+          <span class="card-label">Account Number</span>
+          <span class="card-value">{{ infoData.accountNumber || 'N/A' }}</span>
+        </div>
+        <div class="card-item">
+          <span class="card-label">IFSC Code</span>
+          <span class="card-value">{{ infoData.ifscCode || 'N/A' }}</span>
+        </div>
+        <div class="card-item">
+          <span class="card-label">Branch</span>
+          <span class="card-value">{{ infoData.branchName || 'N/A' }}</span>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="card-title"><i class="ri-id-card-line"></i> Tax Details</div>
+        <div class="card-item">
+          <span class="card-label">PAN Number</span>
+          <span class="card-value">{{ infoData.panNumber || 'N/A' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </app-dialog>

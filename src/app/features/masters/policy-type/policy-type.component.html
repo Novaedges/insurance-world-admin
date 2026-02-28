@@ -7,9 +7,14 @@
   [data]="items"
   [columns]="columns"
   [isLoading]="isLoading"
-  [hiddenActions]="['password', 'view']"
+  [hiddenActions]="['password']"
   [showStatusFilter]="true"
+  [totalItems]="totalItems"
+  [pageSize]="pageSize"
+  [currentPage]="currentPage"
+  (pageChange)="onPageChange($event)"
   (statusFilterChange)="onStatusFilterChange($event)"
+  (view)="onView($event)"
   (edit)="openForm($event)"
   (delete)="onDelete($event)"
   (refresh)="loadData()"
@@ -23,4 +28,48 @@
 >
   <app-policy-type-form [data]="selectedItem" (save)="onSave($event)" (cancel)="closeForm()">
   </app-policy-type-form>
+</app-dialog>
+
+<app-dialog
+  [isOpen]="isInfoModalOpen"
+  title="Policy Type Information"
+  (closeEvent)="closeInfoModal()"
+>
+  <div class="modern-info-container" *ngIf="infoData">
+    <div class="info-header-card">
+      <div class="header-title-box">
+        <h3>{{ infoData.policyType }}</h3>
+        <p>Tag: {{ infoData.tag }}</p>
+      </div>
+      <div>
+        <span class="badge-modern" [ngClass]="infoData.isActive ? 'active' : 'inactive'">
+          {{ infoData.isActive ? 'Active' : 'Inactive' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="info-grid-modern">
+      <div class="info-card" style="grid-column: 1 / -1">
+        <div class="card-title"><i class="ri-file-text-line"></i> Description</div>
+        <div class="card-item">
+          <span class="card-value">{{ infoData.description || 'No description available.' }}</span>
+        </div>
+      </div>
+
+      <div class="info-card" style="grid-column: 1 / -1" *ngIf="infoData.coverage?.length">
+        <div class="card-title"><i class="ri-shield-check-line"></i> Coverage Details</div>
+        <div class="card-item">
+          <ul style="padding-left: 1.2rem; margin: 0">
+            <li
+              *ngFor="let item of infoData.coverage"
+              class="card-value"
+              style="margin-bottom: 0.25rem"
+            >
+              {{ item }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
 </app-dialog>

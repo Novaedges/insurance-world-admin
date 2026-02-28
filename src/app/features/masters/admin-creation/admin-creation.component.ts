@@ -35,6 +35,14 @@ export class AdminCreationComponent implements OnInit {
   passwordAdmin: Admin | null = null;
   newPassword = '';
 
+  isInfoModalOpen = false;
+  infoData: any = null;
+
+  // Pagination
+  totalItems = 0;
+  pageSize = 10;
+  currentPage = 1;
+
   constructor(
     private adminService: AdminCreationService,
     private cdr: ChangeDetectorRef,
@@ -47,37 +55,59 @@ export class AdminCreationComponent implements OnInit {
 
   loadData() {
     this.isLoading = true;
-    this.adminService.getAdmins(this.isActiveFilter).subscribe((success: any) => {
-      this.isLoading = false;
-      const data = success.result || [];
-      this.admins = data.map((item: any) => ({
-        ...item,
-        status: item.isActive ? 'Active' : 'Inactive',
-      }));
-      this.cdr.detectChanges();
+    const limit = this.pageSize;
+    const skip = (this.currentPage - 1) * this.pageSize;
+
+    this.adminService.getAdmins(this.isActiveFilter, limit, skip).subscribe({
+      next: (success: any) => {
+        this.isLoading = false;
+        const data = success.result || [];
+        this.admins = data.map((item: any) => ({
+          ...item,
+          status: item.isActive ? 'Active' : 'Inactive',
+        }));
+        this.totalItems = success.totalCount || 0;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        this.isLoading = false;
+        this.snackbarService.error(err.error?.msg || 'Failed to load admins');
+      },
     });
+  }
+
+  onPageChange(event: { page: number; limit: number }) {
+    this.currentPage = event.page;
+    this.pageSize = event.limit;
+    this.loadData();
   }
 
   onStatusFilterChange(status: boolean) {
     this.isActiveFilter = status;
+    this.currentPage = 1;
     this.loadData();
   }
 
   openForm(admin: Admin | null = null) {
     if (admin) {
-      const _id = admin._id;
+      const _id = admin._id || admin.id;
       if (_id) {
-        this.adminService.getAdminById(_id).subscribe((success: any) => {
-          const data = success.result || success.data;
-          const adminDetails = Array.isArray(data) ? data[0] : data;
+        this.adminService.getAdminById(_id).subscribe({
+          next: (success: any) => {
+            const data = success.result || success.data;
+            const adminDetails = Array.isArray(data) ? data[0] : data;
 
-          this.selectedAdmin = {
-            ...adminDetails,
-            status: adminDetails?.isActive ? 'Active' : 'Inactive',
-            _id: adminDetails._id,
-          };
-          this.isModalOpen = true;
-          this.cdr.detectChanges();
+            this.selectedAdmin = {
+              ...adminDetails,
+              status: adminDetails?.isActive ? 'Active' : 'Inactive',
+              _id: adminDetails._id,
+            };
+            this.isModalOpen = true;
+            this.cdr.detectChanges();
+          },
+          error: (err: any) => {
+            this.snackbarService.error(err.error?.msg || 'Failed to fetch admin details');
+          },
         });
       }
     } else {
@@ -92,15 +122,29 @@ export class AdminCreationComponent implements OnInit {
   }
 
   onSave(admin: Admin) {
-    if (admin._id) {
-      this.adminService.updateAdmin(admin).subscribe(() => {
-        this.loadData();
-        this.closeForm();
+    const _id = admin._id || admin.id;
+    if (_id) {
+      const payload = { ...admin, _id };
+      this.adminService.updateAdmin(payload).subscribe({
+        next: (success: any) => {
+          this.snackbarService.success(success.msg || 'Admin updated successfully');
+          this.loadData();
+          this.closeForm();
+        },
+        error: (err: any) => {
+          this.snackbarService.error(err.error?.msg || 'Failed to update admin');
+        },
       });
     } else {
-      this.adminService.createAdmin(admin).subscribe(() => {
-        this.loadData();
-        this.closeForm();
+      this.adminService.createAdmin(admin).subscribe({
+        next: (success: any) => {
+          this.snackbarService.success(success.msg || 'Admin created successfully');
+          this.loadData();
+          this.closeForm();
+        },
+        error: (err: any) => {
+          this.snackbarService.error(err.error?.msg || 'Failed to create admin');
+        },
       });
     }
   }
@@ -112,9 +156,14 @@ export class AdminCreationComponent implements OnInit {
         _id: id,
         active: false,
       };
-      this.adminService.deleteAdmin(payload).subscribe((success: any) => {
-        this.loadData();
-        this.snackbarService.success(success.msg);
+      this.adminService.deleteAdmin(payload).subscribe({
+        next: (success: any) => {
+          this.loadData();
+          this.snackbarService.success(success.msg || 'Admin deleted successfully');
+        },
+        error: (err: any) => {
+          this.snackbarService.error(err.error?.msg || 'Failed to delete admin');
+        },
       });
     }
   }
@@ -137,11 +186,26 @@ export class AdminCreationComponent implements OnInit {
         _id: this.passwordAdmin._id,
         password: this.newPassword,
       };
-      this.adminService.updatePassword(payload).subscribe(() => {
-        this.closePasswordModal();
-        this.loadData();
-        this.snackbarService.success('Password updated successfully');
+      this.adminService.updatePassword(payload).subscribe({
+        next: (success: any) => {
+          this.closePasswordModal();
+          this.loadData();
+          this.snackbarService.success(success.msg || 'Password updated successfully');
+        },
+        error: (err: any) => {
+          this.snackbarService.error(err.error?.msg || 'Failed to update password');
+        },
       });
     }
+  }
+
+  onView(item: any) {
+    this.infoData = item;
+    this.isInfoModalOpen = true;
+  }
+
+  closeInfoModal() {
+    this.isInfoModalOpen = false;
+    this.infoData = null;
   }
 }

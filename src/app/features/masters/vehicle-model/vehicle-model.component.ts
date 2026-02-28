@@ -27,6 +27,13 @@ export class VehicleModelComponent implements OnInit {
   isLoading = false;
   isActiveFilter: boolean = true;
   selectedItem: VehicleModel | null = null;
+  isInfoModalOpen = false;
+  infoData: any = null;
+
+  // Pagination
+  totalItems = 0;
+  pageSize = 10;
+  currentPage = 1;
 
   constructor(
     private modelService: VehicleModelService,
@@ -40,7 +47,10 @@ export class VehicleModelComponent implements OnInit {
 
   loadData() {
     this.isLoading = true;
-    this.modelService.getModels(this.isActiveFilter).subscribe((response: any) => {
+    const limit = this.pageSize;
+    const skip = (this.currentPage - 1) * this.pageSize;
+
+    this.modelService.getModels(this.isActiveFilter, limit, skip).subscribe((response: any) => {
       this.isLoading = false;
       if (response.status && response.result) {
         this.items = response.result.map((item: any) => ({
@@ -49,15 +59,24 @@ export class VehicleModelComponent implements OnInit {
           vehicleTypeName: item.vehicleType?.name || item.vehicleTypeName || 'N/A',
           manufacturerName: item.manufacturer?.name || item.manufacturerName || 'N/A',
         }));
+        this.totalItems = response.totalCount || 0;
       } else {
         this.items = [];
+        this.totalItems = 0;
       }
       this.cdr.detectChanges();
     });
   }
 
+  onPageChange(event: { page: number; limit: number }) {
+    this.currentPage = event.page;
+    this.pageSize = event.limit;
+    this.loadData();
+  }
+
   onStatusFilterChange(status: boolean) {
     this.isActiveFilter = status;
+    this.currentPage = 1;
     this.loadData();
   }
 
@@ -69,6 +88,16 @@ export class VehicleModelComponent implements OnInit {
   closeForm() {
     this.isModalOpen = false;
     this.selectedItem = null;
+  }
+
+  onView(item: any) {
+    this.infoData = item;
+    this.isInfoModalOpen = true;
+  }
+
+  closeInfoModal() {
+    this.isInfoModalOpen = false;
+    this.infoData = null;
   }
 
   onSave(item: any) {

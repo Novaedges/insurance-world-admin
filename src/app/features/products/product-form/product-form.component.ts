@@ -86,7 +86,6 @@ export class ProductFormComponent implements OnChanges, OnInit {
       maxPrice: [0],
       discountType: ['Flat'],
       discountValue: [0],
-      gst: [0, Validators.required],
       commission: [0],
 
       policyDuration: ['1 Year', Validators.required],
@@ -159,7 +158,6 @@ export class ProductFormComponent implements OnChanges, OnInit {
           maxPrice: 0,
           discountType: 'Flat',
           discountValue: 0,
-          gst: 0,
           commission: 0,
           policyDuration: '1 Year',
           status: 'Active',
@@ -273,7 +271,6 @@ export class ProductFormComponent implements OnChanges, OnInit {
         minPrice: Number(formValue.basePrice),
         maxPrice: Number(formValue.maxPrice),
         discount: Number(formValue.discountValue),
-        gst: Number(formValue.gst),
         commission: Number(formValue.commission),
 
         // Retained Fields via User Request

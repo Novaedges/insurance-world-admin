@@ -53,14 +53,14 @@
   <table class="data-table">
     <thead>
       <tr>
+        <th>Date</th>
         <th>Reg No</th>
         <th>Customer</th>
         <th>Phone</th>
         <th>Policy</th>
-        <th>Vehicle Info</th>
         <th>Status</th>
-        <th>Assigned Agent</th>
-        <th>Date</th>
+        <th>Agent Name</th>
+        <th>Sales Executive Name</th>
         <th class="text-center">Action</th>
       </tr>
     </thead>
@@ -81,6 +81,7 @@
       } @else {
         @for (inq of items; track inq._id) {
           <tr>
+            <td>{{ inq.createdAt | date: 'dd MMM yyyy, hh:mm a' }}</td>
             <td class="font-bold text-primary">{{ inq.regNumber }}</td>
             <td>{{ inq.name }}</td>
             <td>{{ inq.phoneNumber }}</td>
@@ -88,14 +89,6 @@
               {{ inq.policyName }} <br />
               <small class="text-muted" *ngIf="inq.policyTypeDetails?.policyType">{{
                 inq.policyTypeDetails?.policyType
-              }}</small>
-            </td>
-            <td>
-              <span *ngIf="inq.manufacturerDetails?.name">{{ inq.manufacturerDetails?.name }}</span>
-              <span *ngIf="inq.vehicleModelDetails?.name"> {{ inq.vehicleModelDetails?.name }}</span
-              ><br />
-              <small class="text-muted" *ngIf="inq.vehicleTypeDetails?.name">{{
-                inq.vehicleTypeDetails?.name
               }}</small>
             </td>
             <td>
@@ -112,10 +105,14 @@
               </span>
             </td>
             <td>{{ inq.agentName || 'Unassigned' }}</td>
-            <td>{{ inq.createdAt | date: 'dd MMM yyyy, hh:mm a' }}</td>
+            <td>{{ inq.salesExecutiveDetails?.name || 'Unassigned' }}</td>
             <td class="text-center">
-              <div class="action-group" style="display: flex; gap: 0.5rem; justify-content: center">
-                <button class="btn-icon" (click)="openInfo(inq._id)" title="View Details">
+              <div class="action-group">
+                <button
+                  class="btn-icon btn-accent-light"
+                  (click)="openInfo(inq._id)"
+                  title="View Details"
+                >
                   <i class="ri-information-line"></i>
                 </button>
                 <button
@@ -161,30 +158,53 @@
     </tbody>
   </table>
 
-  <div
-    class="pagination-controls"
-    style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0"
-  >
-    <button class="btn-secondary" [disabled]="skip === 0 || isLoading" (click)="prevPage()">
-      <i class="ri-arrow-left-s-line"></i> Previous
-    </button>
-    <span class="text-muted">Showing {{ skip + 1 }} - {{ skip + items.length }}</span>
-    <button
-      class="btn-secondary"
-      [disabled]="items.length < limit || isLoading"
-      (click)="nextPage()"
-    >
-      Next <i class="ri-arrow-right-s-line"></i>
-    </button>
+  <div class="table-pagination">
+    <div class="pagination-info">
+      Showing <span>{{ skip + 1 }}</span> to <span>{{ skip + items.length }}</span> entries
+    </div>
+
+    <div class="pagination-controls">
+      <div class="page-size-selector">
+        <label>Rows per page:</label>
+        <select [(ngModel)]="limit" (change)="onRefresh()">
+          <option [value]="10">10</option>
+          <option [value]="20">20</option>
+          <option [value]="50">50</option>
+          <option [value]="100">100</option>
+        </select>
+      </div>
+
+      <div class="pagination-buttons">
+        <button
+          class="pagination-btn"
+          [disabled]="skip === 0 || isLoading"
+          (click)="prevPage()"
+          title="Previous Page"
+        >
+          <i class="ri-arrow-left-s-line"></i>
+        </button>
+        <span class="page-indicator">Page {{ skip / limit + 1 }}</span>
+        <button
+          class="pagination-btn"
+          [disabled]="items.length < limit || isLoading"
+          (click)="nextPage()"
+          title="Next Page"
+        >
+          <i class="ri-arrow-right-s-line"></i>
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- Info Modal -->
 <app-dialog [isOpen]="isInfoModalOpen" [title]="'Inquiry Details'" (closeEvent)="closeInfo()">
-  <app-inquiry-info-dialog
-    [inquiryId]="selectedInquiryId"
-    (cancel)="closeInfo()"
-  ></app-inquiry-info-dialog>
+  @if (isInfoModalOpen) {
+    <app-inquiry-info-dialog
+      [inquiryId]="selectedInquiryId"
+      (cancel)="closeInfo()"
+    ></app-inquiry-info-dialog>
+  }
 </app-dialog>
 
 <!-- Assign Modal -->
@@ -193,19 +213,23 @@
   [title]="'Assign Application'"
   (closeEvent)="closeAssign()"
 >
-  <app-inquiry-assign-dialog
-    [inquiryId]="selectedInquiryId"
-    (save)="onAssignSaved()"
-    (cancel)="closeAssign()"
-  ></app-inquiry-assign-dialog>
+  @if (isAssignModalOpen) {
+    <app-inquiry-assign-dialog
+      [inquiryId]="selectedInquiryId"
+      (save)="onAssignSaved()"
+      (cancel)="closeAssign()"
+    ></app-inquiry-assign-dialog>
+  }
 </app-dialog>
 
 <!-- Update Status Modal -->
 <app-dialog [isOpen]="isUpdateModalOpen" [title]="'Update Status'" (closeEvent)="closeUpdate()">
-  <app-inquiry-update-dialog
-    [inquiryId]="selectedInquiryId"
-    [currentStatus]="selectedInquiryStatus"
-    (save)="onUpdateSaved()"
-    (cancel)="closeUpdate()"
-  ></app-inquiry-update-dialog>
+  @if (isUpdateModalOpen) {
+    <app-inquiry-update-dialog
+      [inquiryId]="selectedInquiryId"
+      [currentStatus]="selectedInquiryStatus"
+      (save)="onUpdateSaved()"
+      (cancel)="closeUpdate()"
+    ></app-inquiry-update-dialog>
+  }
 </app-dialog>

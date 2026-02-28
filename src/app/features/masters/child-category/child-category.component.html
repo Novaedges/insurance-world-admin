@@ -7,9 +7,10 @@
   [data]="items"
   [columns]="columns"
   [isLoading]="isLoading"
-  [hiddenActions]="['password', 'view']"
+  [hiddenActions]="['password']"
   [showStatusFilter]="true"
   (statusFilterChange)="onStatusFilterChange($event)"
+  (view)="onView($event)"
   (edit)="openForm($event)"
   (delete)="onDelete($event)"
   (refresh)="loadData()"
@@ -23,4 +24,46 @@
 >
   <app-child-category-form [data]="selectedItem" (save)="onSave($event)" (cancel)="closeForm()">
   </app-child-category-form>
+</app-dialog>
+
+<app-dialog
+  [isOpen]="isInfoModalOpen"
+  title="Child Category Information"
+  (closeEvent)="closeInfoModal()"
+>
+  <div class="modern-info-container" *ngIf="infoData">
+    <div class="info-header-card">
+      <div class="header-title-box">
+        <h3>{{ infoData.name }}</h3>
+        <p>Parent: {{ infoData.parentCategoryName || 'N/A' }}</p>
+      </div>
+      <div>
+        <span class="badge-modern" [ngClass]="infoData.status === 'Active' ? 'active' : 'inactive'">
+          {{ infoData.status }}
+        </span>
+      </div>
+    </div>
+
+    <div class="info-grid-modern">
+      <div class="info-card">
+        <div class="card-title"><i class="ri-node-tree"></i> Hierarchy</div>
+        <div class="card-item">
+          <span class="card-label">Parent Category</span>
+          <span class="card-value">{{ infoData.parentCategoryName || 'N/A' }}</span>
+        </div>
+        <div class="card-item">
+          <span class="card-label">Parent Category ID</span>
+          <span class="card-value">{{ infoData.parentCategoryId }}</span>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="card-title"><i class="ri-id-card-line"></i> Identification</div>
+        <div class="card-item">
+          <span class="card-label">Category ID</span>
+          <span class="card-value">{{ infoData.id }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </app-dialog>

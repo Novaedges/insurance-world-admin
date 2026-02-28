@@ -30,21 +30,67 @@
   }
 
   .btn-primary-light {
-    color: #3b82f6 !important;
-    background: rgba(59, 130, 246, 0.1) !important;
+    color: var(--primary-color) !important;
+    background: rgba(63, 94, 150, 0.1) !important;
 
     &:hover {
-      background: rgba(59, 130, 246, 0.2) !important;
+      background: var(--primary-color) !important;
+      color: white !important;
     }
   }
 
   .btn-secondary-light {
-    color: #f59e0b !important;
-    background: rgba(245, 158, 11, 0.1) !important;
+    color: var(--secondary-color) !important;
+    background: rgba(236, 72, 153, 0.1) !important;
 
     &:hover {
-      background: rgba(245, 158, 11, 0.2) !important;
+      background: var(--secondary-color) !important;
+      color: white !important;
     }
+  }
+
+  .btn-accent-light {
+    color: var(--accent-color) !important;
+    background: rgba(139, 92, 246, 0.1) !important;
+
+    &:hover {
+      background: var(--accent-color) !important;
+      color: white !important;
+    }
+  }
+}
+
+.action-group {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+
+  i {
+    font-size: 1.25rem;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
   }
 }
 

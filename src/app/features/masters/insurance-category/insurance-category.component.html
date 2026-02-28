@@ -7,9 +7,14 @@
   [data]="items"
   [columns]="columns"
   [isLoading]="isLoading"
-  [hiddenActions]="['password', 'view']"
+  [hiddenActions]="['password']"
   [showStatusFilter]="true"
+  [totalItems]="totalItems"
+  [pageSize]="pageSize"
+  [currentPage]="currentPage"
+  (pageChange)="onPageChange($event)"
   (statusFilterChange)="onStatusFilterChange($event)"
+  (view)="onView($event)"
   (edit)="openForm($event)"
   (delete)="onDelete($event)"
   (refresh)="loadData()"
@@ -23,4 +28,40 @@
 >
   <app-insurance-category-form [data]="selectedItem" (save)="onSave($event)" (cancel)="closeForm()">
   </app-insurance-category-form>
+</app-dialog>
+
+<app-dialog [isOpen]="isInfoModalOpen" title="Category Information" (closeEvent)="closeInfoModal()">
+  <div class="modern-info-container" *ngIf="infoData">
+    <div class="info-header-card">
+      <div class="header-title-box">
+        <h3>{{ infoData.name }}</h3>
+        <p>Type: {{ infoData.type }}</p>
+      </div>
+      <div>
+        <span class="badge-modern" [ngClass]="infoData.isActive ? 'active' : 'inactive'">
+          {{ infoData.isActive ? 'Active' : 'Inactive' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="info-grid-modern">
+      <div class="info-card" *ngIf="infoData.logo">
+        <div class="card-title"><i class="ri-image-line"></i> Category Logo</div>
+        <div class="card-item" style="align-items: center; justify-content: center; padding: 1rem">
+          <img
+            [src]="infoData.logo"
+            [alt]="infoData.name"
+            style="max-width: 100px; max-height: 100px; border-radius: 8px"
+          />
+        </div>
+      </div>
+
+      <div class="info-card" [style.grid-column]="infoData.logo ? 'auto' : '1 / -1'">
+        <div class="card-title"><i class="ri-file-text-line"></i> Description</div>
+        <div class="card-item">
+          <span class="card-value">{{ infoData.description || 'No description available.' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </app-dialog>

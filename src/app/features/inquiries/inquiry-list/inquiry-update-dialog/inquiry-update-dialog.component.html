@@ -1,64 +1,185 @@
-<div class="dialog-header">
-  <h3>Update Inquiry</h3>
-  <button class="btn-close" (click)="close()">
-    <i class="ri-close-line"></i>
-  </button>
-</div>
-
 <div class="dialog-content">
-  <div class="form-group">
-    <label>Status <span class="required">*</span></label>
-    <select [(ngModel)]="formData.status" [disabled]="isSubmitting">
-      @for (status of statusOptions; track status) {
-        <option [value]="status">{{ status }}</option>
+  <div class="modern-form">
+    <!-- Status Field -->
+    <div class="form-group">
+      <label class="form-label">
+        <i class="ri-flag-line"></i>
+        Update Status <span class="required">*</span>
+      </label>
+      <div class="select-wrapper">
+        <select [(ngModel)]="formData.status" [disabled]="isSubmitting" class="form-select">
+          @for (status of statusOptions; track status) {
+            <option [value]="status">{{ status }}</option>
+          }
+        </select>
+        <i class="ri-arrow-down-s-line dropdown-icon"></i>
+      </div>
+    </div>
+
+    <div class="status-fields-grid">
+      <!-- Policy Selection -->
+      <div class="form-group full-width">
+        <label class="form-label">
+          <i class="ri-shield-check-line"></i>
+          Select Policy <small>(From Product Management)</small>
+        </label>
+        <div class="select-wrapper">
+          <select
+            [(ngModel)]="formData.policyId"
+            (change)="onPolicyChange()"
+            [disabled]="isSubmitting"
+            class="form-select"
+          >
+            <option value="">Select a Policy</option>
+            @for (policy of policies; track policy._id) {
+              <option [value]="policy._id">{{ policy.policyName }}</option>
+            }
+          </select>
+          <i class="ri-arrow-down-s-line dropdown-icon"></i>
+        </div>
+      </div>
+
+      <!-- Policy Details Card (Conditional) -->
+      @if (selectedPolicyDetails) {
+        <div class="policy-details-card full-width">
+          <div class="card-header">
+            <i class="ri-information-line"></i>
+            <span>Policy & Type Details</span>
+          </div>
+          <div class="card-body">
+            <div class="detail-item">
+              <span class="label">Price Range:</span>
+              <span class="value">
+                ₹{{ selectedPolicyDetails.minPrice }} - ₹{{ selectedPolicyDetails.maxPrice }}
+              </span>
+            </div>
+            <div class="detail-item">
+              <span class="label">Insurance Co:</span>
+              <span class="value">{{ selectedPolicyDetails.insuranceCompany }}</span>
+            </div>
+
+            <!-- Policy Type Details -->
+            @if (selectedPolicyTypeDetails) {
+              <div class="policy-type-box">
+                <div class="detail-item">
+                  <span class="label">Policy Type:</span>
+                  <span class="value text-primary font-bold">{{
+                    selectedPolicyTypeDetails.policyType
+                  }}</span>
+                </div>
+                @if (
+                  selectedPolicyTypeDetails.coverage &&
+                  selectedPolicyTypeDetails.coverage.length > 0
+                ) {
+                  <div class="coverage-info">
+                    <span class="label">Coverage Features:</span>
+                    <div class="coverage-list">
+                      @for (feat of selectedPolicyTypeDetails.coverage; track feat) {
+                        <span class="coverage-pill">{{ feat }}</span>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+
+            <div class="detail-items-row">
+              <div class="detail-item">
+                <span class="label">Base Commission:</span>
+                <span class="value">₹{{ selectedPolicyDetails.commission }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">Base Discount:</span>
+                <span class="value">₹{{ selectedPolicyDetails.discount }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       }
-    </select>
+
+      <!-- Selling Price -->
+      <div class="form-group">
+        <label class="form-label">
+          <i class="ri-price-tag-3-line"></i>
+          Selling Price
+          @if (formData.status === 'Completed') {
+            <span class="required">*</span>
+          } @else {
+            <small>(Optional)</small>
+          }
+        </label>
+        <div class="input-wrapper">
+          <span class="prefix">₹</span>
+          <input
+            type="number"
+            [(ngModel)]="formData.sellingPrice"
+            placeholder="0.00"
+            [disabled]="isSubmitting"
+            class="form-input"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">
+          <i class="ri-money-dollar-circle-line"></i>
+          Commission
+        </label>
+        <div class="input-wrapper">
+          <span class="prefix">₹</span>
+          <input
+            type="number"
+            [(ngModel)]="formData.commission"
+            placeholder="0"
+            [disabled]="isSubmitting"
+            class="form-input"
+          />
+        </div>
+      </div>
+
+      <!-- Discount (Flat) -->
+      <div class="form-group">
+        <label class="form-label">
+          <i class="ri-coupon-line"></i>
+          Discount (Flat)
+        </label>
+        <div class="input-wrapper">
+          <span class="prefix">₹</span>
+          <input
+            type="number"
+            [(ngModel)]="formData.discount"
+            placeholder="0"
+            [disabled]="isSubmitting"
+            class="form-input"
+          />
+        </div>
+      </div>
+
+      <!-- Note (Mandatory) -->
+      <div class="form-group full-width">
+        <label class="form-label">
+          <i class="ri-sticky-note-line"></i>
+          Update Note <span class="required">*</span>
+        </label>
+        <textarea
+          [(ngModel)]="formData.note"
+          placeholder="Enter a mandatory update note..."
+          [disabled]="isSubmitting"
+          class="form-textarea"
+          rows="3"
+        ></textarea>
+      </div>
+    </div>
   </div>
 
-  @if (formData.status === 'Completed') {
-    <div class="form-group conditional-group slide-down">
-      <label>Selling Price <span class="required">*</span></label>
-      <div class="input-with-prefix">
-        <span class="prefix">₹</span>
-        <input
-          type="number"
-          [(ngModel)]="formData.sellingPrice"
-          placeholder="Enter Final Price"
-          [disabled]="isSubmitting"
-        />
-      </div>
-      <span class="hint text-muted text-xs">Required when marking as Completed</span>
-    </div>
-
-    <div class="form-group conditional-group slide-down">
-      <label>Policy ID <span class="text-muted text-xs">(Optional)</span></label>
-      <input
-        type="text"
-        [(ngModel)]="formData.policyId"
-        placeholder="Enter Sold Policy Object ID"
-        [disabled]="isSubmitting"
-      />
-    </div>
-
-    <div class="form-group conditional-group slide-down">
-      <label>Policy Type ID <span class="text-muted text-xs">(Optional)</span></label>
-      <input
-        type="text"
-        [(ngModel)]="formData.policyTypeId"
-        placeholder="Enter Policy Type Object ID"
-        [disabled]="isSubmitting"
-      />
-    </div>
-  }
-</div>
-
-<div class="dialog-actions">
-  <button class="btn-secondary" (click)="close()" [disabled]="isSubmitting">Cancel</button>
-  <button class="btn-primary" (click)="onSubmit()" [disabled]="isSubmitting">
-    @if (isSubmitting) {
-      Saving...
-    } @else {
-      Save Changes
-    }
-  </button>
+  <div class="dialog-actions">
+    <button class="btn-secondary" (click)="close()" [disabled]="isSubmitting">Cancel</button>
+    <button class="btn-primary" (click)="onSubmit()" [disabled]="isSubmitting">
+      @if (isSubmitting) {
+        <i class="ri-loader-4-line spin"></i> Saving...
+      } @else {
+        Save Changes
+      }
+    </button>
+  </div>
 </div>

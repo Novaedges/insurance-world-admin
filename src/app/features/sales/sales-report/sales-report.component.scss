@@ -1,3 +1,5 @@
+@import '../../masters/admin-creation/admin-creation.component.scss';
+
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -9,91 +11,6 @@
     font-weight: 700;
     color: var(--text-main);
     letter-spacing: -0.025em;
-  }
-}
-
-.filters-panel {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  align-items: end;
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  background: white;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border-color);
-}
-
-.filter-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-
-  label {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--text-muted);
-  }
-
-  input,
-  select {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    background: var(--bg-light);
-    color: var(--text-main);
-    font-size: 0.95rem;
-    transition: all 0.2s;
-
-    &:focus {
-      outline: none;
-      border-color: var(--primary-color);
-      background: white;
-      box-shadow: 0 0 0 3px rgba(63, 94, 150, 0.1);
-    }
-  }
-}
-
-.filter-actions {
-  display: flex !important;
-  flex-direction: row !important; /* Force row to override filter-group */
-  gap: 1rem;
-  align-items: center; /* Vertically center buttons */
-
-  /* Make buttons same height as inputs */
-  button {
-    height: 46px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 1.5rem;
-    white-space: nowrap;
-    border-radius: var(--radius-md);
-    font-weight: 500;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .btn-primary {
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    &:hover {
-      background: var(--primary-hover);
-    }
-  }
-
-  .btn-text {
-    background: transparent;
-    color: var(--text-muted);
-    border: 1px solid var(--border-color);
-    &:hover {
-      border-color: var(--text-muted);
-      color: var(--text-main);
-    }
   }
 }
 
@@ -121,7 +38,6 @@
 
     i {
       font-size: 1.1em;
-      color: var(--text-muted);
     }
   }
 }
@@ -233,30 +149,135 @@
     .font-bold {
       font-weight: 600;
     }
+  }
+}
 
-    /* Status Badge */
-    .badge {
-      padding: 0.35rem 0.75rem;
-      border-radius: 99px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.025em;
+/* Pagination Styles */
+.table-pagination {
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fafc;
+  border-top: 1px solid var(--border-color);
+  gap: 1rem;
+  flex-wrap: wrap;
+}
 
-      &.success {
-        background: #dcfce7;
-        color: #166534;
-      }
-      &.warning {
-        background: #fef9c3;
-        color: #854d0e;
-      }
+.pagination-info {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+
+  span {
+    font-weight: 600;
+    color: var(--text-main);
+  }
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.page-size-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  select {
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: #ffffff;
+    font-size: 0.85rem;
+    cursor: pointer;
+    outline: none;
+
+    &:focus {
+      border-color: var(--primary-color);
     }
   }
 }
 
-@keyframes spin-anim {
-  100% {
-    transform: rotate(360deg);
+.pagination-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  .page-indicator {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-main);
   }
+}
+
+.pagination-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: #ffffff;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    background: #f1f7ff;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #f1f5f9;
+  }
+}
+
+.fancy-loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.fancy-loader {
+  display: flex;
+  gap: 0.5rem;
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    animation: bounce 0.5s ease-in-out infinite alternate;
+
+    &:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+    &:nth-child(3) {
+      animation-delay: 0.2s;
+    }
+  }
+}
+
+@keyframes bounce {
+  to {
+    transform: translateY(-10px);
+  }
+}
+
+.fancy-loader-text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 500;
 }

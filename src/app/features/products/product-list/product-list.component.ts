@@ -37,6 +37,11 @@ export class ProductListComponent implements OnInit {
   isLoadingInfo = false;
   infoData: any = null;
 
+  // Pagination
+  totalItems = 0;
+  pageSize = 10;
+  currentPage = 1;
+
   constructor(
     private productService: ProductService,
     private snackbarService: SnackbarService,
@@ -50,7 +55,11 @@ export class ProductListComponent implements OnInit {
   loadData(showNotification = false) {
     this.isLoading = true;
     this.cdr.detectChanges();
-    this.productService.getProducts(this.isActiveFilter).subscribe({
+
+    const limit = this.pageSize;
+    const skip = (this.currentPage - 1) * this.pageSize;
+
+    this.productService.getProducts(this.isActiveFilter, limit, skip).subscribe({
       next: (response: any) => {
         this.isLoading = false;
         if (response.status && response.result) {
@@ -58,25 +67,39 @@ export class ProductListComponent implements OnInit {
             ...item,
             status: item.isActive !== false ? 'Active' : 'Inactive',
           }));
+
+          // Fallback if totalCount is not provided:
+          // If we got a full page, assume there might be more.
+          this.totalItems = response.totalCount || 0;
+
           if (showNotification) {
             this.snackbarService.success('Data refreshed successfully');
           }
         } else {
           this.items = [];
+          this.totalItems = 0;
         }
         this.cdr.detectChanges();
       },
       error: () => {
         this.isLoading = false;
         this.items = [];
+        this.totalItems = 0;
         this.snackbarService.error('Failed to load products');
         this.cdr.detectChanges();
       },
     });
   }
 
+  onPageChange(event: { page: number; limit: number }) {
+    this.currentPage = event.page;
+    this.pageSize = event.limit;
+    this.loadData();
+  }
+
   onStatusFilterChange(status: boolean) {
     this.isActiveFilter = status;
+    this.currentPage = 1; // Reset to first page on filter change
     this.loadData();
   }
 

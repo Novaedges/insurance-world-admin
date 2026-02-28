@@ -20,11 +20,13 @@ export class SalesReportComponent implements OnInit {
   items: SaleReportItem[] = [];
 
   // API Pagination & Filters
-  limit = 10;
-  skip = 0;
+  totalItems = 0;
+  pageSize = 10;
+  currentPage = 1;
   searchTerm = '';
   salesExecutiveId = ''; // Adjust if you have a dropdown for this later
 
+  pageSizeOptions = [10, 20, 50, 100];
   isLoading = false;
 
   isInfoModalOpen = false;
@@ -38,33 +40,38 @@ export class SalesReportComponent implements OnInit {
 
   loadData() {
     this.isLoading = true;
+    const skip = (this.currentPage - 1) * this.pageSize;
+
     this.salesService
-      .getSales(this.limit, this.skip, this.searchTerm, this.salesExecutiveId)
+      .getSales(this.pageSize, skip, this.searchTerm, this.salesExecutiveId)
       .subscribe({
         next: (res) => {
           if (res.status && res.result) {
             this.items = res.result;
+            this.totalItems = res.totalCount || 0;
           } else {
             this.items = [];
+            this.totalItems = 0;
           }
           this.isLoading = false;
         },
         error: (err) => {
           console.error('Failed to load sales report', err);
           this.items = [];
+          this.totalItems = 0;
           this.isLoading = false;
         },
       });
   }
 
   onRefresh() {
-    this.skip = 0;
+    this.currentPage = 1;
     this.loadData();
   }
 
   onSearch(event: any) {
     this.searchTerm = event.target.value;
-    this.skip = 0; // Reset pagination on search
+    this.currentPage = 1; // Reset pagination on search
     this.loadData();
   }
 
@@ -78,17 +85,33 @@ export class SalesReportComponent implements OnInit {
     this.selectedSaleId = null;
   }
 
-  // Next Page / Prev Page helpers
-  nextPage() {
-    this.skip += this.limit;
+  // Pagination Handlers
+  onPageChange(event: { page: number; limit: number }) {
+    this.currentPage = event.page;
+    this.pageSize = event.limit;
     this.loadData();
   }
 
-  prevPage() {
-    if (this.skip >= this.limit) {
-      this.skip -= this.limit;
-      this.loadData();
+  get startIndex(): number {
+    return (this.currentPage - 1) * this.pageSize + 1;
+  }
+
+  get endIndex(): number {
+    const end = this.currentPage * this.pageSize;
+    return this.totalItems > 0
+      ? Math.min(end, this.totalItems)
+      : this.startIndex + this.items.length - 1;
+  }
+
+  get hasPrev(): boolean {
+    return this.currentPage > 1;
+  }
+
+  get hasNext(): boolean {
+    if (this.totalItems > 0) {
+      return this.currentPage * this.pageSize < this.totalItems;
     }
+    return this.items.length === this.pageSize;
   }
 
   exportData(format: 'csv' | 'pdf' | 'excel') {

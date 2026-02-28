@@ -60,6 +60,35 @@
   }
 
   <div class="form-group">
+    <label>PAN Number (Optional)</label>
+    <input type="text" formControlName="panNumber" placeholder="Enter PAN number" />
+  </div>
+
+  <div class="form-section-title full-width">Bank Details (Optional)</div>
+
+  <div class="form-group-row">
+    <div class="form-group">
+      <label>Bank Name</label>
+      <input type="text" formControlName="bankName" placeholder="Enter bank name" />
+    </div>
+    <div class="form-group">
+      <label>Account Number</label>
+      <input type="text" formControlName="accountNumber" placeholder="Enter account number" />
+    </div>
+  </div>
+
+  <div class="form-group-row">
+    <div class="form-group">
+      <label>IFSC Code</label>
+      <input type="text" formControlName="ifscCode" placeholder="Enter IFSC code" />
+    </div>
+    <div class="form-group">
+      <label>Branch Name</label>
+      <input type="text" formControlName="branchName" placeholder="Enter branch name" />
+    </div>
+  </div>
+
+  <div class="form-group">
     <label>Status</label>
     <select formControlName="isActive">
       <option [ngValue]="true">Active</option>

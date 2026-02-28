@@ -27,6 +27,13 @@ export class InsuranceCategoryComponent implements OnInit {
   isLoading = false;
   isActiveFilter: boolean = true;
   selectedItem: InsuranceCategory | null = null;
+  isInfoModalOpen = false;
+  infoData: any = null;
+
+  // Pagination
+  totalItems = 0;
+  pageSize = 10;
+  currentPage = 1;
 
   constructor(
     private categoryService: InsuranceCategoryService,
@@ -40,22 +47,36 @@ export class InsuranceCategoryComponent implements OnInit {
 
   loadData() {
     this.isLoading = true;
-    this.categoryService.getCategories(this.isActiveFilter).subscribe((response: any) => {
-      this.isLoading = false;
-      if (response.status && response.result) {
-        this.items = response.result.map((item: any) => ({
-          ...item,
-          status: item.isActive ? 'Active' : 'Inactive',
-        }));
-      } else {
-        this.items = [];
-      }
-      this.cdr.detectChanges();
-    });
+    const limit = this.pageSize;
+    const skip = (this.currentPage - 1) * this.pageSize;
+
+    this.categoryService
+      .getCategories(this.isActiveFilter, limit, skip)
+      .subscribe((response: any) => {
+        this.isLoading = false;
+        if (response.status && response.result) {
+          this.items = response.result.map((item: any) => ({
+            ...item,
+            status: item.isActive ? 'Active' : 'Inactive',
+          }));
+          this.totalItems = response.totalCount || 0;
+        } else {
+          this.items = [];
+          this.totalItems = 0;
+        }
+        this.cdr.detectChanges();
+      });
+  }
+
+  onPageChange(event: { page: number; limit: number }) {
+    this.currentPage = event.page;
+    this.pageSize = event.limit;
+    this.loadData();
   }
 
   onStatusFilterChange(status: boolean) {
     this.isActiveFilter = status;
+    this.currentPage = 1;
     this.loadData();
   }
 
@@ -67,6 +88,16 @@ export class InsuranceCategoryComponent implements OnInit {
   closeForm() {
     this.isModalOpen = false;
     this.selectedItem = null;
+  }
+
+  onView(item: any) {
+    this.infoData = item;
+    this.isInfoModalOpen = true;
+  }
+
+  closeInfoModal() {
+    this.isInfoModalOpen = false;
+    this.infoData = null;
   }
 
   onSave(formData: FormData) {

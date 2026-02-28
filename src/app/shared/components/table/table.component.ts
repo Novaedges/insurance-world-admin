@@ -19,9 +19,13 @@ export interface Column {
   styleUrls: ['./table.component.scss'],
 })
 export class TableComponent {
+  private _data: any[] = [];
+  filteredData: any[] = [];
+  searchTerm: string = '';
+
   @Input() set data(value: any[]) {
-    this._data = value;
-    this.filteredData = [...value];
+    this._data = value || [];
+    this.filterData();
   }
   get data(): any[] {
     return this._data;
@@ -29,10 +33,16 @@ export class TableComponent {
 
   @Input() columns: Column[] = [];
   @Input() actions: boolean = true;
-  @Input() hiddenActions: string[] = []; // 'edit', 'delete', 'password', 'view'
+  @Input() hiddenActions: string[] = [];
   @Input() isLoading: boolean = false;
   @Input() showStatusFilter: boolean = false;
   @Input() statusFilterValue: 'true' | 'false' = 'true';
+
+  // Pagination Inputs
+  @Input() totalItems: number = 0;
+  @Input() pageSize: number = 10;
+  @Input() currentPage: number = 1;
+  @Input() showPagination: boolean = true;
 
   @Output() edit = new EventEmitter<any>();
   @Output() delete = new EventEmitter<any>();
@@ -41,9 +51,12 @@ export class TableComponent {
   @Output() refresh = new EventEmitter<void>();
   @Output() statusFilterChange = new EventEmitter<boolean>();
 
-  _data: any[] = [];
-  filteredData: any[] = [];
-  searchTerm: string = '';
+  // Pagination Output
+  @Output() pageChange = new EventEmitter<{ page: number; limit: number }>();
+
+  pageSizeOptions = [10, 20, 50, 100];
+
+  constructor(private confirmationService: ConfirmationService) {}
 
   onStatusFilterChange(event: any) {
     const isActive = event.target.value === 'true';
@@ -68,8 +81,6 @@ export class TableComponent {
       });
     });
   }
-
-  constructor(private confirmationService: ConfirmationService) {}
 
   onRefresh() {
     this.refresh.emit();
@@ -99,5 +110,51 @@ export class TableComponent {
 
   onChangePassword(row: any) {
     this.changePassword.emit(row);
+  }
+
+  // Pagination Methods
+  onPageSizeChange(event: any) {
+    const newLimit = parseInt(event.target.value, 10);
+    this.pageChange.emit({ page: 1, limit: newLimit });
+  }
+
+  onPrevPage() {
+    if (this.currentPage > 1) {
+      this.pageChange.emit({ page: this.currentPage - 1, limit: this.pageSize });
+    }
+  }
+
+  onNextPage() {
+    // If totalItems is 0, we assume there's a next page if current data length equals pageSize
+    const hasNext =
+      this.totalItems > 0
+        ? this.currentPage * this.pageSize < this.totalItems
+        : this._data.length === this.pageSize;
+
+    if (hasNext) {
+      this.pageChange.emit({ page: this.currentPage + 1, limit: this.pageSize });
+    }
+  }
+
+  get startIndex(): number {
+    return (this.currentPage - 1) * this.pageSize + 1;
+  }
+
+  get endIndex(): number {
+    const end = this.currentPage * this.pageSize;
+    return this.totalItems > 0
+      ? Math.min(end, this.totalItems)
+      : this.startIndex + this._data.length - 1;
+  }
+
+  get hasPrev(): boolean {
+    return this.currentPage > 1;
+  }
+
+  get hasNext(): boolean {
+    if (this.totalItems > 0) {
+      return this.currentPage * this.pageSize < this.totalItems;
+    }
+    return this._data.length === this.pageSize;
   }
 }

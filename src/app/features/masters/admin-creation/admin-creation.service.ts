@@ -14,10 +14,11 @@ export class AdminCreationService {
 
   constructor(private http: HttpClient) {}
 
-  getAdmins(isActive?: boolean): Observable<any> {
-    let params: any = {};
+  getAdmins(isActive?: boolean, limit: number = 10, skip: number = 0): Observable<any> {
+    let params = new HttpParams().set('limit', limit.toString()).set('skip', skip.toString());
+
     if (isActive !== undefined) {
-      params.active = isActive;
+      params = params.set('active', isActive.toString());
     }
     return this.http.get<any>(environment.apiUrl + '/api/web/iw/module/admin/v1', { params });
   }

@@ -97,6 +97,11 @@ export interface Agent {
   password?: string;
   email?: string;
   agentCode: string; // Readonly in edit, but part of model
+  bankName?: string;
+  accountNumber?: string;
+  ifscCode?: string;
+  branchName?: string;
+  panNumber?: string;
   status: 'Active' | 'Inactive';
   isActive?: boolean;
   _id?: string;

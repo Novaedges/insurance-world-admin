@@ -15,9 +15,14 @@
     [data]="companies"
     [columns]="columns"
     [isLoading]="loading"
-    [hiddenActions]="['password', 'view']"
+    [hiddenActions]="['password']"
     [showStatusFilter]="true"
+    [totalItems]="totalItems"
+    [pageSize]="pageSize"
+    [currentPage]="currentPage"
+    (pageChange)="onPageChange($event)"
     (statusFilterChange)="onStatusFilterChange($event)"
+    (view)="onView($event)"
     (edit)="openForm($event)"
     (delete)="onDelete($event)"
     (refresh)="loadData()"
@@ -34,4 +39,52 @@
     (save)="onSave($event)"
     (cancel)="closeForm()"
   ></app-company-form>
+</app-dialog>
+
+<app-dialog [isOpen]="isInfoModalOpen" title="Company Information" (closeEvent)="closeInfoModal()">
+  <div class="modern-info-container" *ngIf="infoData">
+    <div class="info-header-card">
+      <div class="header-title-box">
+        <h3>{{ infoData.companyName }}</h3>
+        <p>{{ infoData.website || 'No website provided' }}</p>
+      </div>
+      <div>
+        <span class="badge-modern" [ngClass]="infoData.isActive ? 'active' : 'inactive'">
+          {{ infoData.isActive ? 'Active' : 'Inactive' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="info-grid-modern">
+      <div class="info-card">
+        <div class="card-title"><i class="ri-contacts-line"></i> Contact Details</div>
+        <div class="card-item">
+          <span class="card-label">Email</span>
+          <span class="card-value">{{ infoData.email || 'N/A' }}</span>
+        </div>
+        <div class="card-item">
+          <span class="card-label">Contact Number</span>
+          <span class="card-value">{{ infoData.contactNumber || 'N/A' }}</span>
+        </div>
+        <div class="card-item">
+          <span class="card-label">Helpline Number</span>
+          <span class="card-value">{{ infoData.helplineNumber || 'N/A' }}</span>
+        </div>
+      </div>
+
+      <div class="info-card" style="grid-column: 1 / -1">
+        <div class="card-title"><i class="ri-map-pin-line"></i> Address</div>
+        <div class="card-item">
+          <span class="card-value">{{ infoData.address || 'N/A' }}</span>
+        </div>
+      </div>
+
+      <div class="info-card" style="grid-column: 1 / -1">
+        <div class="card-title"><i class="ri-file-text-line"></i> Description</div>
+        <div class="card-item">
+          <span class="card-value">{{ infoData.description || 'No description available.' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </app-dialog>

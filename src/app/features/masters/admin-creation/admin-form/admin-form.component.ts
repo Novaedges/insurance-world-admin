@@ -41,13 +41,13 @@ export class AdminFormComponent implements OnChanges {
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
-      id: [''],
+      _id: [''],
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       phoneNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
       password: [''],
-      roleType: ['SALES', Validators.required],
+      roleType: ['ADMIN', Validators.required],
       status: ['Active', Validators.required],
       componentAccess: [[]],
     });
@@ -55,11 +55,13 @@ export class AdminFormComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['admin'] && this.admin) {
-      this.form.patchValue(this.admin);
+      const patchData = { ...this.admin };
+      if (patchData.id && !patchData._id) patchData._id = patchData.id;
+      this.form.patchValue(patchData);
       this.form.get('password')?.clearValidators();
       this.form.get('password')?.updateValueAndValidity();
     } else {
-      this.form.reset({ roleType: 'SALES', status: 'Active', componentAccess: [] });
+      this.form.reset({ roleType: 'ADMIN', status: 'Active', componentAccess: [] });
       this.form.get('password')?.setValidators([Validators.required, Validators.minLength(8)]);
       this.form.get('password')?.updateValueAndValidity();
     }
