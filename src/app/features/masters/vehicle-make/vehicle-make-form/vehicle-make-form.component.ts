@@ -21,11 +21,14 @@ import { InsuranceCategoryService } from '../../insurance-category/insurance-cat
 })
 export class VehicleMakeFormComponent implements OnInit, OnChanges {
   @Input() data: VehicleMake | null = null;
-  @Output() save = new EventEmitter<any>();
+  @Input() isSubmitting: boolean = false;
+  @Output() save = new EventEmitter<FormData>();
   @Output() cancel = new EventEmitter<void>();
 
   form: FormGroup;
   categories: InsuranceCategory[] = [];
+  selectedFile: File | null = null;
+  imagePreview: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -57,14 +60,42 @@ export class VehicleMakeFormComponent implements OnInit, OnChanges {
         ...this.data,
         isActive: this.data.isActive ?? true,
       });
+      this.imagePreview = this.data.logo || null;
     } else {
       this.form.reset({ isActive: true });
+      this.imagePreview = null;
+    }
+    this.selectedFile = null;
+  }
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result as string;
+      };
+      reader.readAsDataURL(file);
     }
   }
 
   onSubmit() {
     if (this.form.valid) {
-      this.save.emit(this.form.value);
+      const formData = new FormData();
+      const formValue = this.form.value;
+
+      Object.keys(formValue).forEach((key) => {
+        if (formValue[key] !== null && formValue[key] !== undefined) {
+          formData.append(key, formValue[key]);
+        }
+      });
+
+      if (this.selectedFile) {
+        formData.append('logo', this.selectedFile);
+      }
+
+      this.save.emit(formData);
     }
   }
 

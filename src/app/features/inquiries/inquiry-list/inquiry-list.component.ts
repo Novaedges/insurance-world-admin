@@ -21,19 +21,16 @@ import { InquiryReportItem } from '../../../core/models/inquiry.models';
     InquiryUpdateDialogComponent,
   ],
   templateUrl: './inquiry-list.component.html',
-  styleUrls: [
-    '../../masters/admin-creation/admin-creation.component.scss',
-    '../../../shared/components/table/table.component.scss',
-    './inquiry-list.component.scss',
-  ],
+  styleUrls: ['./inquiry-list.component.scss'],
 })
 export class InquiryListComponent implements OnInit {
   items: InquiryReportItem[] = [];
   isLoading = true;
 
   // Pagination
-  limit = 10;
-  skip = 0;
+  totalItems = 0;
+  pageSize = 10;
+  currentPage = 1;
 
   // Modals state
   selectedInquiryId: string | null = null;
@@ -44,6 +41,7 @@ export class InquiryListComponent implements OnInit {
   isUpdateModalOpen = false;
 
   // Filters & State
+  searchTerm = '';
   selectedStatuses: string[] = ['Pending'];
   availableStatuses = ['Pending', 'On Going', 'Completed', 'Not Interested'];
   apiMessage: string = '';
@@ -84,7 +82,7 @@ export class InquiryListComponent implements OnInit {
     } else {
       this.selectedStatuses.push(status);
     }
-    this.skip = 0;
+    this.currentPage = 1;
     this.loadData();
   }
 
@@ -99,15 +97,19 @@ export class InquiryListComponent implements OnInit {
       return;
     }
 
-    this.inquiryService.getInquiries(this.limit, this.skip, this.selectedStatuses).subscribe({
+    const skip = (this.currentPage - 1) * this.pageSize;
+
+    this.inquiryService.getInquiries(this.pageSize, skip, this.selectedStatuses).subscribe({
       next: (res) => {
         if (res.status && res.result) {
           this.items = res.result;
+          this.totalItems = res.totalCount || 0;
           if (this.items.length === 0) {
             this.apiMessage = res.msg || 'No data found.';
           }
         } else {
           this.items = [];
+          this.totalItems = 0;
           this.apiMessage = res.msg || 'No data found.';
         }
         this.isLoading = false;
@@ -115,6 +117,7 @@ export class InquiryListComponent implements OnInit {
       error: (err) => {
         console.error('Failed to fetch inquiries', err);
         this.items = [];
+        this.totalItems = 0;
         this.apiMessage = err.error?.msg || 'Failed to load inquiries.';
         this.isLoading = false;
       },
@@ -122,23 +125,44 @@ export class InquiryListComponent implements OnInit {
   }
 
   onRefresh() {
-    this.skip = 0;
+    this.currentPage = 1;
     this.loadData();
   }
 
-  nextPage() {
-    if (this.items.length === this.limit) {
-      this.skip += this.limit;
-      this.loadData();
-    }
+  onSearch(event: any) {
+    this.searchTerm = event.target.value;
+    // Note: Inquiry API currently doesn't support search parameter based on service definition
+    // If it did, we would pass it to loadData()
+    this.currentPage = 1;
+    this.loadData();
   }
 
-  prevPage() {
-    if (this.skip >= this.limit) {
-      this.skip -= this.limit;
-      if (this.skip < 0) this.skip = 0;
-      this.loadData();
+  onPageChange(event: { page: number; limit: number }) {
+    this.currentPage = event.page;
+    this.pageSize = event.limit;
+    this.loadData();
+  }
+
+  get startIndex(): number {
+    return (this.currentPage - 1) * this.pageSize + 1;
+  }
+
+  get endIndex(): number {
+    const end = this.currentPage * this.pageSize;
+    return this.totalItems > 0
+      ? Math.min(end, this.totalItems)
+      : this.startIndex + this.items.length - 1;
+  }
+
+  get hasPrev(): boolean {
+    return this.currentPage > 1;
+  }
+
+  get hasNext(): boolean {
+    if (this.totalItems > 0) {
+      return this.currentPage * this.pageSize < this.totalItems;
     }
+    return this.items.length === this.pageSize;
   }
 
   // Info Modal

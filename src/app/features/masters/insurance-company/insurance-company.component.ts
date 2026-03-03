@@ -6,6 +6,7 @@ import { TableComponent, Column } from '../../../shared/components/table/table.c
 import { DialogComponent } from '../../../shared/components/dialog/dialog.component';
 import { CompanyFormComponent } from './company-form/company-form.component';
 import { SnackbarService } from '../../../core/services/snackbar.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-insurance-company',
@@ -17,6 +18,7 @@ import { SnackbarService } from '../../../core/services/snackbar.service';
 export class InsuranceCompanyComponent implements OnInit {
   companies: InsuranceCompany[] = [];
   loading = false;
+  isSubmitting = false;
   isDialogOpen = false;
   isActiveFilter: boolean = true;
   selectedItem: InsuranceCompany | null = null;
@@ -107,13 +109,16 @@ export class InsuranceCompanyComponent implements OnInit {
     this.infoData = null;
   }
 
-  onSave(item: any) {
-    const isEditing = !!(item._id || item.companyId);
-    const saveObservable = isEditing
-      ? this.companyService.updateCompany(item)
-      : this.companyService.createCompany(item);
+  onSave(formData: FormData) {
+    if (this.isSubmitting) return;
+    this.isSubmitting = true;
 
-    saveObservable.subscribe({
+    const isEditing = !!(formData.get('_id') || formData.get('companyId'));
+    const saveObservable = isEditing
+      ? this.companyService.updateCompany(formData)
+      : this.companyService.createCompany(formData);
+
+    saveObservable.pipe(finalize(() => (this.isSubmitting = false))).subscribe({
       next: (res: any) => {
         if (res.status) {
           this.snackbar.show(`Company ${isEditing ? 'updated' : 'added'} successfully`, 'success');

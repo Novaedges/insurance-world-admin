@@ -20,11 +20,11 @@ export class PolicyTypeService {
     return this.http.get<any>(this.apiUrl, { params });
   }
 
-  createPolicyType(data: any): Observable<any> {
+  createPolicyType(data: FormData): Observable<any> {
     return this.http.post<any>(this.apiUrl, data);
   }
 
-  updatePolicyType(data: any): Observable<any> {
+  updatePolicyType(data: FormData): Observable<any> {
     return this.http.put<any>(this.apiUrl, data);
   }
 

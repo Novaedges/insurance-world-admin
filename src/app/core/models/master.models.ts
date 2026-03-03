@@ -3,7 +3,7 @@ export interface Admin {
   firstName: string;
   lastName: string;
   email: string;
-  roleType: 'ADMIN' | 'SALES' | 'SUPER_ADMIN'; // Adjust based on actual API enum values if known, starting with user provided 'ADMIN'
+  roleType: 'ADMIN' | 'SALES' | 'SUPER_ADMIN';
   phoneNumber: string;
   password?: string; // Optional for updates maybe?
   status: 'Active' | 'Inactive';
@@ -34,6 +34,7 @@ export interface VehicleMake {
   category?: 'Bike' | 'Car'; // Legacy, might be removed later if strictly using types
   isActive?: boolean;
   status?: string; // For UI display
+  logo?: string;
   _id?: string;
 }
 
@@ -48,6 +49,7 @@ export interface VehicleModel {
   engineCC?: string; // Optional
   isActive?: boolean;
   status?: string; // For UI display
+  logo?: string;
   _id?: string;
 }
 
@@ -82,6 +84,7 @@ export interface InsuranceCompany {
   website?: string;
   status?: 'Active' | 'Inactive'; // UI status
   isActive?: boolean; // API status
+  logo?: string;
   createdAt?: string;
   updatedAt?: string;
 
@@ -98,10 +101,16 @@ export interface Agent {
   email?: string;
   agentCode: string; // Readonly in edit, but part of model
   bankName?: string;
-  accountNumber?: string;
+  bankAccNumber?: string;
   ifscCode?: string;
-  branchName?: string;
+  bankBranch?: string;
   panNumber?: string;
+  bankDetails?: {
+    bankName?: string;
+    bankAccNumber?: string;
+    ifscCode?: string;
+    bankBranch?: string;
+  };
   status: 'Active' | 'Inactive';
   isActive?: boolean;
   _id?: string;
@@ -114,6 +123,7 @@ export interface PolicyType {
   description?: string;
   coverage?: string[];
   isActive?: boolean;
+  logo?: string;
   createdAt?: string;
   updatedAt?: string;
 }

@@ -6,6 +6,7 @@ import { VehicleModelFormComponent } from './vehicle-model-form/vehicle-model-fo
 import { VehicleModelService } from './vehicle-model.service';
 import { VehicleModel } from '../../../core/models/master.models';
 import { SnackbarService } from '../../../core/services/snackbar.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-vehicle-model',
@@ -24,6 +25,7 @@ export class VehicleModelComponent implements OnInit {
   ];
 
   isModalOpen = false;
+  isSubmitting = false;
   isLoading = false;
   isActiveFilter: boolean = true;
   selectedItem: VehicleModel | null = null;
@@ -100,12 +102,16 @@ export class VehicleModelComponent implements OnInit {
     this.infoData = null;
   }
 
-  onSave(item: any) {
-    const request = item._id
-      ? this.modelService.updateModel(item)
-      : this.modelService.createModel((({ _id, ...rest }) => rest)(item));
+  onSave(formData: FormData) {
+    if (this.isSubmitting) return;
+    this.isSubmitting = true;
 
-    request.subscribe({
+    const id = formData.get('_id');
+    const request = id
+      ? this.modelService.updateModel(formData)
+      : this.modelService.createModel(formData);
+
+    request.pipe(finalize(() => (this.isSubmitting = false))).subscribe({
       next: (response: any) => {
         if (response.status) {
           this.loadData();

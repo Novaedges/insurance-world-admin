@@ -20,11 +20,11 @@ export class VehicleModelService {
     return this.http.get<any>(this.apiUrl, { params });
   }
 
-  createModel(data: any): Observable<any> {
+  createModel(data: FormData): Observable<any> {
     return this.http.post<any>(this.apiUrl, data);
   }
 
-  updateModel(data: any): Observable<any> {
+  updateModel(data: FormData): Observable<any> {
     return this.http.put<any>(this.apiUrl, data);
   }
 

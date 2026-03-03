@@ -173,12 +173,12 @@ export class ProductListComponent implements OnInit {
     this.infoData = null;
   }
 
-  onSave(item: any) {
+  onSave(formData: FormData) {
     if (this.isSubmitting) return;
     this.isSubmitting = true;
 
     this.productService
-      .saveProduct(item)
+      .saveProduct(formData)
       .pipe(finalize(() => (this.isSubmitting = false)))
       .subscribe({
         next: (response: any) => {

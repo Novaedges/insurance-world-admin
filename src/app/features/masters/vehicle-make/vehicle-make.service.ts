@@ -20,11 +20,11 @@ export class VehicleMakeService {
     return this.http.get<any>(this.apiUrl, { params });
   }
 
-  createMake(data: any): Observable<any> {
+  createMake(data: FormData): Observable<any> {
     return this.http.post<any>(this.apiUrl, data);
   }
 
-  updateMake(data: any): Observable<any> {
+  updateMake(data: FormData): Observable<any> {
     return this.http.put<any>(this.apiUrl, data);
   }
 

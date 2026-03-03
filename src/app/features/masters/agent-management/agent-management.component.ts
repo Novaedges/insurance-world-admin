@@ -5,7 +5,7 @@ import { TableComponent, Column } from '../../../shared/components/table/table.c
 import { DialogComponent } from '../../../shared/components/dialog/dialog.component';
 import { AgentFormComponent } from './agent-form/agent-form.component';
 import { SnackbarService } from '../../../core/services/snackbar.service';
-import { finalize } from 'rxjs/operators';
+import { finalize } from 'rxjs';
 import { AgentService } from './agent.service';
 
 @Component({
@@ -18,6 +18,7 @@ import { AgentService } from './agent.service';
 export class AgentManagementComponent implements OnInit {
   agents: Agent[] = [];
   loading = false;
+  isSubmitting = false;
   isDialogOpen = false;
   isActiveFilter: boolean = true;
   selectedItem: Agent | null = null;
@@ -61,9 +62,13 @@ export class AgentManagementComponent implements OnInit {
         }),
       )
       .subscribe((success: any) => {
-        const data = success.result || [];
+        const data = success.result || success.data || [];
         this.agents = data.map((item: any) => ({
           ...item,
+          bankAccNumber: item.bankAccNumber || item.bankDetails?.bankAccNumber,
+          bankBranch: item.bankBranch || item.bankDetails?.bankBranch,
+          bankName: item.bankName || item.bankDetails?.bankName,
+          ifscCode: item.ifscCode || item.bankDetails?.ifscCode,
           status: item.isActive ? 'Active' : 'Inactive',
         }));
         this.totalItems = success.totalCount || 0;
@@ -91,6 +96,10 @@ export class AgentManagementComponent implements OnInit {
           const agentDetails = Array.isArray(data) ? data[0] : data;
           this.selectedItem = {
             ...agentDetails,
+            bankAccNumber: agentDetails.bankAccNumber || agentDetails.bankDetails?.bankAccNumber,
+            bankBranch: agentDetails.bankBranch || agentDetails.bankDetails?.bankBranch,
+            bankName: agentDetails.bankName || agentDetails.bankDetails?.bankName,
+            ifscCode: agentDetails.ifscCode || agentDetails.bankDetails?.ifscCode,
             status: agentDetails.isActive ? 'Active' : 'Inactive',
             _id: agentDetails._id || agentDetails.id,
           };
@@ -120,19 +129,35 @@ export class AgentManagementComponent implements OnInit {
   }
 
   onSave(item: Agent) {
-    if (item._id) {
-      this.agentService.updateAgent(item).subscribe(() => {
-        this.snackbar.success('Agent updated successfully');
+    if (this.isSubmitting) return;
+    this.isSubmitting = true;
+
+    // Ensure bank details are nested for the API payload
+    const payload = {
+      ...item,
+      bankDetails: {
+        bankName: item.bankName,
+        bankAccNumber: item.bankAccNumber,
+        ifscCode: item.ifscCode,
+        bankBranch: item.bankBranch,
+      },
+    };
+
+    const request = item._id
+      ? this.agentService.updateAgent(payload)
+      : this.agentService.createAgent(payload);
+
+    request.pipe(finalize(() => (this.isSubmitting = false))).subscribe({
+      next: () => {
+        this.snackbar.success(`Agent ${item._id ? 'updated' : 'added'} successfully`);
         this.loadData();
         this.closeForm();
-      });
-    } else {
-      this.agentService.createAgent(item).subscribe(() => {
-        this.snackbar.success('Agent added successfully');
-        this.loadData();
-        this.closeForm();
-      });
-    }
+      },
+      error: (err) => {
+        console.error('Save error:', err);
+        this.snackbar.error(err.error?.msg || 'Failed to save agent');
+      },
+    });
   }
 
   onDelete(item: Agent) {

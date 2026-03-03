@@ -12,6 +12,7 @@ import { Agent } from '../../../../core/models/master.models';
 })
 export class AgentFormComponent implements OnChanges {
   @Input() agent: Agent | null = null;
+  @Input() isSubmitting: boolean = false;
   @Output() save = new EventEmitter<Agent>();
   @Output() cancel = new EventEmitter<void>();
 
@@ -27,9 +28,9 @@ export class AgentFormComponent implements OnChanges {
       password: ['', Validators.required],
       agentCode: ['', Validators.required],
       bankName: [''],
-      accountNumber: [''],
+      bankAccNumber: [''],
       ifscCode: [''],
-      branchName: [''],
+      bankBranch: [''],
       panNumber: [''],
       isActive: [true, Validators.required],
     });

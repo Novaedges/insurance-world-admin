@@ -1,13 +1,5 @@
 <div class="page-header">
   <h2>Sales Reports</h2>
-  <div class="export-actions">
-    <button class="btn-secondary" (click)="exportData('csv')">
-      <i class="ri-file-excel-2-line"></i> Export CSV
-    </button>
-    <button class="btn-secondary" (click)="exportData('pdf')">
-      <i class="ri-file-pdf-line"></i> Export PDF
-    </button>
-  </div>
 </div>
 
 <!-- Sales Table -->
@@ -17,71 +9,95 @@
       <i class="ri-search-line"></i>
       <input type="text" placeholder="Search by Reg No, Name..." (change)="onSearch($event)" />
     </div>
-    <div class="action-buttons">
+
+    <div class="header-actions-right">
+      <div class="export-actions" style="margin-right: 0.5rem">
+        <button class="btn-refresh" (click)="exportData('csv')" title="Export CSV">
+          <i class="ri-file-excel-2-line"></i>
+        </button>
+        <button class="btn-refresh" (click)="exportData('pdf')" title="Export PDF">
+          <i class="ri-file-pdf-line"></i>
+        </button>
+      </div>
+
       <button class="btn-refresh" (click)="onRefresh()" title="Refresh Data">
         <i class="ri-refresh-line"></i>
       </button>
     </div>
   </div>
 
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th>Reg No</th>
-        <th>Customer</th>
-        <th>Phone</th>
-        <th>Policy</th>
-        <th>Vehicle</th>
-        <th>Agent</th>
-        <th>Date</th>
-        <th class="text-center">Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      @if (isLoading) {
+  <div class="table-scroll-wrapper">
+    <table class="data-table">
+      <thead>
         <tr>
-          <td colspan="8" class="text-center p-5">
-            <div class="fancy-loader-container">
-              <div class="fancy-loader">
-                <div class="dot"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
-              </div>
-              <p class="fancy-loader-text">Loading sales data...</p>
-            </div>
-          </td>
+          <th>Reg No</th>
+          <th>Customer</th>
+          <th>Phone</th>
+          <th>Policy</th>
+          <th>Vehicle</th>
+          <th>Agent</th>
+          <th>Date</th>
+          <th class="text-center">Action</th>
         </tr>
-      } @else {
-        @for (sale of items; track sale._id) {
+      </thead>
+      <tbody>
+        @if (isLoading) {
           <tr>
-            <td class="font-bold text-primary">{{ sale.regNumber }}</td>
-            <td>{{ sale.name }}</td>
-            <td>{{ sale.phoneNumber }}</td>
-            <td>
-              {{ sale.policyName || sale.policyDetails.policyName }} <br />
-              <small class="text-muted">{{ sale.policyDetails.insuranceCompany }}</small>
-            </td>
-            <td>
-              {{ sale.manufacturerDetails.name }} {{ sale.vehicleModelDetails.name }}<br />
-              <small class="text-muted">{{ sale.vehicleTypeDetails.name }}</small>
-            </td>
-            <td>{{ sale.agentName }}</td>
-            <td>{{ sale.createdAt }}</td>
-            <td class="text-center">
-              <button class="btn-icon" (click)="openInfo(sale)" title="View Details">
-                <i class="ri-information-line"></i>
-              </button>
+            <td colspan="8" class="text-center p-5">
+              <div class="fancy-loader-container">
+                <div class="fancy-loader">
+                  <div class="dot"></div>
+                  <div class="dot"></div>
+                  <div class="dot"></div>
+                </div>
+                <p class="fancy-loader-text">Loading sales data...</p>
+              </div>
             </td>
           </tr>
+        } @else {
+          @for (sale of items; track sale._id) {
+            <tr>
+              <td class="font-bold text-primary">{{ sale.regNumber }}</td>
+              <td>{{ sale.name }}</td>
+              <td>{{ sale.phoneNumber }}</td>
+              <td>
+                {{ sale.policyName || sale.policyDetails.policyName }} <br />
+                <small class="text-muted">{{ sale.policyDetails.insuranceCompany }}</small>
+              </td>
+              <td>
+                {{ sale.manufacturerDetails.name }} {{ sale.vehicleModelDetails.name }}<br />
+                <small class="text-muted">{{ sale.vehicleTypeDetails.name }}</small>
+              </td>
+              <td>{{ sale.agentName }}</td>
+              <td class="text-muted">{{ sale.createdAt | date: 'dd MMM yyyy' }}</td>
+              <td class="text-center">
+                <div class="action-group">
+                  <button
+                    class="btn-icon btn-accent-light"
+                    (click)="openInfo(sale)"
+                    title="View Details"
+                  >
+                    <i class="ri-information-fill"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+          @if (items.length === 0) {
+            <tr>
+              <td
+                colspan="8"
+                class="no-data"
+                style="text-align: center; padding: 3rem; color: #94a3b8; font-style: italic"
+              >
+                No sales records found.
+              </td>
+            </tr>
+          }
         }
-        @if (items.length === 0) {
-          <tr>
-            <td colspan="8" class="text-center">No sales records found.</td>
-          </tr>
-        }
-      }
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  </div>
 
   @if (items.length > 0) {
     <div class="table-pagination">

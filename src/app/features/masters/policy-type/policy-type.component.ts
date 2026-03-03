@@ -6,6 +6,7 @@ import { PolicyTypeFormComponent } from './policy-type-form/policy-type-form.com
 import { PolicyTypeService } from './policy-type.service';
 import { PolicyType } from '../../../core/models/master.models';
 import { SnackbarService } from '../../../core/services/snackbar.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-policy-type',
@@ -24,6 +25,7 @@ export class PolicyTypeComponent implements OnInit {
   ];
 
   isModalOpen = false;
+  isSubmitting = false;
   isLoading = false;
   isActiveFilter: boolean = true;
   selectedItem: PolicyType | null = null;
@@ -107,13 +109,16 @@ export class PolicyTypeComponent implements OnInit {
     this.infoData = null;
   }
 
-  onSave(formData: any) {
-    const id = formData._id;
+  onSave(formData: FormData) {
+    if (this.isSubmitting) return;
+    this.isSubmitting = true;
+
+    const id = formData.get('_id');
     const request = id
       ? this.policyTypeService.updatePolicyType(formData)
       : this.policyTypeService.createPolicyType(formData);
 
-    request.subscribe({
+    request.pipe(finalize(() => (this.isSubmitting = false))).subscribe({
       next: (response: any) => {
         if (response.status) {
           this.loadData();

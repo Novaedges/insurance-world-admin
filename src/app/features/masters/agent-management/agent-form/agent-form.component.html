@@ -72,8 +72,8 @@
       <input type="text" formControlName="bankName" placeholder="Enter bank name" />
     </div>
     <div class="form-group">
-      <label>Account Number</label>
-      <input type="text" formControlName="accountNumber" placeholder="Enter account number" />
+      <label>Bank Account Number</label>
+      <input type="text" formControlName="bankAccNumber" placeholder="Enter account number" />
     </div>
   </div>
 
@@ -83,8 +83,8 @@
       <input type="text" formControlName="ifscCode" placeholder="Enter IFSC code" />
     </div>
     <div class="form-group">
-      <label>Branch Name</label>
-      <input type="text" formControlName="branchName" placeholder="Enter branch name" />
+      <label>Bank Branch</label>
+      <input type="text" formControlName="bankBranch" placeholder="Enter branch name" />
     </div>
   </div>
 
@@ -98,8 +98,15 @@
 
   <div class="form-actions full-width">
     <button type="button" class="btn-secondary" (click)="onCancel()">Cancel</button>
-    <button type="submit" class="btn-primary" [disabled]="form.invalid">
-      {{ agent ? 'Update Agent' : 'Add Agent' }}
+    <button type="submit" class="btn-primary" [disabled]="form.invalid || isSubmitting">
+      <i
+        class="ri-loader-4-line animate-spin"
+        *ngIf="isSubmitting"
+        style="margin-right: 0.5rem"
+      ></i>
+      {{
+        isSubmitting ? (agent ? 'Updating...' : 'Adding...') : agent ? 'Update Agent' : 'Add Agent'
+      }}
     </button>
   </div>
 </form>

@@ -6,6 +6,7 @@ import { VehicleMakeFormComponent } from './vehicle-make-form/vehicle-make-form.
 import { VehicleMakeService } from './vehicle-make.service';
 import { VehicleMake } from '../../../core/models/master.models';
 import { SnackbarService } from '../../../core/services/snackbar.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-vehicle-make',
@@ -23,6 +24,7 @@ export class VehicleMakeComponent implements OnInit {
   ];
 
   isModalOpen = false;
+  isSubmitting = false;
   isLoading = false;
   isActiveFilter: boolean = true;
   selectedItem: VehicleMake | null = null;
@@ -103,12 +105,16 @@ export class VehicleMakeComponent implements OnInit {
     this.infoData = null;
   }
 
-  onSave(item: any) {
-    const request = item._id
-      ? this.makeService.updateMake(item)
-      : this.makeService.createMake((({ _id, ...rest }) => rest)(item));
+  onSave(formData: FormData) {
+    if (this.isSubmitting) return;
+    this.isSubmitting = true;
 
-    request.subscribe({
+    const id = formData.get('_id');
+    const request = id
+      ? this.makeService.updateMake(formData)
+      : this.makeService.createMake(formData);
+
+    request.pipe(finalize(() => (this.isSubmitting = false))).subscribe({
       next: (response: any) => {
         if (response.status) {
           this.loadData();

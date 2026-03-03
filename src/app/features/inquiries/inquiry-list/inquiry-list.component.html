@@ -4,197 +4,194 @@
 
 <!-- Inquiry Table -->
 <div class="table-container glass-panel">
-  <div
-    class="table-actions-header"
-    style="
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-      gap: 1rem;
-    "
-  >
-    <div class="filters">
-      <div class="custom-select-container" (click)="$event.stopPropagation()">
-        <label class="select-label">Status <span class="text-danger">*</span></label>
-        <div
-          class="select-box"
-          [class.open]="isStatusDropdownOpen"
-          (click)="toggleStatusDropdown($event)"
-        >
-          <span class="selected-text">{{ getSelectedStatusText() }}</span>
-          <i class="ri-arrow-down-s-line"></i>
-        </div>
-        @if (isStatusDropdownOpen) {
-          <div class="select-dropdown">
-            @for (status of availableStatuses; track status) {
-              <label class="dropdown-item" [class.active-item]="selectedStatuses.includes(status)">
-                <input
-                  type="checkbox"
-                  [value]="status"
-                  [checked]="selectedStatuses.includes(status)"
-                  (change)="toggleStatus(status)"
-                />
-                <span class="item-text">{{ status }}</span>
-              </label>
-            }
-          </div>
-        }
-      </div>
+  <div class="table-actions-header">
+    <div class="search-box">
+      <i class="ri-search-line"></i>
+      <input
+        type="text"
+        placeholder="Search inquiries..."
+        (input)="onSearch($event)"
+        [(ngModel)]="searchTerm"
+      />
     </div>
-    <div class="action-buttons">
+
+    <div class="header-actions-right">
+      <div class="filters">
+        <div class="custom-select-container" (click)="$event.stopPropagation()">
+          <div
+            class="select-box"
+            [class.open]="isStatusDropdownOpen"
+            (click)="toggleStatusDropdown($event)"
+          >
+            <span class="selected-text">{{ getSelectedStatusText() }}</span>
+            <i class="ri-arrow-down-s-line"></i>
+          </div>
+          @if (isStatusDropdownOpen) {
+            <div class="select-dropdown">
+              @for (status of availableStatuses; track status) {
+                <label
+                  class="dropdown-item"
+                  [class.active-item]="selectedStatuses.includes(status)"
+                >
+                  <input
+                    type="checkbox"
+                    [value]="status"
+                    [checked]="selectedStatuses.includes(status)"
+                    (change)="toggleStatus(status)"
+                  />
+                  <span class="item-text">{{ status }}</span>
+                </label>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
       <button class="btn-refresh" (click)="onRefresh()" title="Refresh Data">
         <i class="ri-refresh-line"></i>
       </button>
     </div>
   </div>
 
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Reg No</th>
-        <th>Customer</th>
-        <th>Phone</th>
-        <th>Policy</th>
-        <th>Status</th>
-        <th>Agent Name</th>
-        <th>Sales Executive Name</th>
-        <th class="text-center">Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      @if (isLoading) {
+  <div class="table-scroll-wrapper">
+    <table class="data-table">
+      <thead>
         <tr>
-          <td colspan="9" class="text-center p-5">
-            <div class="fancy-loader-container">
-              <div class="fancy-loader">
-                <div class="dot"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
-              </div>
-              <p class="fancy-loader-text">Loading inquiries...</p>
-            </div>
-          </td>
+          <th>Date</th>
+          <th>Reg No</th>
+          <th>Customer</th>
+          <th>Phone</th>
+          <th>Policy</th>
+          <th>Status</th>
+          <th>Agent Name</th>
+          <th>Sales Executive</th>
+          <th class="text-center">Action</th>
         </tr>
-      } @else {
-        @for (inq of items; track inq._id) {
-          <tr>
-            <td>{{ inq.createdAt | date: 'dd MMM yyyy, hh:mm a' }}</td>
-            <td class="font-bold text-primary">{{ inq.regNumber }}</td>
-            <td>{{ inq.name }}</td>
-            <td>{{ inq.phoneNumber }}</td>
-            <td>
-              {{ inq.policyName }} <br />
-              <small class="text-muted" *ngIf="inq.policyTypeDetails?.policyType">{{
-                inq.policyTypeDetails?.policyType
-              }}</small>
-            </td>
-            <td>
-              <span
-                class="status-badge"
-                [ngClass]="{
-                  'status-pending': inq.status === 'Pending',
-                  'status-ongoing': inq.status === 'On Going',
-                  'status-completed': inq.status === 'Completed',
-                  'status-rejected': inq.status === 'Not Interested',
-                }"
-              >
-                {{ inq.status }}
-              </span>
-            </td>
-            <td>{{ inq.agentName || 'Unassigned' }}</td>
-            <td>{{ inq.salesExecutiveDetails?.name || 'Unassigned' }}</td>
-            <td class="text-center">
-              <div class="action-group">
-                <button
-                  class="btn-icon btn-accent-light"
-                  (click)="openInfo(inq._id)"
-                  title="View Details"
-                >
-                  <i class="ri-information-line"></i>
-                </button>
-                <button
-                  class="btn-icon btn-primary-light"
-                  (click)="openAssign(inq._id)"
-                  title="Assign Sales Person"
-                >
-                  <i class="ri-user-add-line"></i>
-                </button>
-                <button
-                  class="btn-icon btn-secondary-light"
-                  (click)="openUpdate(inq)"
-                  title="Update Status"
-                >
-                  <i class="ri-edit-line"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-        }
-        @if (items.length === 0) {
+      </thead>
+      <tbody>
+        @if (isLoading) {
           <tr>
             <td colspan="9" class="text-center p-5">
-              <div
-                class="empty-state"
-                style="
-                  display: flex;
-                  flex-direction: column;
-                  align-items: center;
-                  color: var(--text-secondary);
-                "
-              >
-                <i
-                  class="ri-inbox-line"
-                  style="font-size: 2.5rem; margin-bottom: 0.5rem; opacity: 0.7"
-                ></i>
-                <p style="font-size: 1.1rem">{{ apiMessage || 'No inquiries found.' }}</p>
+              <div class="fancy-loader-container">
+                <div class="fancy-loader">
+                  <div class="dot"></div>
+                  <div class="dot"></div>
+                  <div class="dot"></div>
+                </div>
+                <p class="fancy-loader-text">Loading inquiries...</p>
               </div>
             </td>
           </tr>
+        } @else {
+          @for (inq of items; track inq._id) {
+            <tr>
+              <td class="text-muted">{{ inq.createdAt | date: 'dd MMM yyyy' }}</td>
+              <td class="font-bold text-primary">{{ inq.regNumber }}</td>
+              <td>{{ inq.name }}</td>
+              <td>{{ inq.phoneNumber }}</td>
+              <td>
+                {{ inq.policyName }} <br />
+                <small class="text-muted" *ngIf="inq.policyTypeDetails?.policyType">{{
+                  inq.policyTypeDetails?.policyType
+                }}</small>
+              </td>
+              <td>
+                <span class="status-badge {{ inq.status }}">
+                  {{ inq.status }}
+                </span>
+              </td>
+              <td>{{ inq.agentName || 'Unassigned' }}</td>
+              <td>{{ inq.salesExecutiveDetails?.name || 'Unassigned' }}</td>
+              <td class="text-center">
+                <div class="action-group">
+                  <button
+                    class="btn-icon btn-accent-light"
+                    (click)="openInfo(inq._id)"
+                    title="View Details"
+                  >
+                    <i class="ri-information-fill"></i>
+                  </button>
+                  <button
+                    class="btn-icon btn-primary-light"
+                    (click)="openAssign(inq._id)"
+                    title="Assign Sales Person"
+                  >
+                    <i class="ri-user-add-line"></i>
+                  </button>
+                  <button
+                    class="btn-icon btn-secondary-light"
+                    (click)="openUpdate(inq)"
+                    title="Update Status"
+                  >
+                    <i class="ri-edit-line"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+          @if (items.length === 0) {
+            <tr>
+              <td
+                colspan="9"
+                class="no-data"
+                style="text-align: center; padding: 3rem; color: #94a3b8; font-style: italic"
+              >
+                {{ apiMessage || 'No inquiries found.' }}
+              </td>
+            </tr>
+          }
         }
-      }
-    </tbody>
-  </table>
-
-  <div class="table-pagination">
-    <div class="pagination-info">
-      Showing <span>{{ skip + 1 }}</span> to <span>{{ skip + items.length }}</span> entries
-    </div>
-
-    <div class="pagination-controls">
-      <div class="page-size-selector">
-        <label>Rows per page:</label>
-        <select [(ngModel)]="limit" (change)="onRefresh()">
-          <option [value]="10">10</option>
-          <option [value]="20">20</option>
-          <option [value]="50">50</option>
-          <option [value]="100">100</option>
-        </select>
-      </div>
-
-      <div class="pagination-buttons">
-        <button
-          class="pagination-btn"
-          [disabled]="skip === 0 || isLoading"
-          (click)="prevPage()"
-          title="Previous Page"
-        >
-          <i class="ri-arrow-left-s-line"></i>
-        </button>
-        <span class="page-indicator">Page {{ skip / limit + 1 }}</span>
-        <button
-          class="pagination-btn"
-          [disabled]="items.length < limit || isLoading"
-          (click)="nextPage()"
-          title="Next Page"
-        >
-          <i class="ri-arrow-right-s-line"></i>
-        </button>
-      </div>
-    </div>
+      </tbody>
+    </table>
   </div>
+
+  @if (items.length > 0) {
+    <div class="table-pagination">
+      <div class="pagination-info">
+        Showing <span>{{ startIndex }}</span> to <span>{{ endIndex }}</span>
+        @if (totalItems > 0) {
+          of <span>{{ totalItems }}</span>
+        }
+        entries
+      </div>
+
+      <div class="pagination-controls">
+        <div class="page-size-selector">
+          <label>Rows per page:</label>
+          <div class="pageSize-select-wrapper">
+            <select
+              [value]="pageSize"
+              (change)="onPageChange({ page: 1, limit: +$any($event.target).value })"
+            >
+              @for (size of [10, 20, 50, 100]; track size) {
+                <option [value]="size">{{ size }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="pagination-buttons">
+          <button
+            class="pagination-btn"
+            [disabled]="!hasPrev || isLoading"
+            (click)="onPageChange({ page: currentPage - 1, limit: pageSize })"
+            title="Previous Page"
+          >
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <span class="page-indicator">Page {{ currentPage }}</span>
+          <button
+            class="pagination-btn"
+            [disabled]="!hasNext || isLoading"
+            (click)="onPageChange({ page: currentPage + 1, limit: pageSize })"
+            title="Next Page"
+          >
+            <i class="ri-arrow-right-s-line"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>
 
 <!-- Info Modal -->

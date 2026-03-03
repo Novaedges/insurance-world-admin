@@ -169,6 +169,9 @@
     </style>
 
     <div class="info-header-card">
+      <div class="header-logo-container" *ngIf="infoData.logo">
+        <img [src]="infoData.logo" alt="Product Logo" class="modal-logo" />
+      </div>
       <div class="header-title-box">
         <h3>{{ infoData.policyName || 'N/A' }}</h3>
         <p>Managed by {{ infoData.insuranceCompany || 'Unknown' }}</p>

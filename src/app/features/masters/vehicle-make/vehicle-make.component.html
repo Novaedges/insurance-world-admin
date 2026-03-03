@@ -26,7 +26,12 @@
   [title]="selectedItem ? 'Edit Make' : 'Add Make'"
   (closeEvent)="closeForm()"
 >
-  <app-vehicle-make-form [data]="selectedItem" (save)="onSave($event)" (cancel)="closeForm()">
+  <app-vehicle-make-form
+    [data]="selectedItem"
+    [isSubmitting]="isSubmitting"
+    (save)="onSave($event)"
+    (cancel)="closeForm()"
+  >
   </app-vehicle-make-form>
 </app-dialog>
 
@@ -37,9 +42,12 @@
 >
   <div class="modern-info-container" *ngIf="infoData">
     <div class="info-header-card">
+      <div class="header-logo-container" *ngIf="infoData.logo">
+        <img [src]="infoData.logo" alt="Make Logo" class="modal-logo" />
+      </div>
       <div class="header-title-box">
         <h3>{{ infoData.name }}</h3>
-        <p>Category: {{ infoData.vehicleTypeName || 'N/A' }}</p>
+        <p>Category: {{ infoData.vehicleTypeName }}</p>
       </div>
       <div>
         <span class="badge-modern" [ngClass]="infoData.isActive ? 'active' : 'inactive'">

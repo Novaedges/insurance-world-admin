@@ -6,6 +6,7 @@ import { InsuranceCategoryFormComponent } from './insurance-category-form/insura
 import { InsuranceCategoryService } from './insurance-category.service';
 import { InsuranceCategory } from '../../../core/models/master.models';
 import { SnackbarService } from '../../../core/services/snackbar.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-insurance-category',
@@ -24,6 +25,7 @@ export class InsuranceCategoryComponent implements OnInit {
   ];
 
   isModalOpen = false;
+  isSubmitting = false;
   isLoading = false;
   isActiveFilter: boolean = true;
   selectedItem: InsuranceCategory | null = null;
@@ -101,12 +103,15 @@ export class InsuranceCategoryComponent implements OnInit {
   }
 
   onSave(formData: FormData) {
+    if (this.isSubmitting) return;
+    this.isSubmitting = true;
+
     const id = formData.get('_id') as string;
     const request = id
       ? this.categoryService.updateCategory(formData)
       : this.categoryService.createCategory(formData);
 
-    request.subscribe({
+    request.pipe(finalize(() => (this.isSubmitting = false))).subscribe({
       next: (response: any) => {
         if (response.status) {
           this.loadData();

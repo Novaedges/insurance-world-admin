@@ -34,6 +34,7 @@
 >
   <app-agent-form
     [agent]="selectedItem"
+    [isSubmitting]="isSubmitting"
     (save)="onSave($event)"
     (cancel)="closeForm()"
   ></app-agent-form>
@@ -73,16 +74,16 @@
           <span class="card-value">{{ infoData.bankName || 'N/A' }}</span>
         </div>
         <div class="card-item">
-          <span class="card-label">Account Number</span>
-          <span class="card-value">{{ infoData.accountNumber || 'N/A' }}</span>
+          <span class="card-label">Bank Account Number</span>
+          <span class="card-value">{{ infoData.bankAccNumber || 'N/A' }}</span>
         </div>
         <div class="card-item">
           <span class="card-label">IFSC Code</span>
           <span class="card-value">{{ infoData.ifscCode || 'N/A' }}</span>
         </div>
         <div class="card-item">
-          <span class="card-label">Branch</span>
-          <span class="card-value">{{ infoData.branchName || 'N/A' }}</span>
+          <span class="card-label">Bank Branch</span>
+          <span class="card-value">{{ infoData.bankBranch || 'N/A' }}</span>
         </div>
       </div>
 

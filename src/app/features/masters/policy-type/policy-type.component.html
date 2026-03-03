@@ -26,7 +26,12 @@
   [title]="selectedItem ? 'Edit Policy Type' : 'Add Policy Type'"
   (closeEvent)="closeForm()"
 >
-  <app-policy-type-form [data]="selectedItem" (save)="onSave($event)" (cancel)="closeForm()">
+  <app-policy-type-form
+    [data]="selectedItem"
+    [isSubmitting]="isSubmitting"
+    (save)="onSave($event)"
+    (cancel)="closeForm()"
+  >
   </app-policy-type-form>
 </app-dialog>
 
@@ -37,6 +42,9 @@
 >
   <div class="modern-info-container" *ngIf="infoData">
     <div class="info-header-card">
+      <div class="header-logo-container" *ngIf="infoData.logo">
+        <img [src]="infoData.logo" alt="Policy Logo" class="modal-logo" />
+      </div>
       <div class="header-title-box">
         <h3>{{ infoData.policyType }}</h3>
         <p>Tag: {{ infoData.tag }}</p>

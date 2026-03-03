@@ -20,16 +20,14 @@ export class ProductService {
     return this.http.get<any>(this.apiUrl, { params });
   }
 
-  saveProduct(data: any): Observable<any> {
-    if (data._id) {
-      // Ensure 'id' is not sent to avoid backend conflicts
-      const { id, ...updateData } = data;
-      return this.http.put<any>(this.apiUrl, updateData);
+  saveProduct(data: FormData): Observable<any> {
+    const id = data.get('_id');
+    if (id) {
+      return this.http.put<any>(this.apiUrl, data);
     } else {
       return this.http.post<any>(this.apiUrl, data);
     }
   }
-
   getProductById(id: string): Observable<any> {
     return this.http.get<any>(this.apiUrl, {
       params: { _id: id },

@@ -20,7 +20,6 @@ export class InquiryUpdateDialogComponent implements OnInit {
   @Output() save = new EventEmitter<void>();
 
   statusOptions = ['Pending', 'Connected', 'Completed', 'Not Interested', 'Cancelled'];
-  // Connected, Not Interested, Cancelled, Completed
   policies: any[] = [];
   policyTypes: any[] = [];
   selectedPolicyDetails: any = null;

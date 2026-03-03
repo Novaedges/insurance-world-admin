@@ -96,3 +96,18 @@
     }
   }
 }
+
+.header-logo-container {
+  margin-right: 1.5rem;
+  flex-shrink: 0;
+
+  .modal-logo {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    border-radius: var(--radius-md);
+    background: #fff;
+    padding: 0.25rem;
+    border: 1px solid var(--border-color);
+  }
+}

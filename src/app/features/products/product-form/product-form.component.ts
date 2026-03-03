@@ -41,11 +41,13 @@ import { SnackbarService } from '../../../core/services/snackbar.service';
 export class ProductFormComponent implements OnChanges, OnInit {
   @Input() data: Product | null = null;
   @Input() isSubmitting: boolean = false;
-  @Output() save = new EventEmitter<Product>();
+  @Output() save = new EventEmitter<FormData>();
   @Output() cancel = new EventEmitter<void>();
 
   form: FormGroup;
   currentStep = 1;
+  selectedFile: File | null = null;
+  imagePreview: string | null = null;
 
   // Master Data Arrays
   categories: InsuranceCategory[] = [];
@@ -152,6 +154,7 @@ export class ProductFormComponent implements OnChanges, OnInit {
         this.onCategoryChange(false);
         this.onMakeChange(false);
         this.calculateFinalPrice();
+        this.imagePreview = this.data.logo || null;
       } else {
         this.form.reset({
           basePrice: 0,
@@ -165,7 +168,21 @@ export class ProductFormComponent implements OnChanges, OnInit {
         });
         this.finalPrice = 0;
         this.currentStep = 1;
+        this.imagePreview = null;
       }
+      this.selectedFile = null;
+    }
+  }
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result as string;
+      };
+      reader.readAsDataURL(file);
     }
   }
 
@@ -251,49 +268,42 @@ export class ProductFormComponent implements OnChanges, OnInit {
     }
 
     if (this.form.valid) {
+      const formData = new FormData();
       const formValue = this.form.value;
-      const cat = this.categories.find(
-        (c: any) =>
-          c._id === formValue.insuranceCategoryId || c.id === formValue.insuranceCategoryId,
-      );
 
-      // Structure Payload exactly like API expects + retained existing UI fields
-      const payload: any = {
-        _id: formValue._id || formValue.id,
-        policyName: formValue.name,
-        policyCode: formValue.policyCode,
-        insuranceCompany: formValue.insuranceCompany,
-        vehicleTypeId: formValue.insuranceCategoryId,
-        manufacturerId: formValue.makeId,
-        vehicleModelId: formValue.modelId,
-        policyTypeId: formValue.policyTypeId,
-        rtoIds: formValue.rtoIds,
-        minPrice: Number(formValue.basePrice),
-        maxPrice: Number(formValue.maxPrice),
-        discount: Number(formValue.discountValue),
-        commission: Number(formValue.commission),
+      // Structure Payload Logic
+      formData.append('policyName', formValue.name);
+      formData.append('policyCode', formValue.policyCode);
+      formData.append('insuranceCompany', formValue.insuranceCompany);
+      formData.append('vehicleTypeId', formValue.insuranceCategoryId);
+      formData.append('manufacturerId', formValue.makeId || '');
+      formData.append('vehicleModelId', formValue.modelId || '');
+      formData.append('policyTypeId', formValue.policyTypeId);
+      formData.append('rtoIds', JSON.stringify(formValue.rtoIds || []));
+      formData.append('minPrice', String(formValue.basePrice));
+      formData.append('maxPrice', String(formValue.maxPrice || 0));
+      formData.append('discount', String(formValue.discountValue || 0));
+      formData.append('commission', String(formValue.commission || 0));
 
-        // Retained Fields via User Request
-        name: formValue.name,
-        description: formValue.description,
-        insuranceCategoryName: cat?.name,
-        insuranceCategoryId: formValue.insuranceCategoryId,
-        policyDuration: formValue.policyDuration,
-        termsAndConditions: formValue.termsAndConditions,
-        status: formValue.status,
-        finalPrice: this.finalPrice,
-        discountType: formValue.discountType,
-        basePrice: formValue.basePrice,
-        makeId: formValue.makeId,
-        modelId: formValue.modelId,
-      };
+      // Retained Fields via User Request
+      formData.append('name', formValue.name);
+      formData.append('description', formValue.description || '');
+      formData.append('insuranceCategoryId', formValue.insuranceCategoryId);
+      formData.append('policyDuration', formValue.policyDuration);
+      formData.append('termsAndConditions', formValue.termsAndConditions || '');
+      formData.append('status', formValue.status);
+      formData.append('discountType', formValue.discountType);
+      formData.append('basePrice', String(formValue.basePrice));
 
-      // Cleanup empty _id
-      if (!payload._id) {
-        delete payload._id;
+      if (formValue._id || formValue.id) {
+        formData.append('_id', formValue._id || formValue.id);
       }
 
-      this.save.emit(payload);
+      if (this.selectedFile) {
+        formData.append('logo', this.selectedFile);
+      }
+
+      this.save.emit(formData);
     }
   }
 

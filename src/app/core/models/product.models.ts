@@ -32,4 +32,5 @@ export interface Product {
   discount?: number;
   gst?: number;
   commission?: number;
+  logo?: string;
 }

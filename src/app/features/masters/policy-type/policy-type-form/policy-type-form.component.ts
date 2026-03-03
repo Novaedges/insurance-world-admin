@@ -12,10 +12,13 @@ import { PolicyType } from '../../../../core/models/master.models';
 })
 export class PolicyTypeFormComponent implements OnChanges {
   @Input() data: PolicyType | null = null;
-  @Output() save = new EventEmitter<any>();
+  @Input() isSubmitting: boolean = false;
+  @Output() save = new EventEmitter<FormData>();
   @Output() cancel = new EventEmitter<void>();
 
   form: FormGroup;
+  selectedFile: File | null = null;
+  imagePreview: string | null = null;
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
@@ -35,35 +38,55 @@ export class PolicyTypeFormComponent implements OnChanges {
         coverageText: this.data.coverage ? this.data.coverage.join(', ') : '',
         isActive: this.data.isActive ?? true,
       });
+      this.imagePreview = this.data.logo || null;
     } else {
       this.form.reset({ isActive: true });
+      this.imagePreview = null;
+    }
+    this.selectedFile = null;
+  }
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result as string;
+      };
+      reader.readAsDataURL(file);
     }
   }
 
   onSubmit() {
     if (this.form.valid) {
+      const formData = new FormData();
       const formValue = this.form.value;
-      const payload: any = {
-        policyType: formValue.policyType,
-        tag: formValue.tag,
-        description: formValue.description,
-        isActive: formValue.isActive,
-      };
+
+      formData.append('policyType', formValue.policyType);
+      formData.append('tag', formValue.tag);
+      formData.append('description', formValue.description || '');
+      formData.append('isActive', formValue.isActive);
 
       if (formValue._id) {
-        payload._id = formValue._id;
+        formData.append('_id', formValue._id);
       }
 
       if (formValue.coverageText) {
-        payload.coverage = formValue.coverageText
+        const coverage = formValue.coverageText
           .split(',')
           .map((item: string) => item.trim())
           .filter((item: string) => item.length > 0);
+        formData.append('coverage', JSON.stringify(coverage));
       } else {
-        payload.coverage = [];
+        formData.append('coverage', JSON.stringify([]));
       }
 
-      this.save.emit(payload);
+      if (this.selectedFile) {
+        formData.append('logo', this.selectedFile);
+      }
+
+      this.save.emit(formData);
     }
   }
 

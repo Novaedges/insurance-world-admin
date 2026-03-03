@@ -20,14 +20,11 @@ export class InsuranceCompanyService {
     return this.http.get<any>(this.apiUrl, { params });
   }
 
-  createCompany(data: any): Observable<any> {
+  createCompany(data: FormData): Observable<any> {
     return this.http.post<any>(this.apiUrl, data);
   }
 
-  updateCompany(data: any): Observable<any> {
-    if (data._id && !data.companyId) {
-      data.companyId = data._id;
-    }
+  updateCompany(data: FormData): Observable<any> {
     return this.http.put<any>(this.apiUrl, data);
   }
 

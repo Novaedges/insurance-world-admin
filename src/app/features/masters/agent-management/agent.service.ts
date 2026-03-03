@@ -11,9 +11,9 @@ export class AgentService {
 
   getAgents(isActive?: boolean, limit: number = 10, skip: number = 0): Observable<any> {
     let params = new HttpParams().set('limit', limit.toString()).set('skip', skip.toString());
-    // if (isActive !== undefined) {
-    //   params = params.set('isActive', isActive.toString());
-    // }
+    if (isActive !== undefined) {
+      params = params.set('isActive', isActive.toString());
+    }
     return this.http.get<any>(environment.apiUrl + '/api/web/iw/module/insurance/agent/v1', {
       params,
     });
@@ -35,7 +35,7 @@ export class AgentService {
 
   deleteAgent(data: any): Observable<any> {
     return this.http.delete<any>(environment.apiUrl + '/api/web/iw/module/insurance/agent/v1', {
-      params: data,
+      body: data,
     });
   }
 }

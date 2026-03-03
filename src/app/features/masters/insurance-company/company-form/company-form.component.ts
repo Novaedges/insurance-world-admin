@@ -12,10 +12,13 @@ import { InsuranceCompany } from '../../../../core/models/master.models';
 })
 export class CompanyFormComponent implements OnChanges {
   @Input() company: InsuranceCompany | null = null;
-  @Output() save = new EventEmitter<InsuranceCompany>();
+  @Input() isSubmitting: boolean = false;
+  @Output() save = new EventEmitter<FormData>();
   @Output() cancel = new EventEmitter<void>();
 
   form: FormGroup;
+  selectedFile: File | null = null;
+  imagePreview: string | null = null;
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
@@ -39,25 +42,47 @@ export class CompanyFormComponent implements OnChanges {
         ...this.company,
         companyId: this.company._id || this.company.id,
       });
+      this.imagePreview = this.company.logo || null;
     } else {
       this.form.reset({ status: 'Active' });
+      this.selectedFile = null;
+      this.imagePreview = null;
+    }
+  }
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result as string;
+      };
+      reader.readAsDataURL(file);
     }
   }
 
   onSubmit() {
     if (this.form.valid) {
-      const payload = { ...this.form.value };
+      const formData = new FormData();
+      const formValue = this.form.value;
 
-      // BUG FIX: API quirk throws 402 if description is truthy, so send falsy/empty string if not editing
-      if (payload.description === null || payload.description === undefined) {
-        payload.description = '';
-      } else if (payload.description) {
-        // Keep existing behavior if user specifically filled it, but document mentioned sending falsy avoids error
-        // Since documentation states: "To avoid error, omit it or send empty/falsey" -> Forcing it empty for safety.
-        payload.description = '';
+      Object.keys(formValue).forEach((key) => {
+        if (formValue[key] !== null && formValue[key] !== undefined) {
+          // BUG FIX: API quirk mentioned in existing code - description safety
+          if (key === 'description') {
+            formData.append(key, '');
+          } else {
+            formData.append(key, formValue[key]);
+          }
+        }
+      });
+
+      if (this.selectedFile) {
+        formData.append('logo', this.selectedFile);
       }
 
-      this.save.emit(payload);
+      this.save.emit(formData);
     }
   }
 

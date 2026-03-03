@@ -12,11 +12,13 @@ import { InsuranceCategory } from '../../../../core/models/master.models';
 })
 export class InsuranceCategoryFormComponent implements OnChanges {
   @Input() data: InsuranceCategory | null = null;
+  @Input() isSubmitting: boolean = false;
   @Output() save = new EventEmitter<FormData>();
   @Output() cancel = new EventEmitter<void>();
 
   form: FormGroup;
   selectedFile: File | null = null;
+  imagePreview: string | null = null;
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
@@ -34,8 +36,10 @@ export class InsuranceCategoryFormComponent implements OnChanges {
         ...this.data,
         isActive: this.data.isActive ?? true,
       });
+      this.imagePreview = this.data.logo || null;
     } else {
       this.form.reset({ type: 'Motor', isActive: true });
+      this.imagePreview = null;
     }
     this.selectedFile = null;
   }
@@ -44,6 +48,11 @@ export class InsuranceCategoryFormComponent implements OnChanges {
     const file = event.target.files[0];
     if (file) {
       this.selectedFile = file;
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result as string;
+      };
+      reader.readAsDataURL(file);
     }
   }
 
