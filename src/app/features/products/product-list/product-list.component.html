@@ -238,7 +238,7 @@
       </div>
 
       <!-- Locations Card -->
-      <div class="info-card" style="grid-column: 1 / -1">
+      <div class="info-card">
         <div class="card-title"><i class="ri-map-pin-line"></i> Eligible coverage (RTOs)</div>
         <div class="rto-pills" *ngIf="infoData.rtos?.length; else noRtosTpl">
           <span class="rto-pill" *ngFor="let rto of infoData.rtos">
@@ -250,6 +250,23 @@
             >No RTOs directly mapped.</span
           >
         </ng-template>
+      </div>
+
+      <!-- Detailed Info Card -->
+      <div class="info-card" style="grid-column: 1 / -1">
+        <div class="card-title"><i class="ri-article-line"></i> Detailed Information</div>
+        <div class="card-item" style="margin-bottom: 1.5rem">
+          <span class="card-label">Description</span>
+          <span class="card-value" style="white-space: pre-wrap">{{
+            infoData.description || 'No description provided.'
+          }}</span>
+        </div>
+        <div class="card-item">
+          <span class="card-label">Terms & Conditions</span>
+          <span class="card-value" style="white-space: pre-wrap">{{
+            infoData.tAndC || infoData.termsAndConditions || 'No terms and conditions defined.'
+          }}</span>
+        </div>
       </div>
     </div>
   </div>

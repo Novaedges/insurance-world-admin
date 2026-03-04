@@ -13,7 +13,6 @@ import { Product } from '../../../core/models/product.models';
 // Master Models
 import {
   InsuranceCategory,
-  ChildCategory,
   VehicleMake,
   VehicleModel,
   RTO,
@@ -86,7 +85,7 @@ export class ProductFormComponent implements OnChanges, OnInit {
       // New Pricing/Commission fields
       basePrice: [0, Validators.required],
       maxPrice: [0],
-      discountType: ['Flat'],
+      discountType: ['FLAT'],
       discountValue: [0],
       commission: [0],
 
@@ -148,6 +147,7 @@ export class ProductFormComponent implements OnChanges, OnInit {
           insuranceCategoryId: this.data.vehicleTypeId || this.data.insuranceCategoryId,
           makeId: this.data.manufacturerId || this.data.makeId,
           modelId: this.data.vehicleModelId || this.data.modelId,
+          termsAndConditions: this.data.tAndC || this.data.termsAndConditions,
         };
 
         this.form.patchValue(patchedData);
@@ -159,7 +159,7 @@ export class ProductFormComponent implements OnChanges, OnInit {
         this.form.reset({
           basePrice: 0,
           maxPrice: 0,
-          discountType: 'Flat',
+          discountType: 'FLAT',
           discountValue: 0,
           commission: 0,
           policyDuration: '1 Year',
@@ -214,14 +214,14 @@ export class ProductFormComponent implements OnChanges, OnInit {
 
   calculateFinalPrice() {
     const base = this.form.get('basePrice')?.value || 0;
-    const type = this.form.get('discountType')?.value || 'Flat';
+    const type = this.form.get('discountType')?.value || 'FLAT';
     const value = this.form.get('discountValue')?.value || 0;
 
     let discountAmount = 0;
     if (type === 'Percentage') {
       discountAmount = (base * value) / 100;
     } else {
-      discountAmount = value; // Assumed Flat
+      discountAmount = value; // Assumed FLAT
     }
 
     this.finalPrice = Math.max(0, base - discountAmount);
@@ -290,7 +290,7 @@ export class ProductFormComponent implements OnChanges, OnInit {
       formData.append('description', formValue.description || '');
       formData.append('insuranceCategoryId', formValue.insuranceCategoryId);
       formData.append('policyDuration', formValue.policyDuration);
-      formData.append('termsAndConditions', formValue.termsAndConditions || '');
+      formData.append('tAndC', formValue.termsAndConditions || '');
       formData.append('status', formValue.status);
       formData.append('discountType', formValue.discountType);
       formData.append('basePrice', String(formValue.basePrice));

@@ -43,7 +43,7 @@ export class InquiryListComponent implements OnInit {
   // Filters & State
   searchTerm = '';
   selectedStatuses: string[] = ['Pending'];
-  availableStatuses = ['Pending', 'On Going', 'Completed', 'Not Interested'];
+  availableStatuses = ['Pending', 'Connected', 'Completed', 'Not Interested', 'Cancelled'];
   apiMessage: string = '';
   isStatusDropdownOpen = false;
 

@@ -33,4 +33,5 @@ export interface Product {
   gst?: number;
   commission?: number;
   logo?: string;
+  tAndC?: string;
 }
