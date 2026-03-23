@@ -1,5 +1,5 @@
 @if (isOpen) {
-  <div class="modal-overlay" (click)="close()">
+  <div class="modal-overlay" (click)="!disableBackdropClick && close()">
     <div class="modal-container" (click)="$event.stopPropagation()">
       <header class="modal-header">
         <h3>{{ title }}</h3>

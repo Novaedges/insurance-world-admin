@@ -28,7 +28,7 @@ export class AdminFormComponent implements OnChanges {
     { id: 'insurance-category', name: 'Categories' },
     { id: 'child-category', name: 'Sub-Categories' },
     { id: 'insurance-company', name: 'Insurance Companies' },
-    { id: 'agent-management', name: 'Agent Management' },
+    { id: 'agent-management', name: 'Partner Management' },
     { id: 'whatsapp', name: 'WhatsApp' },
     { id: 'sms', name: 'SMS' },
     { id: 'payments', name: 'Payments' },

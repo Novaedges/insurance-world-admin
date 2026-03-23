@@ -22,13 +22,13 @@ export class CompanyFormComponent implements OnChanges {
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
-      companyId: [''], // Will handle _id vs companyId
+      companyId: [''],
       companyName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       description: [''],
       address: [''],
-      email: ['', [Validators.email]],
-      contactNumber: ['', [Validators.pattern('^[0-9]{10}$')]],
-      helplineNumber: ['', [Validators.pattern('^[0-9]{10}$')]],
+      email: [''],
+      contactNumber: [''],
+      helplineNumber: [''],
       website: [''],
       status: ['Active', Validators.required],
     });

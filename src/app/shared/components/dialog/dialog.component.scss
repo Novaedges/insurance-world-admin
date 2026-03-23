@@ -43,12 +43,21 @@
   .close-btn {
     background: transparent;
     border: none;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     line-height: 1;
     color: var(--text-muted);
-    padding: 0;
+    padding: 0.25rem;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
 
     &:hover {
+      background: rgba(0, 0, 0, 0.05);
       color: var(--text-main);
     }
   }

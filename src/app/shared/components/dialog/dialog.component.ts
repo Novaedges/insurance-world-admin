@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 export class DialogComponent {
   @Input() isOpen: boolean = false;
   @Input() title: string = 'Modal Title';
+  @Input() disableBackdropClick: boolean = true;
   @Output() closeEvent = new EventEmitter<void>();
 
   close() {

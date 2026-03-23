@@ -11,9 +11,14 @@ export class InquiryService {
 
   constructor(private http: HttpClient) {}
 
-  getInquiries(limit: number = 10, skip: number = 0, status: string[] = []): Observable<any> {
-    let params = new HttpParams().set('limit', limit.toString()).set('skip', skip.toString());
-
+  getInquiries(limit?: number, skip?: number, status: string[] = []): Observable<any> {
+    let params = new HttpParams();
+    if (limit !== undefined) {
+      params = params.set('limit', limit.toString());
+    }
+    if (skip !== undefined) {
+      params = params.set('skip', skip.toString());
+    }
     if (status && status.length > 0) {
       params = params.set('status', JSON.stringify(status));
     }

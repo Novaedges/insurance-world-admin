@@ -9,8 +9,14 @@ import { environment } from '../../../../environments/environment';
 export class AgentService {
   constructor(private http: HttpClient) {}
 
-  getAgents(isActive?: boolean, limit: number = 10, skip: number = 0): Observable<any> {
-    let params = new HttpParams().set('limit', limit.toString()).set('skip', skip.toString());
+  getAgents(isActive?: boolean, limit?: number, skip?: number): Observable<any> {
+    let params = new HttpParams();
+    if (limit !== undefined) {
+      params = params.set('limit', limit.toString());
+    }
+    if (skip !== undefined) {
+      params = params.set('skip', skip.toString());
+    }
     if (isActive !== undefined) {
       params = params.set('isActive', isActive.toString());
     }

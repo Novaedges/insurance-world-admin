@@ -44,7 +44,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     '/policy-type': 'Policy Types',
     '/child-category': 'Sub-Categories',
     '/insurance-company': 'Insurance Companies',
-    '/agent-management': 'Agent Management',
+    '/agent-management': 'Partner Management',
     '/whatsapp': 'WhatsApp Automation',
     '/sms': 'SMS Notifications',
     '/renewals': 'Renewal Management',
