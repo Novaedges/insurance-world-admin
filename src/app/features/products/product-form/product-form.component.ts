@@ -89,7 +89,7 @@ export class ProductFormComponent implements OnChanges, OnInit {
       discountValue: [0],
       commission: [0],
 
-      policyDuration: ['1 Year', Validators.required],
+      policyDuration: [1, Validators.required],
       termsAndConditions: [''],
       status: ['Active', Validators.required],
 
@@ -148,6 +148,7 @@ export class ProductFormComponent implements OnChanges, OnInit {
           makeId: this.data.manufacturerId || this.data.makeId,
           modelId: this.data.vehicleModelId || this.data.modelId,
           termsAndConditions: this.data.tAndC || this.data.termsAndConditions,
+          policyDuration: this.data.policyDuration ? parseInt(String(this.data.policyDuration)) : 1,
         };
 
         this.form.patchValue(patchedData);
@@ -162,7 +163,7 @@ export class ProductFormComponent implements OnChanges, OnInit {
           discountType: 'FLAT',
           discountValue: 0,
           commission: 0,
-          policyDuration: '1 Year',
+          policyDuration: 1,
           status: 'Active',
           rtoIds: [],
         });
@@ -289,7 +290,7 @@ export class ProductFormComponent implements OnChanges, OnInit {
       formData.append('name', formValue.name);
       formData.append('description', formValue.description || '');
       formData.append('insuranceCategoryId', formValue.insuranceCategoryId);
-      formData.append('policyDuration', formValue.policyDuration);
+      formData.append('policyDuration', String(formValue.policyDuration));
       formData.append('tAndC', formValue.termsAndConditions || '');
       formData.append('status', formValue.status);
       formData.append('discountType', formValue.discountType);

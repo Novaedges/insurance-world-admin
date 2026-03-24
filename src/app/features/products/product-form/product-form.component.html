@@ -135,9 +135,9 @@
       <div class="form-group">
         <label>Policy Duration <span class="text-danger">*</span></label>
         <select formControlName="policyDuration">
-          <option value="1 Year">1 Year</option>
-          <option value="3 Years">3 Years</option>
-          <option value="5 Years">5 Years</option>
+          <option [value]="1">1 Year</option>
+          <option [value]="3">3 Years</option>
+          <option [value]="5">5 Years</option>
         </select>
         @if (form.get('policyDuration')?.invalid && form.get('policyDuration')?.touched) {
           <div class="error-msg">Policy Duration is required</div>
