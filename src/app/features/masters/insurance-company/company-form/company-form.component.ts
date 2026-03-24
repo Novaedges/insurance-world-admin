@@ -35,18 +35,19 @@ export class CompanyFormComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['company'] && this.company) {
-      // Form expects companyName, API returns companyName.
-      // We map _id to companyId for the form edit state
-      this.form.patchValue({
-        ...this.company,
-        companyId: this.company._id || this.company.id,
-      });
-      this.imagePreview = this.company.logo || null;
-    } else {
-      this.form.reset({ status: 'Active' });
-      this.selectedFile = null;
-      this.imagePreview = null;
+    if (changes['company']) {
+      if (this.company) {
+        // Form expects companyId, API returns _id.
+        this.form.patchValue({
+          ...this.company,
+          companyId: this.company._id || this.company.id,
+        });
+        this.imagePreview = this.company.logo || null;
+      } else {
+        this.form.reset({ status: 'Active' });
+        this.selectedFile = null;
+        this.imagePreview = null;
+      }
     }
   }
 

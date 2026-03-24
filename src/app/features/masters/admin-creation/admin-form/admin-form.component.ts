@@ -54,16 +54,18 @@ export class AdminFormComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['admin'] && this.admin) {
-      const patchData = { ...this.admin };
-      if (patchData.id && !patchData._id) patchData._id = patchData.id;
-      this.form.patchValue(patchData);
-      this.form.get('password')?.clearValidators();
-      this.form.get('password')?.updateValueAndValidity();
-    } else {
-      this.form.reset({ roleType: 'ADMIN', status: 'Active', componentAccess: [] });
-      this.form.get('password')?.setValidators([Validators.required, Validators.minLength(8)]);
-      this.form.get('password')?.updateValueAndValidity();
+    if (changes['admin']) {
+      if (this.admin) {
+        const patchData = { ...this.admin };
+        if (patchData.id && !patchData._id) patchData._id = patchData.id;
+        this.form.patchValue(patchData);
+        this.form.get('password')?.clearValidators();
+        this.form.get('password')?.updateValueAndValidity();
+      } else {
+        this.form.reset({ roleType: 'ADMIN', status: 'Active', componentAccess: [] });
+        this.form.get('password')?.setValidators([Validators.required, Validators.minLength(8)]);
+        this.form.get('password')?.updateValueAndValidity();
+      }
     }
   }
 

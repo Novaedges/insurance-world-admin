@@ -44,10 +44,12 @@ export class ChildCategoryFormComponent implements OnChanges, OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['data'] && this.data) {
-      this.form.patchValue(this.data);
-    } else {
-      this.form.reset({ status: 'Active' });
+    if (changes['data']) {
+      if (this.data) {
+        this.form.patchValue(this.data);
+      } else {
+        this.form.reset({ status: 'Active' });
+      }
     }
   }
 

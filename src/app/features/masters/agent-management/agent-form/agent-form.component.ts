@@ -37,17 +37,19 @@ export class AgentFormComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['agent'] && this.agent) {
-      this.form.patchValue(this.agent);
-      this.form.get('password')?.clearValidators();
-      this.form.get('password')?.updateValueAndValidity();
-      this.form.get('agentCode')?.setValidators(Validators.required); // Must exist in edit
-    } else {
-      this.form.reset({ isActive: true });
-      this.form.get('password')?.setValidators([Validators.required, Validators.minLength(8)]);
-      this.form.get('password')?.updateValueAndValidity();
-      this.form.get('agentCode')?.clearValidators(); // Not needed in create (backend generated?)
-      this.form.get('agentCode')?.updateValueAndValidity();
+    if (changes['agent']) {
+      if (this.agent) {
+        this.form.patchValue(this.agent);
+        this.form.get('password')?.clearValidators();
+        this.form.get('password')?.updateValueAndValidity();
+        this.form.get('agentCode')?.setValidators(Validators.required);
+      } else {
+        this.form.reset({ isActive: true });
+        this.form.get('password')?.setValidators([Validators.required, Validators.minLength(8)]);
+        this.form.get('password')?.updateValueAndValidity();
+        this.form.get('agentCode')?.clearValidators();
+        this.form.get('agentCode')?.updateValueAndValidity();
+      }
     }
   }
 

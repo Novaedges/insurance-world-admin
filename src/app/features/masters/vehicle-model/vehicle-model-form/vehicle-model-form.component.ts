@@ -97,19 +97,20 @@ export class VehicleModelFormComponent implements OnChanges, OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['data'] && this.data) {
-      this.form.patchValue({
-        ...this.data,
-        isActive: this.data.isActive ?? true,
-      });
-      // Trigger filtering if data has vehicleTypeId
-      this.imagePreview = this.data.logo || null;
-    } else {
-      this.form.reset({ fuelType: 'Petrol', isActive: true });
-      this.filteredMakes = [];
-      this.imagePreview = null;
+    if (changes['data']) {
+      if (this.data) {
+        this.form.patchValue({
+          ...this.data,
+          isActive: this.data.isActive ?? true,
+        });
+        this.imagePreview = this.data.logo || null;
+      } else {
+        this.form.reset({ fuelType: 'Petrol', isActive: true });
+        this.filteredMakes = [];
+        this.imagePreview = null;
+      }
+      this.selectedFile = null;
     }
-    this.selectedFile = null;
   }
 
   onFileSelected(event: any) {

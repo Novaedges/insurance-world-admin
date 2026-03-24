@@ -26,24 +26,26 @@ export class PolicyTypeFormComponent implements OnChanges {
       policyType: ['', Validators.required],
       tag: ['', Validators.required],
       description: [''],
-      coverageText: [''], // Will be converted to/from string[] coverage
+      coverageText: [''],
       isActive: [true, Validators.required],
     });
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['data'] && this.data) {
-      this.form.patchValue({
-        ...this.data,
-        coverageText: this.data.coverage ? this.data.coverage.join(', ') : '',
-        isActive: this.data.isActive ?? true,
-      });
-      this.imagePreview = this.data.logo || null;
-    } else {
-      this.form.reset({ isActive: true });
-      this.imagePreview = null;
+    if (changes['data']) {
+      if (this.data) {
+        this.form.patchValue({
+          ...this.data,
+          coverageText: this.data.coverage ? this.data.coverage.join(', ') : '',
+          isActive: this.data.isActive ?? true,
+        });
+        this.imagePreview = this.data.logo || null;
+      } else {
+        this.form.reset({ isActive: true });
+        this.imagePreview = null;
+      }
+      this.selectedFile = null;
     }
-    this.selectedFile = null;
   }
 
   onFileSelected(event: any) {

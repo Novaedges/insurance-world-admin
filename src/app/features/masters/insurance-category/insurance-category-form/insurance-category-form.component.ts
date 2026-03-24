@@ -31,17 +31,19 @@ export class InsuranceCategoryFormComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['data'] && this.data) {
-      this.form.patchValue({
-        ...this.data,
-        isActive: this.data.isActive ?? true,
-      });
-      this.imagePreview = this.data.logo || null;
-    } else {
-      this.form.reset({ type: 'Motor', isActive: true });
-      this.imagePreview = null;
+    if (changes['data']) {
+      if (this.data) {
+        this.form.patchValue({
+          ...this.data,
+          isActive: this.data.isActive ?? true,
+        });
+        this.imagePreview = this.data.logo || null;
+      } else {
+        this.form.reset({ type: 'Motor', isActive: true });
+        this.imagePreview = null;
+      }
+      this.selectedFile = null;
     }
-    this.selectedFile = null;
   }
 
   onFileSelected(event: any) {

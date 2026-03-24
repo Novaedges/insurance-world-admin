@@ -27,10 +27,12 @@ export class RtoFormComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['data'] && this.data) {
-      this.form.patchValue(this.data);
-    } else {
-      this.form.reset({ isActive: true });
+    if (changes['data']) {
+      if (this.data) {
+        this.form.patchValue(this.data);
+      } else {
+        this.form.reset({ isActive: true });
+      }
     }
   }
 
