@@ -20,6 +20,7 @@ export class InsuranceCategoryComponent implements OnInit {
   columns: Column[] = [
     { field: 'name', header: 'Category Name' },
     { field: 'type', header: 'Type' },
+    { field: 'priority', header: 'Priority' },
     { field: 'description', header: 'Description' },
     { field: 'status', header: 'Status', type: 'status' },
   ];

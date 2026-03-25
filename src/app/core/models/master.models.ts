@@ -59,6 +59,7 @@ export interface InsuranceCategory {
   type: 'Motor' | 'Health';
   description?: string;
   logo?: string;
+  priority?: number;
   isActive?: boolean;
   _id?: string;
   status?: string; // For UI display

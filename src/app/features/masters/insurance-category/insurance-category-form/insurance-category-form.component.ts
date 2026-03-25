@@ -26,6 +26,7 @@ export class InsuranceCategoryFormComponent implements OnChanges {
       name: ['', Validators.required],
       type: ['Motor', Validators.required],
       description: [''],
+      priority: [0, Validators.required],
       isActive: [true, Validators.required],
     });
   }
@@ -39,7 +40,7 @@ export class InsuranceCategoryFormComponent implements OnChanges {
         });
         this.imagePreview = this.data.logo || null;
       } else {
-        this.form.reset({ type: 'Motor', isActive: true });
+        this.form.reset({ type: 'Motor', isActive: true, priority: 0 });
         this.imagePreview = null;
       }
       this.selectedFile = null;
