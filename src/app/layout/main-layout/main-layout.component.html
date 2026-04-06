@@ -221,9 +221,9 @@
           <i class="icon ri-message-2-line"></i>
           <span class="label">SMS</span>
         </a>
-      }
+      } -->
 
-      @if (hasSectionAccess(['payments', 'commissions'])) {
+      <!-- @if (hasSectionAccess(['payments', 'commissions'])) {
         <div class="nav-section-label">Finance</div>
       }
       @if (hasAccess('payments')) {
@@ -247,45 +247,24 @@
           <i class="icon ri-hand-coin-line"></i>
           <span class="label">Commissions</span>
         </a>
-      }
+      } -->
 
       @if (hasSectionAccess(['renewals', 'crm', 'marketing', 'ai-engine'])) {
         <div class="nav-section-label">Growth</div>
       }
-      @if (hasAccess('renewals')) {
-        <a
-          routerLink="/renewals"
-          routerLinkActive="active"
-          class="nav-item"
-          (click)="closeMobileSidebar()"
-        >
-          <i class="icon ri-refresh-line"></i>
-          <span class="label">Renewals</span>
-        </a>
-      }
-      @if (hasAccess('crm')) {
-        <a
-          routerLink="/crm"
-          routerLinkActive="active"
-          class="nav-item"
-          (click)="closeMobileSidebar()"
-        >
-          <i class="icon ri-customer-service-2-line"></i>
-          <span class="label">CRM Sync</span>
-        </a>
-      }
+
       @if (hasAccess('marketing')) {
         <a
-          routerLink="/marketing"
+          routerLink="/marketing/banners"
           routerLinkActive="active"
           class="nav-item"
           (click)="closeMobileSidebar()"
         >
-          <i class="icon ri-megaphone-line"></i>
-          <span class="label">Marketing</span>
+          <i class="icon ri-slideshow-4-line"></i>
+          <span class="label">Promotional Banners</span>
         </a>
       }
-      @if (hasAccess('ai-engine')) {
+      <!-- @if (hasAccess('ai-engine')) {
         <a
           routerLink="/ai-engine"
           routerLinkActive="active"

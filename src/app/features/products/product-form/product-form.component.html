@@ -27,17 +27,28 @@
         }
       </div>
 
-      <div class="form-group">
-        <label>Insurance Company <span class="text-danger">*</span></label>
-        <select formControlName="insuranceCompany">
-          <option value="" disabled>Select Company</option>
+      <div class="form-group full-width">
+        <label>Insurance Companies <span class="text-danger">*</span></label>
+        <div class="checkbox-group scrollable-grid multi-select-grid">
           @for (company of insuranceCompanies; track company._id || company.id) {
-            <!-- Using name as requested by User for this field -->
-            <option [value]="company.companyName">{{ company.companyName }}</option>
+            <label class="checkbox-item">
+              <input
+                type="checkbox"
+                [value]="company._id || company.id || ''"
+                (change)="
+                  onCheckboxChange($event, 'insuranceCompaniesId', company._id || company.id || '')
+                "
+                [checked]="isSelected('insuranceCompaniesId', company._id || company.id || '')"
+              />
+              <span class="custom-checkbox"></span>
+              {{ company.companyName }}
+            </label>
           }
-        </select>
-        @if (form.get('insuranceCompany')?.invalid && form.get('insuranceCompany')?.touched) {
-          <div class="error-msg">Insurance Company is required</div>
+        </div>
+        @if (
+          form.get('insuranceCompaniesId')?.invalid && form.get('insuranceCompaniesId')?.touched
+        ) {
+          <div class="error-msg">At least one Insurance Company is required</div>
         }
       </div>
       <div class="form-group">
@@ -53,16 +64,24 @@
         }
       </div>
 
-      <div class="form-group">
-        <label>Vehicle/Insurance Category <span class="text-danger">*</span></label>
-        <select formControlName="insuranceCategoryId" (change)="onCategoryChange()">
-          <option value="" disabled>Select Category</option>
+      <div class="form-group full-width">
+        <label>Vehicle/Insurance Categories <span class="text-danger">*</span></label>
+        <div class="checkbox-group scrollable-grid multi-select-grid">
           @for (cat of categories; track cat._id || cat.id) {
-            <option [value]="cat._id || cat.id || ''">{{ cat.name }}</option>
+            <label class="checkbox-item">
+              <input
+                type="checkbox"
+                [value]="cat._id || cat.id || ''"
+                (change)="onCheckboxChange($event, 'insuranceCategoryId', cat._id || cat.id || '')"
+                [checked]="isSelected('insuranceCategoryId', cat._id || cat.id || '')"
+              />
+              <span class="custom-checkbox"></span>
+              {{ cat.name }}
+            </label>
           }
-        </select>
+        </div>
         @if (form.get('insuranceCategoryId')?.invalid && form.get('insuranceCategoryId')?.touched) {
-          <div class="error-msg">Category is required</div>
+          <div class="error-msg">At least one Category is required</div>
         }
       </div>
 
@@ -92,35 +111,59 @@
   <!-- Step 2: Configuration -->
   @if (currentStep === 2) {
     <div class="step-content">
-      <div class="form-group">
-        <label>Manufacturer/Make</label>
-        <select formControlName="makeId" (change)="onMakeChange()">
-          <option value="">Any Make</option>
+      <div class="form-group full-width">
+        <label>Manufacturers/Makes (Optional)</label>
+        <div class="checkbox-group scrollable-grid multi-select-grid">
+          @if (filteredMakes.length === 0) {
+            <div class="text-muted p-2" style="font-size: 0.85rem">
+              Please select a category first
+            </div>
+          }
           @for (make of filteredMakes; track make._id || make.id) {
-            <option [value]="make._id || make.id || ''">{{ make.name }}</option>
+            <label class="checkbox-item">
+              <input
+                type="checkbox"
+                [value]="make._id || make.id || ''"
+                (change)="onCheckboxChange($event, 'makeId', make._id || make.id || '')"
+                [checked]="isSelected('makeId', make._id || make.id || '')"
+              />
+              <span class="custom-checkbox"></span>
+              {{ make.name }}
+            </label>
           }
-        </select>
+        </div>
       </div>
-      <div class="form-group">
-        <label>Model</label>
-        <select formControlName="modelId">
-          <option value="">Any Model</option>
-          @for (model of filteredModels; track model._id || model.id) {
-            <option [value]="model._id || model.id || ''">{{ model.name }}</option>
+      <div class="form-group full-width">
+        <label>Models (Optional)</label>
+        <div class="checkbox-group scrollable-grid multi-select-grid">
+          @if (filteredModels.length === 0) {
+            <div class="text-muted p-2" style="font-size: 0.85rem">Please select a make first</div>
           }
-        </select>
+          @for (model of filteredModels; track model._id || model.id) {
+            <label class="checkbox-item">
+              <input
+                type="checkbox"
+                [value]="model._id || model.id || ''"
+                (change)="onCheckboxChange($event, 'modelId', model._id || model.id || '')"
+                [checked]="isSelected('modelId', model._id || model.id || '')"
+              />
+              <span class="custom-checkbox"></span>
+              {{ model.name }}
+            </label>
+          }
+        </div>
       </div>
 
       <div class="form-group full-width">
         <label>Applicable RTOs <span class="text-danger">*</span></label>
-        <div class="checkbox-group rto-grid">
+        <div class="checkbox-group rto-grid scrollable-grid">
           @for (rto of rtos; track rto._id) {
             <label class="checkbox-item">
               <input
                 type="checkbox"
                 [value]="rto._id || ''"
-                (change)="onRtoCheckboxChange($event, rto._id || '')"
-                [checked]="isRtoSelected(rto._id || '')"
+                (change)="onCheckboxChange($event, 'rtoIds', rto._id || '')"
+                [checked]="isSelected('rtoIds', rto._id || '')"
               />
               <span class="custom-checkbox"></span>
               {{ rto.rtoCode }} - {{ rto.rtoName }}

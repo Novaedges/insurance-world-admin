@@ -31,6 +31,7 @@ export class InquiryUpdateDialogComponent implements OnInit {
     sellingPrice: null as number | null,
     commission: null as number | null,
     discount: null as number | null,
+    lapsDate: '',
     note: '',
   };
 
@@ -68,6 +69,12 @@ export class InquiryUpdateDialogComponent implements OnInit {
                 // Store temporarily to select once policies load
                 this.tempPolicyName = targetPolicyName;
               }
+            }
+
+            if (inquiry && inquiry.lapsDate) {
+              // Ensure date is in YYYY-MM-DD format for input[type="date"]
+              const date = new Date(inquiry.lapsDate);
+              this.formData.lapsDate = date.toISOString().split('T')[0];
             }
           }
         },
@@ -175,6 +182,7 @@ export class InquiryUpdateDialogComponent implements OnInit {
     if (this.formData.sellingPrice) payload.sellingPrice = this.formData.sellingPrice;
     if (this.formData.commission) payload.commission = this.formData.commission;
     if (this.formData.discount) payload.discount = this.formData.discount;
+    if (this.formData.lapsDate) payload.lapsDate = this.formData.lapsDate;
 
     this.inquiryService.updateInquiryStatus(payload).subscribe({
       next: (res) => {

@@ -12,4 +12,5 @@ export interface SaleReportItem {
   policyCode: string;
   agentName: string;
   salesExecutiveName: string;
+  lapsDate?: string;
 }

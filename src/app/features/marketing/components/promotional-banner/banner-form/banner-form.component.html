@@ -1,0 +1,49 @@
+<form [formGroup]="bannerForm" (ngSubmit)="onSubmit()" class="banner-form">
+  <div class="form-grid">
+    <div class="form-group full-width">
+      <label>Banner Image</label>
+      <div class="file-upload-container">
+        <input type="file" (change)="onFileSelected($event)" accept="image/*" id="bannerImage" />
+        <label for="bannerImage" class="file-upload-label">
+          <i class="ri-upload-cloud-2-line"></i>
+          <span>Choose an image or drag and drop</span>
+          <small>SVG, PNG, JPG or WebP (max. 800x400px)</small>
+        </label>
+      </div>
+      @if (imagePreview) {
+        <div class="image-preview-container">
+          <img [src]="imagePreview" alt="Banner Preview" />
+          <button type="button" class="remove-img" (click)="selectedFile = null; imagePreview = null">
+            <i class="ri-close-line"></i>
+          </button>
+        </div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label>Priority</label>
+      <input type="number" formControlName="priority" placeholder="Enter priority (e.g. 10)" />
+      @if (bannerForm.get('priority')?.touched && bannerForm.get('priority')?.invalid) {
+         <span class="error-msg">Priority is required and must be 0 or greater.</span>
+      }
+    </div>
+
+    <div class="form-group checkbox-group">
+      <label class="checkbox-label">
+        <input type="checkbox" formControlName="showInPortal" />
+        <span class="custom-checkbox"></span>
+        Show in Portal
+      </label>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button type="button" class="btn-secondary" (click)="onCancel()" [disabled]="isSubmitting">
+      Cancel
+    </button>
+    <button type="submit" class="btn-primary" [disabled]="bannerForm.invalid || isSubmitting">
+      <i class="ri-loader-4-line" *ngIf="isSubmitting" style="margin-right: 0.5rem"></i>
+      {{ isSubmitting ? 'Processing...' : (bannerData ? 'Update Banner' : 'Create Banner') }}
+    </button>
+  </div>
+</form>

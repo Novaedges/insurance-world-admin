@@ -40,13 +40,14 @@
           <th>Agent</th>
           <th>Executive</th>
           <th>Date</th>
+          <th>Lapse Date</th>
           <th class="text-center">Action</th>
         </tr>
       </thead>
       <tbody>
         @if (isLoading) {
           <tr>
-            <td colspan="11" class="text-center p-5">
+            <td colspan="12" class="text-center p-5">
               <div class="fancy-loader-container">
                 <div class="fancy-loader">
                   <div class="dot"></div>
@@ -73,6 +74,9 @@
               <td>{{ sale.agentName }}</td>
               <td>{{ sale.salesExecutiveName }}</td>
               <td class="text-muted">{{ sale.createdAt | date: 'dd MMM yyyy' }}</td>
+              <td class="text-danger font-bold">
+                {{ sale.lapsDate ? (sale.lapsDate | date: 'dd MMM yyyy') : 'N/A' }}
+              </td>
               <td class="text-center">
                 <div class="action-group">
                   <button
@@ -89,7 +93,7 @@
           @if (items.length === 0) {
             <tr>
               <td
-                colspan="11"
+                colspan="12"
                 class="no-data"
                 style="text-align: center; padding: 3rem; color: #94a3b8; font-style: italic"
               >

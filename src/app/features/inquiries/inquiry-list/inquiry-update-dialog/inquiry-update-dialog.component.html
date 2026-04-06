@@ -155,6 +155,22 @@
         </div>
       </div>
 
+      <!-- Lapse Date -->
+      <div class="form-group">
+        <label class="form-label">
+          <i class="ri-calendar-event-line"></i>
+          Lapse Date (Expiry)
+        </label>
+        <div class="input-wrapper">
+          <input
+            type="date"
+            [(ngModel)]="formData.lapsDate"
+            [disabled]="isSubmitting"
+            class="form-input"
+          />
+        </div>
+      </div>
+
       <!-- Note (Mandatory) -->
       <div class="form-group full-width">
         <label class="form-label">

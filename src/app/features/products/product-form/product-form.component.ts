@@ -78,9 +78,9 @@ export class ProductFormComponent implements OnChanges, OnInit {
       _id: [''],
       name: ['', Validators.required],
       description: [''],
-      insuranceCategoryId: ['', Validators.required],
-      makeId: [''],
-      modelId: [''],
+      insuranceCategoryId: [[], Validators.required],
+      makeId: [[]],
+      modelId: [[]],
 
       // New Pricing/Commission fields
       basePrice: [0, Validators.required],
@@ -91,11 +91,11 @@ export class ProductFormComponent implements OnChanges, OnInit {
 
       policyDuration: [1, Validators.required],
       termsAndConditions: [''],
-      status: ['Active', Validators.required],
+      status: 'Active',
 
       // New explicitly matching API Payload
       policyCode: ['', Validators.required],
-      insuranceCompany: ['', Validators.required],
+      insuranceCompaniesId: [[], Validators.required],
       policyTypeId: ['', Validators.required],
       rtoIds: [[], Validators.required],
     });
@@ -137,6 +137,12 @@ export class ProductFormComponent implements OnChanges, OnInit {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['data']) {
       if (this.data) {
+        const ensureArray = (val: any) => {
+          if (!val) return [];
+          if (Array.isArray(val)) return val;
+          return [val];
+        };
+
         // Handle patch value mapping since field names changed conceptually
         const patchedData = {
           ...this.data,
@@ -144,9 +150,10 @@ export class ProductFormComponent implements OnChanges, OnInit {
           basePrice: this.data.minPrice !== undefined ? this.data.minPrice : this.data.basePrice,
           discountValue:
             this.data.discount !== undefined ? this.data.discount : this.data.discountValue,
-          insuranceCategoryId: this.data.vehicleTypeId || this.data.insuranceCategoryId,
-          makeId: this.data.manufacturerId || this.data.makeId,
-          modelId: this.data.vehicleModelId || this.data.modelId,
+          insuranceCategoryId: ensureArray(this.data.vehicleTypeId),
+          makeId: ensureArray(this.data.manufacturerId),
+          modelId: ensureArray(this.data.vehicleModelId),
+          insuranceCompaniesId: ensureArray(this.data.insuranceCompaniesId),
           termsAndConditions: this.data.tAndC || this.data.termsAndConditions,
           policyDuration: this.data.policyDuration ? parseInt(String(this.data.policyDuration)) : 1,
         };
@@ -166,6 +173,10 @@ export class ProductFormComponent implements OnChanges, OnInit {
           policyDuration: 1,
           status: 'Active',
           rtoIds: [],
+          insuranceCompaniesId: [],
+          insuranceCategoryId: [],
+          makeId: [],
+          modelId: [],
         });
         this.finalPrice = 0;
         this.currentStep = 1;
@@ -188,28 +199,33 @@ export class ProductFormComponent implements OnChanges, OnInit {
   }
 
   onCategoryChange(resetMakeAndModel = true) {
-    const catId = this.form.get('insuranceCategoryId')?.value;
+    const selectedCatIds = this.form.get('insuranceCategoryId')?.value || [];
 
     // Dependent Dropdown Logic (Category -> Make)
-    if (this.makes.length > 0) {
-      this.filteredMakes = this.makes.filter((m: any) => m.vehicleTypeId === catId);
+    if (this.makes.length > 0 && selectedCatIds.length > 0) {
+      this.filteredMakes = this.makes.filter((m: any) => selectedCatIds.includes(m.vehicleTypeId));
     } else {
       this.filteredMakes = [];
     }
 
     if (resetMakeAndModel) {
-      this.form.patchValue({ makeId: '', modelId: '' });
+      this.form.patchValue({ makeId: [], modelId: [] });
       this.filteredModels = [];
     }
   }
 
   onMakeChange(resetModel = true) {
-    const makeId = this.form.get('makeId')?.value;
-    this.filteredModels = this.models.filter(
-      (m: any) => m.manufacturerId === makeId || m.makeId === makeId,
-    );
+    const selectedMakeIds = this.form.get('makeId')?.value || [];
+    if (this.models.length > 0 && selectedMakeIds.length > 0) {
+      this.filteredModels = this.models.filter((m: any) =>
+        selectedMakeIds.includes(m.manufacturerId || m.makeId),
+      );
+    } else {
+      this.filteredModels = [];
+    }
+
     if (resetModel) {
-      this.form.patchValue({ modelId: '' });
+      this.form.patchValue({ modelId: [] });
     }
   }
 
@@ -229,19 +245,29 @@ export class ProductFormComponent implements OnChanges, OnInit {
   }
 
   // --- Multi Select Handlers ---
-  isRtoSelected(rtoId: string): boolean {
-    const currentRtoIds = this.form.get('rtoIds')?.value || [];
-    return currentRtoIds.includes(rtoId);
+  isSelected(controlName: string, id: string): boolean {
+    const values = this.form.get(controlName)?.value || [];
+    return values.includes(id);
   }
 
-  onRtoCheckboxChange(event: any, rtoId: string) {
+  onCheckboxChange(event: any, controlName: string, id: string) {
     const isChecked = event.target.checked;
-    const currentRtoIds = this.form.get('rtoIds')?.value || [];
+    const currentValues = this.form.get(controlName)?.value || [];
 
+    let newValues;
     if (isChecked) {
-      this.form.patchValue({ rtoIds: [...currentRtoIds, rtoId] });
+      newValues = [...currentValues, id];
     } else {
-      this.form.patchValue({ rtoIds: currentRtoIds.filter((id: string) => id !== rtoId) });
+      newValues = currentValues.filter((v: string) => v !== id);
+    }
+
+    this.form.patchValue({ [controlName]: newValues });
+
+    // Trigger dependent logic
+    if (controlName === 'insuranceCategoryId') {
+      this.onCategoryChange();
+    } else if (controlName === 'makeId') {
+      this.onMakeChange();
     }
   }
 
@@ -275,10 +301,10 @@ export class ProductFormComponent implements OnChanges, OnInit {
       // Structure Payload Logic
       formData.append('policyName', formValue.name);
       formData.append('policyCode', formValue.policyCode);
-      formData.append('insuranceCompany', formValue.insuranceCompany);
-      formData.append('vehicleTypeId', formValue.insuranceCategoryId);
-      formData.append('manufacturerId', formValue.makeId || '');
-      formData.append('vehicleModelId', formValue.modelId || '');
+      formData.append('insuranceCompaniesId', JSON.stringify(formValue.insuranceCompaniesId || []));
+      formData.append('vehicleTypeId', JSON.stringify(formValue.insuranceCategoryId || []));
+      formData.append('manufacturerId', JSON.stringify(formValue.makeId || []));
+      formData.append('vehicleModelId', JSON.stringify(formValue.modelId || []));
       formData.append('policyTypeId', formValue.policyTypeId);
       formData.append('rtoIds', JSON.stringify(formValue.rtoIds || []));
       formData.append('minPrice', String(formValue.basePrice));
@@ -289,7 +315,7 @@ export class ProductFormComponent implements OnChanges, OnInit {
       // Retained Fields via User Request
       formData.append('name', formValue.name);
       formData.append('description', formValue.description || '');
-      formData.append('insuranceCategoryId', formValue.insuranceCategoryId);
+      // formData.append('insuranceCategoryId', formValue.insuranceCategoryId); // Removed legacy or keep? I'll comment out
       formData.append('policyDuration', String(formValue.policyDuration));
       formData.append('tAndC', formValue.termsAndConditions || '');
       formData.append('status', formValue.status);

@@ -43,6 +43,14 @@
           <span class="label">Policy Code:</span>
           <span class="value">{{ saleDetails.policyCode }}</span>
         </div>
+        @if (saleDetails.lapsDate) {
+          <div class="detail-row">
+            <span class="label text-danger">Lapse Date (Expiry):</span>
+            <span class="value font-bold text-danger">{{
+              saleDetails.lapsDate | date: 'dd MMM yyyy'
+            }}</span>
+          </div>
+        }
       </div>
 
       <!-- Pricing Info -->

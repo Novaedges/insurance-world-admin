@@ -21,10 +21,10 @@ export interface Product {
   // New API Fields mapped exactly
   policyName?: string;
   policyCode?: string;
-  insuranceCompany?: string;
-  vehicleTypeId?: string;
-  manufacturerId?: string;
-  vehicleModelId?: string;
+  insuranceCompaniesId?: string[]; // Multiple Insurance Company IDs
+  vehicleTypeId?: string[]; // Multiple Vehicle Type IDs
+  manufacturerId?: string[]; // Multiple Manufacturer IDs
+  vehicleModelId?: string[]; // Multiple Vehicle Model IDs
   policyTypeId?: string;
   rtoIds?: string[];
   minPrice?: number;
