@@ -37,7 +37,7 @@ export class VehicleMakeFormComponent implements OnInit, OnChanges {
     this.form = this.fb.group({
       _id: [''],
       name: ['', Validators.required],
-      vehicleTypeId: ['', Validators.required],
+      vehicleTypeId: [[], Validators.required],
       isActive: [true, Validators.required],
     });
   }
@@ -57,8 +57,22 @@ export class VehicleMakeFormComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['data']) {
       if (this.data) {
+        const ensureArray = (val: any) => {
+          if (!val) return [];
+          if (Array.isArray(val)) return val;
+          if (typeof val === 'string' && val.startsWith('[')) {
+            try {
+              return JSON.parse(val);
+            } catch (e) {
+              return [val];
+            }
+          }
+          return [val];
+        };
+
         this.form.patchValue({
           ...this.data,
+          vehicleTypeId: ensureArray(this.data.vehicleTypeId),
           isActive: this.data.isActive ?? true,
         });
         this.imagePreview = this.data.logo || null;
@@ -82,6 +96,26 @@ export class VehicleMakeFormComponent implements OnInit, OnChanges {
     }
   }
 
+  // --- Multi Select Handlers ---
+  isSelected(id: string): boolean {
+    const values = this.form.get('vehicleTypeId')?.value || [];
+    return values.includes(id);
+  }
+
+  onCheckboxChange(event: any, id: string) {
+    const isChecked = event.target.checked;
+    const currentValues = this.form.get('vehicleTypeId')?.value || [];
+
+    let newValues;
+    if (isChecked) {
+      newValues = [...currentValues, id];
+    } else {
+      newValues = currentValues.filter((v: string) => v !== id);
+    }
+
+    this.form.patchValue({ vehicleTypeId: newValues });
+  }
+
   onSubmit() {
     if (this.form.valid) {
       const formData = new FormData();
@@ -89,7 +123,11 @@ export class VehicleMakeFormComponent implements OnInit, OnChanges {
 
       Object.keys(formValue).forEach((key) => {
         if (formValue[key] !== null && formValue[key] !== undefined) {
-          formData.append(key, formValue[key]);
+          if (key === 'vehicleTypeId' && Array.isArray(formValue[key])) {
+            formData.append(key, JSON.stringify(formValue[key]));
+          } else {
+            formData.append(key, formValue[key]);
+          }
         }
       });
 

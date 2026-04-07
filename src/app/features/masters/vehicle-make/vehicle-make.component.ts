@@ -17,6 +17,7 @@ import { finalize } from 'rxjs';
 })
 export class VehicleMakeComponent implements OnInit {
   items: VehicleMake[] = [];
+  protected readonly Array = Array;
   columns: Column[] = [
     { field: 'name', header: 'Make Name' },
     { field: 'vehicleTypeName', header: 'Category' }, // Assuming backend returns populated or we map it
@@ -62,7 +63,9 @@ export class VehicleMakeComponent implements OnInit {
           // Based on user request "show the category form the category GET API",
           // we might need to join data if not provided.
           // Let's assume for now we just display what we have or 'vehicleTypeId' if name is missing.
-          vehicleTypeName: item.vehicleType?.name || item.vehicleTypeName || 'N/A',
+          vehicleTypeName: Array.isArray(item.vehicleType)
+            ? item.vehicleType.map((v: any) => v.name).join(', ')
+            : item.vehicleType?.name || item.vehicleTypeName || 'N/A',
         }));
         this.totalItems = response.totalCount || 0;
       } else {

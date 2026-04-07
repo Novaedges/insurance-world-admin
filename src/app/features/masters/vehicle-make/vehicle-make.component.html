@@ -65,7 +65,13 @@
         </div>
         <div class="card-item">
           <span class="card-label">Vehicle Type ID</span>
-          <span class="card-value">{{ infoData.vehicleTypeId || 'N/A' }}</span>
+          <span class="card-value">
+            {{
+              Array.isArray(infoData.vehicleTypeId)
+                ? infoData.vehicleTypeId.join(', ')
+                : infoData.vehicleTypeId || 'N/A'
+            }}
+          </span>
         </div>
       </div>
 

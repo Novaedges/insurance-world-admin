@@ -5,11 +5,25 @@
   </div>
 
   <div class="form-group">
-    <label>Category</label>
-    <select formControlName="vehicleTypeId">
-      <option value="" disabled>Select Category</option>
-      <option *ngFor="let cat of categories" [value]="cat._id">{{ cat.name }}</option>
-    </select>
+    <label>Category <span class="text-danger">*</span></label>
+    <div class="permissions-grid">
+      @for (cat of categories; track cat._id) {
+        <label class="checkbox-item">
+          <input
+            type="checkbox"
+            [value]="cat._id || ''"
+            (change)="onCheckboxChange($event, cat._id || '')"
+            [checked]="isSelected(cat._id || '')"
+          />
+          {{ cat.name }}
+        </label>
+      }
+    </div>
+    @if (form.get('vehicleTypeId')?.invalid && form.get('vehicleTypeId')?.touched) {
+      <div class="error-msg" style="color: #ef4444; font-size: 0.75rem; margin-top: 0.25rem">
+        At least one Category is required
+      </div>
+    }
   </div>
 
   <div class="form-group">

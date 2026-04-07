@@ -29,7 +29,7 @@ export interface RTO {
 export interface VehicleMake {
   id?: string;
   name: string;
-  vehicleTypeId: string;
+  vehicleTypeId: string | string[];
   vehicleTypeName?: string; // For display
   category?: 'Bike' | 'Car'; // Legacy, might be removed later if strictly using types
   isActive?: boolean;

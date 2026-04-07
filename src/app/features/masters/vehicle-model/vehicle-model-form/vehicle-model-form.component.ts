@@ -86,8 +86,13 @@ export class VehicleModelFormComponent implements OnChanges, OnInit {
       this.filteredMakes = [];
       return;
     }
-    // Filter makes where vehicleTypeId matches
-    this.filteredMakes = this.allMakes.filter((make) => make.vehicleTypeId === typeId);
+    // Filter makes where vehicleTypeId matches (could be an array)
+    this.filteredMakes = this.allMakes.filter((make) => {
+      if (Array.isArray(make.vehicleTypeId)) {
+        return make.vehicleTypeId.includes(typeId);
+      }
+      return make.vehicleTypeId === typeId;
+    });
 
     // Check if current manufacturerId is valid for new category, if not reset
     const currentMakeId = this.form.get('manufacturerId')?.value;
