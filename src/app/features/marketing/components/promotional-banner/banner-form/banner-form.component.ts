@@ -73,10 +73,10 @@ export class BannerFormComponent implements OnChanges {
     if (formValue._id) {
       formData.append('_id', formValue._id);
     }
-    
+
     formData.append('showInPortal', formValue.showInPortal.toString());
     formData.append('priority', formValue.priority.toString());
-    
+
     if (this.selectedFile) {
       formData.append('image', this.selectedFile);
     }

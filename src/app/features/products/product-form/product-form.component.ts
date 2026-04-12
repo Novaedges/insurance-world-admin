@@ -201,12 +201,27 @@ export class ProductFormComponent implements OnChanges, OnInit {
   onCategoryChange(resetMakeAndModel = true) {
     const selectedCatIds = this.form.get('insuranceCategoryId')?.value || [];
 
-    // Dependent Dropdown Logic (Category -> Make)
-    if (this.makes.length > 0 && selectedCatIds.length > 0) {
-      this.filteredMakes = this.makes.filter((m: any) => selectedCatIds.includes(m.vehicleTypeId));
-    } else {
-      this.filteredMakes = [];
-    }
+    // Synchronize by calling the API as requested
+    this.makeService.getMakes().subscribe((res: any) => {
+      this.makes = res.result || [];
+      if (this.makes.length > 0 && selectedCatIds.length > 0) {
+        this.filteredMakes = this.makes.filter((m: any) => {
+          if (!m.vehicleTypeId) return false;
+          if (Array.isArray(m.vehicleTypeId)) {
+            return m.vehicleTypeId.some((id: string) => selectedCatIds.includes(id));
+          }
+          return selectedCatIds.includes(m.vehicleTypeId);
+        });
+      } else {
+        this.filteredMakes = [];
+      }
+    });
+
+    // Also sync models
+    this.modelService.getModels().subscribe((res: any) => {
+      this.models = res.result || [];
+      this.onMakeChange(false);
+    });
 
     if (resetMakeAndModel) {
       this.form.patchValue({ makeId: [], modelId: [] });
@@ -217,9 +232,10 @@ export class ProductFormComponent implements OnChanges, OnInit {
   onMakeChange(resetModel = true) {
     const selectedMakeIds = this.form.get('makeId')?.value || [];
     if (this.models.length > 0 && selectedMakeIds.length > 0) {
-      this.filteredModels = this.models.filter((m: any) =>
-        selectedMakeIds.includes(m.manufacturerId || m.makeId),
-      );
+      this.filteredModels = this.models.filter((m: any) => {
+        const makeId = m.manufacturerId || m.makeId || m._id;
+        return selectedMakeIds.includes(makeId);
+      });
     } else {
       this.filteredModels = [];
     }

@@ -21,7 +21,7 @@ export class ProductListComponent implements OnInit {
   columns: Column[] = [
     { field: 'policyCode', header: 'Policy Code' },
     { field: 'policyName', header: 'Policy Name' },
-    { field: 'insuranceCompany', header: 'Company' },
+    // { field: 'insuranceCompany', header: 'Company' },
     { field: 'policyTypeName', header: 'Policy Type' },
     { field: 'minPrice', header: 'Min Price', type: 'currency', currencyCode: 'INR' },
     { field: 'status', header: 'Status', type: 'status' },

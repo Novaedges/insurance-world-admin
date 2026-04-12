@@ -48,7 +48,7 @@
 .file-upload-container {
   position: relative;
   width: 100%;
-  
+
   input[type='file'] {
     position: absolute;
     top: 0;
@@ -103,7 +103,7 @@
   overflow: hidden;
   border: 1px solid #e2e8f0;
   max-width: 100%;
-  
+
   img {
     display: block;
     width: 100%;
@@ -194,11 +194,11 @@
 
     input[type='checkbox'] {
       display: none;
-      
+
       &:checked + .custom-checkbox {
         background-color: #6366f1;
         border-color: #6366f1;
-        
+
         &::after {
           display: block;
         }

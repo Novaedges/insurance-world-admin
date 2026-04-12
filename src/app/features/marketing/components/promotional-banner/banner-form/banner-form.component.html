@@ -13,7 +13,11 @@
       @if (imagePreview) {
         <div class="image-preview-container">
           <img [src]="imagePreview" alt="Banner Preview" />
-          <button type="button" class="remove-img" (click)="selectedFile = null; imagePreview = null">
+          <button
+            type="button"
+            class="remove-img"
+            (click)="selectedFile = null; imagePreview = null"
+          >
             <i class="ri-close-line"></i>
           </button>
         </div>
@@ -24,7 +28,7 @@
       <label>Priority</label>
       <input type="number" formControlName="priority" placeholder="Enter priority (e.g. 10)" />
       @if (bannerForm.get('priority')?.touched && bannerForm.get('priority')?.invalid) {
-         <span class="error-msg">Priority is required and must be 0 or greater.</span>
+        <span class="error-msg">Priority is required and must be 0 or greater.</span>
       }
     </div>
 
@@ -43,7 +47,7 @@
     </button>
     <button type="submit" class="btn-primary" [disabled]="bannerForm.invalid || isSubmitting">
       <i class="ri-loader-4-line" *ngIf="isSubmitting" style="margin-right: 0.5rem"></i>
-      {{ isSubmitting ? 'Processing...' : (bannerData ? 'Update Banner' : 'Create Banner') }}
+      {{ isSubmitting ? 'Processing...' : bannerData ? 'Update Banner' : 'Create Banner' }}
     </button>
   </div>
 </form>
