@@ -18,6 +18,10 @@
         </div>
         <div class="card-content">
           <div class="detail-item">
+            <span class="label">Invoice No</span>
+            <span class="value font-bold text-primary">{{ inquiryDetails.invoiceNo }}</span>
+          </div>
+          <div class="detail-item">
             <span class="label">Registration No</span>
             <span class="value font-bold text-primary">{{ inquiryDetails.regNumber }}</span>
           </div>
@@ -48,8 +52,12 @@
             </span>
           </div>
           <div class="detail-item">
-            <span class="label">Assigned Agent</span>
+            <span class="label">Partner Name</span>
             <span class="value">{{ inquiryDetails.agentName || 'Unassigned' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Partner Phone Number</span>
+            <span class="value">{{ inquiryDetails.agentPhoneNumber || 'Unassigned' }}</span>
           </div>
           @if (inquiryDetails.rtoDetails) {
             <div class="detail-item">

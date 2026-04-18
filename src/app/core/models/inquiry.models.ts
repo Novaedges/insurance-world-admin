@@ -1,11 +1,13 @@
 export interface InquiryReportItem {
   _id: string;
   regNumber: string;
+  invoiceNo: string;
   name: string;
   phoneNumber: string;
   createdAt: string;
   policyName: string;
   agentName: string;
+  agentPhoneNumber: number;
   status: string;
   rtoDetails?: {
     rtoName: string;

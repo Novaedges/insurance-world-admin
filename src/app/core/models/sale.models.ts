@@ -1,6 +1,7 @@
 export interface SaleReportItem {
   _id: string;
   regNumber: string;
+  invoiceNo: string;
   name: string;
   phoneNumber: string;
   createdAt: string;

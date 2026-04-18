@@ -32,8 +32,16 @@ export class InquiryUpdateDialogComponent implements OnInit {
     commission: null as number | null,
     discount: null as number | null,
     lapsDate: '',
-    note: '',
+    paymentNote: [] as { note: string; referenceNo: string }[],
+    remarks: '',
   };
+
+  get netAmount(): number {
+    const premium = this.formData.sellingPrice || 0;
+    const commission = this.formData.commission || 0;
+    const discount = this.formData.discount || 0;
+    return premium - commission - discount;
+  }
 
   isSubmitting = false;
 
@@ -60,15 +68,34 @@ export class InquiryUpdateDialogComponent implements OnInit {
         next: (res) => {
           if (res.status && res.result) {
             const inquiry = Array.isArray(res.result) ? res.result[0] : res.result;
+
+            if (inquiry && inquiry.policyDetails) {
+              this.selectedPolicyDetails = inquiry.policyDetails;
+            }
+
+            if (inquiry && inquiry.policyTypeDetails) {
+              this.selectedPolicyTypeDetails = inquiry.policyTypeDetails;
+            }
+
             if (inquiry && inquiry.policyName) {
               const targetPolicyName = inquiry.policyName;
               // If policies are already loaded, try to find and select
               if (this.policies.length > 0) {
-                this.selectPolicyByName(targetPolicyName);
+                this.selectPolicyByName(targetPolicyName, true);
               } else {
                 // Store temporarily to select once policies load
                 this.tempPolicyName = targetPolicyName;
               }
+            }
+
+            if (inquiry && inquiry.commission !== undefined) {
+              this.formData.commission = inquiry.commission;
+            }
+            if (inquiry && inquiry.discount !== undefined) {
+              this.formData.discount = inquiry.discount;
+            }
+            if (inquiry && inquiry.sellingPrice !== undefined) {
+              this.formData.sellingPrice = inquiry.sellingPrice;
             }
 
             if (inquiry && inquiry.lapsDate) {
@@ -76,6 +103,15 @@ export class InquiryUpdateDialogComponent implements OnInit {
               const date = new Date(inquiry.lapsDate);
               this.formData.lapsDate = date.toISOString().split('T')[0];
             }
+
+            if (inquiry && inquiry.paymentNote && Array.isArray(inquiry.paymentNote)) {
+              this.formData.paymentNote = [...inquiry.paymentNote];
+            } else if (this.formData.paymentNote.length === 0) {
+              // Add one empty field by default if none exist
+              this.addPaymentDetail();
+            }
+
+            this.cdr.detectChanges();
           }
         },
         error: (err) => {
@@ -87,7 +123,7 @@ export class InquiryUpdateDialogComponent implements OnInit {
 
   private tempPolicyName: string = '';
 
-  private selectPolicyByName(name: string) {
+  private selectPolicyByName(name: string, skipUpdateDetails: boolean = false) {
     const matchedPolicy = this.policies.find(
       (p) =>
         p.policyName?.toLowerCase() === name.toLowerCase() ||
@@ -96,7 +132,9 @@ export class InquiryUpdateDialogComponent implements OnInit {
 
     if (matchedPolicy) {
       this.formData.policyId = matchedPolicy._id;
-      this.onPolicyChange();
+      if (!skipUpdateDetails) {
+        this.onPolicyChange();
+      }
     }
   }
 
@@ -106,7 +144,7 @@ export class InquiryUpdateDialogComponent implements OnInit {
         if (res.status && res.result) {
           this.policies = res.result;
           if (this.tempPolicyName) {
-            this.selectPolicyByName(this.tempPolicyName);
+            this.selectPolicyByName(this.tempPolicyName, true);
             this.tempPolicyName = '';
           }
         }
@@ -128,6 +166,18 @@ export class InquiryUpdateDialogComponent implements OnInit {
         console.error('Failed to load policy types', err);
       },
     });
+  }
+
+  addPaymentDetail() {
+    this.formData.paymentNote.push({ note: '', referenceNo: '' });
+  }
+
+  removePaymentDetail(index: number) {
+    if (this.formData.paymentNote.length > 1) {
+      this.formData.paymentNote.splice(index, 1);
+    } else {
+      this.formData.paymentNote[0] = { note: '', referenceNo: '' };
+    }
   }
 
   onPolicyChange() {
@@ -153,7 +203,7 @@ export class InquiryUpdateDialogComponent implements OnInit {
   onSubmit() {
     if (!this.inquiryId) return;
 
-    if (!this.formData.note || this.formData.note.trim() === '') {
+    if (!this.formData.remarks || this.formData.remarks.trim() === '') {
       this.snackbarService.error('Note is mandatory');
       return;
     }
@@ -168,21 +218,30 @@ export class InquiryUpdateDialogComponent implements OnInit {
     const payload: any = {
       _id: this.inquiryId,
       status: this.formData.status,
-      note: this.formData.note,
+      remakrs: this.formData.remarks,
     };
 
     if (this.formData.policyId) {
       payload.policyId = this.formData.policyId;
-      // Also send policyTypeId if we have it
-      if (this.selectedPolicyDetails?.policyTypeId) {
-        payload.policyTypeId = this.selectedPolicyDetails.policyTypeId;
-      }
+    }
+
+    // Always send policyTypeId if we have it, regardless of whether policy changed
+    if (this.selectedPolicyTypeDetails?._id) {
+      payload.policyTypeId = this.selectedPolicyTypeDetails._id;
     }
 
     if (this.formData.sellingPrice) payload.sellingPrice = this.formData.sellingPrice;
     if (this.formData.commission) payload.commission = this.formData.commission;
     if (this.formData.discount) payload.discount = this.formData.discount;
     if (this.formData.lapsDate) payload.lapsDate = this.formData.lapsDate;
+
+    // Filter out empty payment notes
+    const validPaymentNotes = this.formData.paymentNote.filter(
+      (pn) => pn.note.trim() !== '' || pn.referenceNo.trim() !== '',
+    );
+    if (validPaymentNotes.length > 0) {
+      payload.paymentNote = validPaymentNotes;
+    }
 
     this.inquiryService.updateInquiryStatus(payload).subscribe({
       next: (res) => {

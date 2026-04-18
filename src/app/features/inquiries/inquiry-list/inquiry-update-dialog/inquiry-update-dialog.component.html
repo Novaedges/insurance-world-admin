@@ -44,44 +44,21 @@
         <div class="policy-details-card full-width">
           <div class="card-header">
             <i class="ri-information-line"></i>
-            <span>Policy & Type Details</span>
+            <span>Policy Details</span>
           </div>
           <div class="card-body">
-            <div class="detail-item">
-              <span class="label">Price Range:</span>
-              <span class="value">
-                ₹{{ selectedPolicyDetails.minPrice }} - ₹{{ selectedPolicyDetails.maxPrice }}
-              </span>
-            </div>
-            <div class="detail-item">
-              <span class="label">Insurance Co:</span>
-              <span class="value">{{ selectedPolicyDetails.insuranceCompany }}</span>
-            </div>
-
-            <!-- Policy Type Details -->
-            @if (selectedPolicyTypeDetails) {
-              <div class="policy-type-box">
-                <div class="detail-item">
-                  <span class="label">Policy Type:</span>
-                  <span class="value text-primary font-bold">{{
-                    selectedPolicyTypeDetails.policyType
-                  }}</span>
-                </div>
-                @if (
-                  selectedPolicyTypeDetails.coverage &&
-                  selectedPolicyTypeDetails.coverage.length > 0
-                ) {
-                  <div class="coverage-info">
-                    <span class="label">Coverage Features:</span>
-                    <div class="coverage-list">
-                      @for (feat of selectedPolicyTypeDetails.coverage; track feat) {
-                        <span class="coverage-pill">{{ feat }}</span>
-                      }
-                    </div>
-                  </div>
-                }
+            <div class="detail-items-row">
+              <div class="detail-item">
+                <span class="label">Price Range:</span>
+                <span class="value">
+                  ₹{{ selectedPolicyDetails.minPrice }} - ₹{{ selectedPolicyDetails.maxPrice }}
+                </span>
               </div>
-            }
+              <div class="detail-item">
+                <span class="label">Insurance Co:</span>
+                <span class="value">{{ selectedPolicyDetails.insuranceCompany }}</span>
+              </div>
+            </div>
 
             <div class="detail-items-row">
               <div class="detail-item">
@@ -101,7 +78,7 @@
       <div class="form-group">
         <label class="form-label">
           <i class="ri-price-tag-3-line"></i>
-          Selling Price
+          Premium Price
           @if (formData.status === 'Completed') {
             <span class="required">*</span>
           } @else {
@@ -171,6 +148,68 @@
         </div>
       </div>
 
+      <!-- Net Collection Summary -->
+      <div class="summary-section full-width">
+        <div class="summary-card">
+          <div class="summary-item">
+            <span class="summary-label">
+              <i class="ri-wallet-3-line"></i>
+              Actual Amount to Collect
+            </span>
+            <span
+              class="summary-value"
+              [class.text-success]="netAmount >= 0"
+              [class.text-danger]="netAmount < 0"
+            >
+              {{ netAmount | currency: 'INR' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Details -->
+      <div class="payment-details-section full-width">
+        <label class="form-label">
+          <i class="ri-bank-card-line"></i>
+          Payment Details
+        </label>
+        <div class="payment-list">
+          @for (item of formData.paymentNote; track $index) {
+            <div class="payment-item">
+              <div class="payment-inputs">
+                <div class="input-wrapper">
+                  <input
+                    type="text"
+                    [(ngModel)]="item.note"
+                    placeholder="Payment Note"
+                    class="form-input"
+                  />
+                </div>
+                <div class="input-wrapper">
+                  <input
+                    type="text"
+                    [(ngModel)]="item.referenceNo"
+                    placeholder="Reference No"
+                    class="form-input"
+                  />
+                </div>
+              </div>
+              <button
+                type="button"
+                class="remove-payment-btn"
+                (click)="removePaymentDetail($index)"
+                title="Remove Item"
+              >
+                <i class="ri-delete-bin-line"></i>
+              </button>
+            </div>
+          }
+        </div>
+        <button type="button" class="add-payment-btn" (click)="addPaymentDetail()">
+          <i class="ri-add-line"></i> Add More Payment Info
+        </button>
+      </div>
+
       <!-- Note (Mandatory) -->
       <div class="form-group full-width">
         <label class="form-label">
@@ -178,7 +217,7 @@
           Update Note <span class="required">*</span>
         </label>
         <textarea
-          [(ngModel)]="formData.note"
+          [(ngModel)]="formData.remarks"
           placeholder="Enter a mandatory update note..."
           [disabled]="isSubmitting"
           class="form-textarea"
