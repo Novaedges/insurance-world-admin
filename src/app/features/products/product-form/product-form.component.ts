@@ -98,6 +98,7 @@ export class ProductFormComponent implements OnChanges, OnInit {
       insuranceCompaniesId: [[], Validators.required],
       policyTypeId: ['', Validators.required],
       rtoIds: [[], Validators.required],
+      policyCovers: [[]],
     });
 
     this.form.valueChanges.subscribe(() => this.calculateFinalPrice());
@@ -156,6 +157,7 @@ export class ProductFormComponent implements OnChanges, OnInit {
           insuranceCompaniesId: ensureArray(this.data.insuranceCompaniesId),
           termsAndConditions: this.data.tAndC || this.data.termsAndConditions,
           policyDuration: this.data.policyDuration ? parseInt(String(this.data.policyDuration)) : 1,
+          policyCovers: ensureArray(this.data.policyCovers),
         };
 
         this.form.patchValue(patchedData);
@@ -177,6 +179,7 @@ export class ProductFormComponent implements OnChanges, OnInit {
           insuranceCategoryId: [],
           makeId: [],
           modelId: [],
+          policyCovers: [],
         });
         this.finalPrice = 0;
         this.currentStep = 1;
@@ -260,6 +263,26 @@ export class ProductFormComponent implements OnChanges, OnInit {
     this.finalPrice = Math.max(0, base - discountAmount);
   }
 
+  // --- Policy Covers Handlers ---
+  addPolicyCover(input: HTMLInputElement) {
+    const value = input.value.trim();
+    if (!value) return;
+
+    const currentCovers = this.form.get('policyCovers')?.value || [];
+    if (!currentCovers.includes(value)) {
+      this.form.patchValue({ policyCovers: [...currentCovers, value] });
+      input.value = '';
+    } else {
+      this.snackbarService.error('This cover is already added');
+    }
+  }
+
+  removePolicyCover(index: number) {
+    const currentCovers = this.form.get('policyCovers')?.value || [];
+    const newCovers = currentCovers.filter((_: any, i: number) => i !== index);
+    this.form.patchValue({ policyCovers: newCovers });
+  }
+
   // --- Multi Select Handlers ---
   isSelected(controlName: string, id: string): boolean {
     const values = this.form.get(controlName)?.value || [];
@@ -337,6 +360,7 @@ export class ProductFormComponent implements OnChanges, OnInit {
       formData.append('status', formValue.status);
       formData.append('discountType', formValue.discountType);
       formData.append('basePrice', String(formValue.basePrice));
+      formData.append('policyCovers', JSON.stringify(formValue.policyCovers || []));
 
       if (formValue._id || formValue.id) {
         formData.append('_id', formValue._id || formValue.id);

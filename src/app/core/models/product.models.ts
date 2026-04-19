@@ -34,4 +34,5 @@ export interface Product {
   commission?: number;
   logo?: string;
   tAndC?: string;
+  policyCovers?: string[];
 }

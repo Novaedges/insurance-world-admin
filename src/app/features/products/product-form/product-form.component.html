@@ -105,6 +105,29 @@
           placeholder="Product Description"
         ></textarea>
       </div>
+
+      <div class="form-group full-width">
+        <label>Policy Covers (Key Features)</label>
+        <div class="tag-input-container">
+          <div class="tag-list">
+            @for (cover of form.get('policyCovers')?.value; track $index) {
+              <span class="tag-item">
+                {{ cover }}
+                <i class="ri-close-line" (click)="removePolicyCover($index)"></i>
+              </span>
+            }
+          </div>
+          <div class="input-with-button">
+            <input
+              #coverInput
+              type="text"
+              placeholder="Add a policy cover/feature..."
+              (keyup.enter)="addPolicyCover(coverInput)"
+            />
+            <button type="button" class="btn-add" (click)="addPolicyCover(coverInput)">Add</button>
+          </div>
+        </div>
+      </div>
     </div>
   }
 

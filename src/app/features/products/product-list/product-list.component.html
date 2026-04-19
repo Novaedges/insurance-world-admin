@@ -166,6 +166,21 @@
         font-size: 0.8rem;
         font-weight: 500;
       }
+      .cover-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+      }
+      .cover-pill {
+        background-color: #eef2ff;
+        border: 1px solid #c7d2fe;
+        color: #4f46e5;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
     </style>
 
     <div class="info-header-card">
@@ -202,16 +217,35 @@
         <div class="card-title"><i class="ri-car-line"></i> Categorization</div>
         <div class="card-item">
           <span class="card-label">Vehicle Type</span>
-          <span class="card-value">{{ infoData.vehicleTypeName || 'N/A' }}</span>
+          <span class="card-value">
+            <ng-container *ngIf="infoData.vehicleTypes?.length; else naTpl">
+              <span *ngFor="let vt of infoData.vehicleTypes; let last = last">
+                {{ vt.name }}{{ !last ? ', ' : '' }}
+              </span>
+            </ng-container>
+          </span>
         </div>
         <div class="card-item">
           <span class="card-label">Manufacturer</span>
-          <span class="card-value">{{ infoData.manufacturerName || 'N/A' }}</span>
+          <span class="card-value">
+            <ng-container *ngIf="infoData.manufacturers?.length; else naTpl">
+              <span *ngFor="let m of infoData.manufacturers; let last = last">
+                {{ m.name }}{{ !last ? ', ' : '' }}
+              </span>
+            </ng-container>
+          </span>
         </div>
         <div class="card-item">
           <span class="card-label">Model</span>
-          <span class="card-value">{{ infoData.vehicleModelName || 'N/A' }}</span>
+          <span class="card-value">
+            <ng-container *ngIf="infoData.vehicleModels?.length; else naTpl">
+              <span *ngFor="let vm of infoData.vehicleModels; let last = last">
+                {{ vm.name }}{{ !last ? ', ' : '' }}
+              </span>
+            </ng-container>
+          </span>
         </div>
+        <ng-template #naTpl><span class="card-value">N/A</span></ng-template>
       </div>
 
       <!-- Financials Card -->
@@ -234,6 +268,16 @@
             <span class="card-label">Commission</span>
             <span class="card-value">{{ infoData.commission | currency: 'INR' }}</span>
           </div>
+        </div>
+      </div>
+
+      <!-- Policy Covers Card -->
+      <div class="info-card" *ngIf="infoData.policyCovers?.length">
+        <div class="card-title"><i class="ri-shield-flash-line"></i> Policy Coverage Features</div>
+        <div class="cover-pills">
+          <span class="cover-pill" *ngFor="let cover of infoData.policyCovers">
+            {{ cover }}
+          </span>
         </div>
       </div>
 

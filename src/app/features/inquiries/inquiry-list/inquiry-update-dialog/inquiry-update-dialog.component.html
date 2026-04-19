@@ -4,10 +4,14 @@
     <div class="form-group">
       <label class="form-label">
         <i class="ri-flag-line"></i>
-        Update Status <span class="required">*</span>
+        Update Enquiry <span class="required">*</span>
       </label>
       <div class="select-wrapper">
-        <select [(ngModel)]="formData.status" [disabled]="isSubmitting" class="form-select">
+        <select
+          [(ngModel)]="formData.status"
+          [disabled]="isSubmitting || isReadOnly"
+          class="form-select"
+        >
           @for (status of statusOptions; track status) {
             <option [value]="status">{{ status }}</option>
           }
@@ -27,7 +31,7 @@
           <select
             [(ngModel)]="formData.policyId"
             (change)="onPolicyChange()"
-            [disabled]="isSubmitting"
+            [disabled]="isSubmitting || isReadOnly"
             class="form-select"
           >
             <option value="">Select a Policy</option>
@@ -91,7 +95,7 @@
             type="number"
             [(ngModel)]="formData.sellingPrice"
             placeholder="0.00"
-            [disabled]="isSubmitting"
+            [disabled]="isSubmitting || isReadOnly"
             class="form-input"
           />
         </div>
@@ -108,7 +112,7 @@
             type="number"
             [(ngModel)]="formData.commission"
             placeholder="0"
-            [disabled]="isSubmitting"
+            [disabled]="isSubmitting || isReadOnly"
             class="form-input"
           />
         </div>
@@ -126,7 +130,7 @@
             type="number"
             [(ngModel)]="formData.discount"
             placeholder="0"
-            [disabled]="isSubmitting"
+            [disabled]="isSubmitting || isReadOnly"
             class="form-input"
           />
         </div>
@@ -142,7 +146,7 @@
           <input
             type="date"
             [(ngModel)]="formData.lapsDate"
-            [disabled]="isSubmitting"
+            [disabled]="isSubmitting || isReadOnly"
             class="form-input"
           />
         </div>
@@ -174,7 +178,7 @@
           Payment Details
         </label>
         <div class="payment-list">
-          @for (item of formData.paymentNote; track $index) {
+          @for (item of formData.paymentNotes; track $index) {
             <div class="payment-item">
               <div class="payment-inputs">
                 <div class="input-wrapper">
@@ -182,6 +186,7 @@
                     type="text"
                     [(ngModel)]="item.note"
                     placeholder="Payment Note"
+                    [disabled]="isSubmitting || isReadOnly"
                     class="form-input"
                   />
                 </div>
@@ -190,24 +195,29 @@
                     type="text"
                     [(ngModel)]="item.referenceNo"
                     placeholder="Reference No"
+                    [disabled]="isSubmitting || isReadOnly"
                     class="form-input"
                   />
                 </div>
               </div>
-              <button
-                type="button"
-                class="remove-payment-btn"
-                (click)="removePaymentDetail($index)"
-                title="Remove Item"
-              >
-                <i class="ri-delete-bin-line"></i>
-              </button>
+              @if (!isReadOnly) {
+                <button
+                  type="button"
+                  class="remove-payment-btn"
+                  (click)="removePaymentDetail($index)"
+                  title="Remove Item"
+                >
+                  <i class="ri-delete-bin-line"></i>
+                </button>
+              }
             </div>
           }
         </div>
-        <button type="button" class="add-payment-btn" (click)="addPaymentDetail()">
-          <i class="ri-add-line"></i> Add More Payment Info
-        </button>
+        @if (!isReadOnly) {
+          <button type="button" class="add-payment-btn" (click)="addPaymentDetail()">
+            <i class="ri-add-line"></i> Add More Payment Info
+          </button>
+        }
       </div>
 
       <!-- Note (Mandatory) -->
@@ -219,7 +229,7 @@
         <textarea
           [(ngModel)]="formData.remarks"
           placeholder="Enter a mandatory update note..."
-          [disabled]="isSubmitting"
+          [disabled]="isSubmitting || isReadOnly"
           class="form-textarea"
           rows="3"
         ></textarea>
@@ -229,7 +239,7 @@
 
   <div class="dialog-actions">
     <button class="btn-secondary" (click)="close()" [disabled]="isSubmitting">Cancel</button>
-    <button class="btn-primary" (click)="onSubmit()" [disabled]="isSubmitting">
+    <button class="btn-primary" (click)="onSubmit()" [disabled]="isSubmitting || isReadOnly">
       @if (isSubmitting) {
         <i class="ri-loader-4-line spin"></i> Saving...
       } @else {

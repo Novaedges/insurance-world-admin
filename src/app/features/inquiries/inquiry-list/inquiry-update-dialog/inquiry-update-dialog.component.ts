@@ -32,7 +32,7 @@ export class InquiryUpdateDialogComponent implements OnInit {
     commission: null as number | null,
     discount: null as number | null,
     lapsDate: '',
-    paymentNote: [] as { note: string; referenceNo: string }[],
+    paymentNotes: [] as { note: string; referenceNo: string }[],
     remarks: '',
   };
 
@@ -44,6 +44,10 @@ export class InquiryUpdateDialogComponent implements OnInit {
   }
 
   isSubmitting = false;
+
+  get isReadOnly(): boolean {
+    return this.currentStatus === 'Completed';
+  }
 
   constructor(
     private inquiryService: InquiryService,
@@ -68,7 +72,7 @@ export class InquiryUpdateDialogComponent implements OnInit {
         next: (res) => {
           if (res.status && res.result) {
             const inquiry = Array.isArray(res.result) ? res.result[0] : res.result;
-
+            console.log(inquiry);
             if (inquiry && inquiry.policyDetails) {
               this.selectedPolicyDetails = inquiry.policyDetails;
             }
@@ -88,8 +92,8 @@ export class InquiryUpdateDialogComponent implements OnInit {
               }
             }
 
-            if (inquiry && inquiry.commission !== undefined) {
-              this.formData.commission = inquiry.commission;
+            if (inquiry && inquiry.afterSaleCommission !== undefined) {
+              this.formData.commission = inquiry.afterSaleCommission;
             }
             if (inquiry && inquiry.discount !== undefined) {
               this.formData.discount = inquiry.discount;
@@ -104,11 +108,14 @@ export class InquiryUpdateDialogComponent implements OnInit {
               this.formData.lapsDate = date.toISOString().split('T')[0];
             }
 
-            if (inquiry && inquiry.paymentNote && Array.isArray(inquiry.paymentNote)) {
-              this.formData.paymentNote = [...inquiry.paymentNote];
-            } else if (this.formData.paymentNote.length === 0) {
-              // Add one empty field by default if none exist
+            if (inquiry && inquiry.paymentNotes && Array.isArray(inquiry.paymentNotes)) {
+              this.formData.paymentNotes = [...inquiry.paymentNotes];
+            } else if (this.formData.paymentNotes.length === 0) {
               this.addPaymentDetail();
+            }
+
+            if (inquiry && inquiry.remarks) {
+              this.formData.remarks = inquiry.remarks;
             }
 
             this.cdr.detectChanges();
@@ -169,14 +176,14 @@ export class InquiryUpdateDialogComponent implements OnInit {
   }
 
   addPaymentDetail() {
-    this.formData.paymentNote.push({ note: '', referenceNo: '' });
+    this.formData.paymentNotes.push({ note: '', referenceNo: '' });
   }
 
   removePaymentDetail(index: number) {
-    if (this.formData.paymentNote.length > 1) {
-      this.formData.paymentNote.splice(index, 1);
+    if (this.formData.paymentNotes.length > 1) {
+      this.formData.paymentNotes.splice(index, 1);
     } else {
-      this.formData.paymentNote[0] = { note: '', referenceNo: '' };
+      this.formData.paymentNotes[0] = { note: '', referenceNo: '' };
     }
   }
 
@@ -218,7 +225,7 @@ export class InquiryUpdateDialogComponent implements OnInit {
     const payload: any = {
       _id: this.inquiryId,
       status: this.formData.status,
-      remakrs: this.formData.remarks,
+      remarks: this.formData.remarks,
     };
 
     if (this.formData.policyId) {
@@ -236,11 +243,11 @@ export class InquiryUpdateDialogComponent implements OnInit {
     if (this.formData.lapsDate) payload.lapsDate = this.formData.lapsDate;
 
     // Filter out empty payment notes
-    const validPaymentNotes = this.formData.paymentNote.filter(
+    const validpaymentNotess = this.formData.paymentNotes.filter(
       (pn) => pn.note.trim() !== '' || pn.referenceNo.trim() !== '',
     );
-    if (validPaymentNotes.length > 0) {
-      payload.paymentNote = validPaymentNotes;
+    if (validpaymentNotess.length > 0) {
+      payload.paymentNotes = validpaymentNotess;
     }
 
     this.inquiryService.updateInquiryStatus(payload).subscribe({
