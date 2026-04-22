@@ -34,15 +34,13 @@ export class SalesService {
     return this.http.get<any>(this.apiUrl, { params });
   }
 
-  // Mock export function - retained for UI compatibility
-  exportSales(format: 'csv' | 'pdf' | 'excel'): Observable<boolean> {
-    console.log(`Exporting sales data in ${format.toUpperCase()} format...`);
-    // Example: return this.http.get(`${this.apiUrl}/export?format=${format}`);
-    return new Observable((observer) => {
-      setTimeout(() => {
-        observer.next(true);
-        observer.complete();
-      }, 1000);
-    });
+  downloadSales(search: string = '', salesExecutiveId: string = ''): Observable<Blob> {
+    let params = new HttpParams().set('search', search).set('download', '1');
+
+    if (salesExecutiveId) {
+      params = params.set('salesExecutiveId', salesExecutiveId);
+    }
+
+    return this.http.get(this.apiUrl, { params, responseType: 'blob' });
   }
 }

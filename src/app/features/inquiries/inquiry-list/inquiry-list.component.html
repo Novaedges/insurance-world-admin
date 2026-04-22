@@ -87,7 +87,7 @@
             <tr>
               <td class="text-muted">{{ inq.createdAt | date: 'dd MMM yyyy' }}</td>
               <td class="font-bold text-primary">{{ inq.regNumber }}</td>
-              <td>{{ inq.name }}</td>
+              <td>{{ inq.name | uppercase }}</td>
               <td>{{ inq.phoneNumber }}</td>
               <td>
                 {{ inq.policyName }} <br />

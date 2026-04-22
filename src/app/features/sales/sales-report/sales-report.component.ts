@@ -5,6 +5,8 @@ import { SalesService } from '../../../core/services/sales.service';
 import { SaleReportItem } from '../../../core/models/sale.models';
 import { DialogComponent } from '../../../shared/components/dialog/dialog.component';
 import { SaleInfoDialogComponent } from './sale-info-dialog/sale-info-dialog.component';
+import { finalize } from 'rxjs/operators';
+import { SnackbarService } from '../../../core/services/snackbar.service';
 
 @Component({
   selector: 'app-sales-report',
@@ -32,7 +34,10 @@ export class SalesReportComponent implements OnInit {
   isInfoModalOpen = false;
   selectedSaleId: string | null = null;
 
-  constructor(private salesService: SalesService) {}
+  constructor(
+    private salesService: SalesService,
+    private snackbarService: SnackbarService,
+  ) {}
 
   ngOnInit() {
     this.loadData();
@@ -114,11 +119,26 @@ export class SalesReportComponent implements OnInit {
     return this.items.length === this.pageSize;
   }
 
-  exportData(format: 'csv' | 'pdf' | 'excel') {
-    this.salesService.exportSales(format).subscribe((success) => {
-      if (success) {
-        alert(`Exported as ${format.toUpperCase()} successfully! (Mock)`);
-      }
-    });
+  downloadExcel() {
+    this.isLoading = true;
+
+    this.salesService
+      .downloadSales(this.searchTerm, this.salesExecutiveId)
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: (blob: Blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `sales_report_${new Date().getTime()}.xlsx`;
+          link.click();
+          window.URL.revokeObjectURL(url);
+          this.snackbarService.success('Sales report downloaded successfully');
+        },
+        error: (err) => {
+          console.error('Download error:', err);
+          this.snackbarService.error('Failed to download sales report');
+        },
+      });
   }
 }

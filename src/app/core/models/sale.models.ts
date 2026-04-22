@@ -1,17 +1,35 @@
 export interface SaleReportItem {
   _id: string;
+  policyId: string;
   regNumber: string;
-  invoiceNo: string;
   name: string;
   phoneNumber: string;
+  rtoId: string;
+  status: string;
+  invoiceNo: string;
   createdAt: string;
   updatedAt: string;
+  salesExecutiveId: string;
+  remarks: string;
   sellingPrice: number;
-  actualPrice: number;
-  discount: number;
+  inquiryId: string;
   policyName: string;
   policyCode: string;
+  insuranceCompany: string;
+  minPrice: number;
+  maxPrice: number;
+  discount: number;
+  gst: number;
+  commission: number;
+  vehicleType: string;
+  manufacturer: string;
+  vehicleModel: string;
+  rtoName: string;
+  rtoCode: string;
   agentName: string;
   salesExecutiveName: string;
+  policyType: string;
+  coverage: string[];
+  actualPrice: number;
   lapsDate?: string;
 }

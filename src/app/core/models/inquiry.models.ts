@@ -9,6 +9,8 @@ export interface InquiryReportItem {
   agentName: string;
   agentPhoneNumber: number;
   status: string;
+  sellingPrice: number;
+  afterSaleCommission: number;
   rtoDetails?: {
     rtoName: string;
     rtoId: string;

@@ -68,6 +68,17 @@ export class TableComponent {
     this.filterData();
   }
 
+  resolveFieldValue(row: any, field: string): any {
+    if (field.includes(' - ')) {
+      const parts = field.split(' - ');
+      const val1 = row[parts[0]];
+      const val2 = row[parts[1]];
+      if (val1 === undefined || val2 === undefined) return '';
+      return { isRange: true, val1, val2 };
+    }
+    return row[field];
+  }
+
   filterData() {
     if (!this.searchTerm) {
       this.filteredData = [...this._data];
@@ -76,7 +87,12 @@ export class TableComponent {
 
     this.filteredData = this._data.filter((row) => {
       return this.columns.some((col) => {
-        const val = row[col.field]?.toString().toLowerCase();
+        const value = this.resolveFieldValue(row, col.field);
+        if (value && typeof value === 'object' && value.isRange) {
+          const combined = `${value.val1} - ${value.val2}`.toLowerCase();
+          return combined.includes(this.searchTerm);
+        }
+        const val = value?.toString().toLowerCase();
         return val && val.includes(this.searchTerm);
       });
     });

@@ -11,12 +11,12 @@
   } @else if (inquiryDetails) {
     <div class="info-grid">
       <!-- General Info Card -->
-      <div class="info-card">
+      <div class="info-card wide">
         <div class="card-header">
-          <i class="ri-user-smile-line"></i>
+          <i class="ri-information-line"></i>
           <h4>General Information</h4>
         </div>
-        <div class="card-content">
+        <div class="card-content details-grid">
           <div class="detail-item">
             <span class="label">Invoice No</span>
             <span class="value font-bold text-primary">{{ inquiryDetails.invoiceNo }}</span>
@@ -27,7 +27,7 @@
           </div>
           <div class="detail-item">
             <span class="label">Customer Name</span>
-            <span class="value">{{ inquiryDetails.name }}</span>
+            <span class="value">{{ inquiryDetails.name | uppercase }}</span>
           </div>
           <div class="detail-item">
             <span class="label">Phone Number</span>
@@ -61,7 +61,7 @@
           </div>
           @if (inquiryDetails.rtoDetails) {
             <div class="detail-item">
-              <span class="label">RTO</span>
+              <span class="label">RTO Location</span>
               <span class="value">{{ inquiryDetails.rtoDetails.rtoName }}</span>
             </div>
           }
@@ -104,45 +104,28 @@
 
       <!-- Policy Info Card -->
       @if (inquiryDetails.policyDetails) {
-        <div class="info-card wide">
+        <div class="info-card">
           <div class="card-header">
             <i class="ri-shield-check-line"></i>
             <h4>Policy Information</h4>
           </div>
           <div class="card-content">
-            <div class="policy-main-grid">
-              <div class="policy-details">
-                <div class="detail-item">
-                  <span class="label">Policy Name</span>
-                  <span class="value font-bold">{{ inquiryDetails.policyDetails.policyName }}</span>
-                </div>
-
-                <div class="detail-item">
-                  <span class="label">Insurance Company</span>
-                  <span class="value">{{ inquiryDetails.policyDetails.insuranceCompany }}</span>
-                </div>
-                @if (inquiryDetails.policyTypeDetails) {
-                  <div class="detail-item">
-                    <span class="label">Policy Type</span>
-                    <span class="value">{{ inquiryDetails.policyTypeDetails.policyType }}</span>
-                  </div>
-                }
-              </div>
-
-              @if (
-                inquiryDetails.policyTypeDetails?.coverage &&
-                inquiryDetails.policyTypeDetails?.coverage?.length
-              ) {
-                <div class="coverage-section">
-                  <span class="label">Coverage Features</span>
-                  <div class="coverage-tags">
-                    @for (cov of inquiryDetails.policyTypeDetails?.coverage; track cov) {
-                      <span class="coverage-tag">{{ cov }}</span>
-                    }
-                  </div>
-                </div>
-              }
+            <div class="detail-item">
+              <span class="label">Policy Name</span>
+              <span class="value font-bold text-primary">{{
+                inquiryDetails.policyDetails.policyName
+              }}</span>
             </div>
+            <div class="detail-item">
+              <span class="label">Insurance Company</span>
+              <span class="value">{{ inquiryDetails.policyDetails.insuranceCompany }}</span>
+            </div>
+            @if (inquiryDetails.policyTypeDetails) {
+              <div class="detail-item">
+                <span class="label">Policy Type</span>
+                <span class="value">{{ inquiryDetails.policyTypeDetails.policyType }}</span>
+              </div>
+            }
           </div>
         </div>
 
@@ -154,30 +137,57 @@
           </div>
           <div class="card-content pricing-grid">
             <div class="detail-item">
+              <span class="label">Item Code</span>
+              <span class="value">{{ inquiryDetails.policyDetails.policyCode }}</span>
+            </div>
+            <div class="detail-item">
               <span class="label">Price Range</span>
-              <span class="value font-bold">
+              <span class="value">
                 {{ inquiryDetails.policyDetails.minPrice | currency: 'INR' }} -
                 {{ inquiryDetails.policyDetails.maxPrice | currency: 'INR' }}
               </span>
             </div>
-            <div class="detail-item">
-              <span class="label">Policy Code</span>
-              <span class="value">{{ inquiryDetails.policyDetails.policyCode }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">Available Discount</span>
-              <span class="value text-danger"
-                >-{{ inquiryDetails.policyDetails.discount | currency: 'INR' }}</span
-              >
-            </div>
-            <div class="detail-item">
+            <div class="detail-item highlight-success">
               <span class="label">Expected Commission</span>
-              <span class="value text-success font-bold">{{
+              <span class="value">{{
                 inquiryDetails.policyDetails.commission | currency: 'INR'
               }}</span>
             </div>
+            <div class="detail-item highlight-danger">
+              <span class="label">Available Discount</span>
+              <span class="value"
+                >-{{ inquiryDetails.policyDetails.discount | currency: 'INR' }}</span
+              >
+            </div>
+            <div class="detail-item highlight-primary">
+              <span class="label">Final Selling Price</span>
+              <span class="value">{{ inquiryDetails.sellingPrice | currency: 'INR' }}</span>
+            </div>
+            <div class="detail-item highlight-success">
+              <span class="label">Actual Commission</span>
+              <span class="value">{{ inquiryDetails.afterSaleCommission | currency: 'INR' }}</span>
+            </div>
           </div>
         </div>
+
+        @if (
+          inquiryDetails.policyTypeDetails?.coverage &&
+          inquiryDetails.policyTypeDetails?.coverage?.length
+        ) {
+          <div class="info-card wide">
+            <div class="card-header">
+              <i class="ri-list-check-3"></i>
+              <h4>Coverage Features</h4>
+            </div>
+            <div class="card-content">
+              <div class="coverage-tags">
+                @for (cov of inquiryDetails.policyTypeDetails?.coverage; track cov) {
+                  <span class="coverage-tag">{{ cov }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        }
       }
     </div>
   } @else {

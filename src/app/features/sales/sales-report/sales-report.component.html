@@ -1,5 +1,10 @@
 <div class="page-header">
   <h2>Sales Reports</h2>
+  <div class="header-actions">
+    <button class="btn-secondary" (click)="downloadExcel()" title="Download Excel">
+      <i class="ri-file-excel-2-line"></i> Download Excel
+    </button>
+  </div>
 </div>
 
 <!-- Sales Table -->
@@ -11,15 +16,6 @@
     </div>
 
     <div class="header-actions-right">
-      <div class="export-actions" style="margin-right: 0.5rem">
-        <button class="btn-refresh" (click)="exportData('csv')" title="Export CSV">
-          <i class="ri-file-excel-2-line"></i>
-        </button>
-        <button class="btn-refresh" (click)="exportData('pdf')" title="Export PDF">
-          <i class="ri-file-pdf-line"></i>
-        </button>
-      </div>
-
       <button class="btn-refresh" (click)="onRefresh()" title="Refresh Data">
         <i class="ri-refresh-line"></i>
       </button>
@@ -30,16 +26,14 @@
     <table class="data-table">
       <thead>
         <tr>
+          <th>Date</th>
           <th>Reg No</th>
           <th>Customer</th>
           <th>Phone</th>
           <th>Policy</th>
-          <th>Actual Price</th>
+          <th>Price</th>
           <th>Selling Price</th>
-          <th>Discount</th>
-          <th>Agent</th>
           <th>Executive</th>
-          <th>Date</th>
           <th>Lapse Date</th>
           <th class="text-center">Action</th>
         </tr>
@@ -61,8 +55,9 @@
         } @else {
           @for (sale of items; track sale._id) {
             <tr>
+              <td class="text-muted">{{ sale.createdAt | date: 'dd MMM yyyy' }}</td>
               <td class="font-bold text-primary">{{ sale.regNumber }}</td>
-              <td>{{ sale.name }}</td>
+              <td>{{ sale.name | uppercase }}</td>
               <td>{{ sale.phoneNumber }}</td>
               <td>
                 {{ sale.policyName }} <br />
@@ -70,10 +65,7 @@
               </td>
               <td>{{ sale.actualPrice | currency: 'INR' }}</td>
               <td>{{ sale.sellingPrice | currency: 'INR' }}</td>
-              <td class="text-danger">-{{ sale.discount | currency: 'INR' }}</td>
-              <td>{{ sale.agentName }}</td>
               <td>{{ sale.salesExecutiveName }}</td>
-              <td class="text-muted">{{ sale.createdAt | date: 'dd MMM yyyy' }}</td>
               <td class="text-danger font-bold">
                 {{ sale.lapsDate ? (sale.lapsDate | date: 'dd MMM yyyy') : 'N/A' }}
               </td>

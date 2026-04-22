@@ -105,10 +105,29 @@
   border: 1px solid #e2e8f0;
 }
 
-.pricing-grid {
+.details-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-item {
+    border-bottom: 1px solid #f1f5f9;
+    padding: 0.75rem 0;
+  }
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+
+  @media (max-width: 992px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
   @media (max-width: 640px) {
     grid-template-columns: 1fr;
@@ -117,8 +136,55 @@
   .detail-item {
     border-bottom: none;
     background: #f8fafc;
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
+    padding: 1rem;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    border: 1px solid #f1f5f9;
+
+    .label {
+      text-align: left;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+    }
+
+    .value {
+      text-align: left;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    &.highlight-success {
+      background: rgba(16, 185, 129, 0.05);
+      border-color: rgba(16, 185, 129, 0.2);
+      .value {
+        color: #059669;
+      }
+    }
+
+    &.highlight-danger {
+      background: rgba(239, 68, 68, 0.05);
+      border-color: rgba(239, 68, 68, 0.2);
+      .value {
+        color: #dc2626;
+      }
+    }
+
+    &.highlight-primary {
+      background: rgba(59, 130, 246, 0.05);
+      border-color: rgba(59, 130, 246, 0.2);
+      .value {
+        color: #2563eb;
+      }
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    }
   }
 }
 

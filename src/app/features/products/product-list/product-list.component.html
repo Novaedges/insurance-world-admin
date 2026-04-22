@@ -1,8 +1,13 @@
 <div class="page-header">
   <h2>Product Management</h2>
-  <button class="btn-primary" (click)="openForm()" appTooltip="Add New Product">
-    + Add Product
-  </button>
+  <div class="header-actions">
+    <button class="btn-secondary" (click)="downloadExcel()" appTooltip="Download Excel">
+      <i class="ri-file-excel-2-line"></i> Download Excel
+    </button>
+    <button class="btn-primary" (click)="openForm()" appTooltip="Add New Product">
+      + Add Product
+    </button>
+  </div>
 </div>
 
 <app-table
@@ -203,7 +208,7 @@
       <div class="info-card">
         <div class="card-title"><i class="ri-file-info-line"></i> Identity Details</div>
         <div class="card-item">
-          <span class="card-label">Policy Code</span>
+          <span class="card-label">Item Code</span>
           <span class="card-value">{{ infoData.policyCode || 'N/A' }}</span>
         </div>
         <div class="card-item">

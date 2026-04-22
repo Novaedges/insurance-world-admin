@@ -13,10 +13,10 @@
   @if (currentStep === 1) {
     <div class="step-content">
       <div class="form-group">
-        <label>Policy Code <span class="text-danger">*</span></label>
-        <input type="text" formControlName="policyCode" placeholder="Enter Policy Code" />
+        <label>Item Code <span class="text-danger">*</span></label>
+        <input type="text" formControlName="policyCode" placeholder="Enter Item Code" />
         @if (form.get('policyCode')?.invalid && form.get('policyCode')?.touched) {
-          <div class="error-msg">Policy Code is required</div>
+          <div class="error-msg">Item Code is required</div>
         }
       </div>
       <div class="form-group">

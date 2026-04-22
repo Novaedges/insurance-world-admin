@@ -19,11 +19,11 @@ import { finalize } from 'rxjs/operators';
 export class ProductListComponent implements OnInit {
   items: Product[] = [];
   columns: Column[] = [
-    { field: 'policyCode', header: 'Policy Code' },
+    { field: 'policyCode', header: 'Item Code' },
     { field: 'policyName', header: 'Policy Name' },
-    // { field: 'insuranceCompany', header: 'Company' },
     { field: 'policyTypeName', header: 'Policy Type' },
-    { field: 'minPrice', header: 'Min Price', type: 'currency', currencyCode: 'INR' },
+    { field: 'minPrice - maxPrice', header: 'Price Range', type: 'currency', currencyCode: 'INR' },
+    { field: 'commission', header: 'Commission', type: 'currency', currencyCode: 'INR' },
     { field: 'status', header: 'Status', type: 'status' },
   ];
 
@@ -101,6 +101,32 @@ export class ProductListComponent implements OnInit {
     this.isActiveFilter = status;
     this.currentPage = 1; // Reset to first page on filter change
     this.loadData();
+  }
+
+  downloadExcel() {
+    this.isLoading = true;
+    this.cdr.detectChanges();
+
+    this.productService
+      .downloadProducts(this.isActiveFilter)
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: (blob: Blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `products_${new Date().getTime()}.xlsx`;
+          link.click();
+          window.URL.revokeObjectURL(url);
+          this.snackbarService.success('Excel downloaded successfully');
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Download error:', err);
+          this.snackbarService.error('Failed to download Excel');
+          this.cdr.detectChanges();
+        },
+      });
   }
 
   openForm(item: any = null) {

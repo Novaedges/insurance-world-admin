@@ -9,17 +9,39 @@
     font-size: 1.5rem;
   }
 
-  .btn-primary {
-    background: var(--primary-color);
-    color: #fff;
-    border: none;
+  .header-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .btn-primary,
+  .btn-secondary {
     padding: 0.75rem 1.5rem;
     border-radius: var(--radius-md);
     font-weight: 500;
-    transition: background 0.2s;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
 
+  .btn-primary {
+    background: var(--primary-color);
+    color: #fff;
     &:hover {
       background: var(--primary-hover);
+    }
+  }
+
+  .btn-secondary {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    &:hover {
+      background: #e2e8f0;
     }
   }
 }

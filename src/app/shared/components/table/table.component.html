@@ -59,24 +59,32 @@
             <tr>
               @for (col of columns; track col.field) {
                 <td>
+                  @let cellValue = resolveFieldValue(row, col.field);
+
                   @if (col.type === 'status') {
-                    <span class="status-badge" [ngClass]="row[col.field]?.toLowerCase()">
-                      {{ row[col.field] }}
+                    <span class="status-badge" [ngClass]="cellValue?.toLowerCase()">
+                      {{ cellValue }}
                     </span>
-                  }
-                  @if (col.type === 'currency') {
+                  } @else if (col.type === 'currency') {
                     <span>
-                      {{ row[col.field] | currency: col.currencyCode }}
+                      @if (cellValue?.isRange) {
+                        {{ cellValue.val1 | currency: col.currencyCode }} -
+                        {{ cellValue.val2 | currency: col.currencyCode }}
+                      } @else {
+                        {{ cellValue | currency: col.currencyCode }}
+                      }
                     </span>
-                  }
-                  @if (col.type === 'date') {
+                  } @else if (col.type === 'date') {
                     <span>
-                      {{ row[col.field] | date: 'dd-MM-yyyy' }}
+                      {{ cellValue | date: 'dd-MM-yyyy' }}
                     </span>
-                  }
-                  @if (!col.type || col.type === 'text') {
+                  } @else {
                     <span>
-                      {{ row[col.field] }}
+                      @if (cellValue?.isRange) {
+                        {{ cellValue.val1 }} - {{ cellValue.val2 }}
+                      } @else {
+                        {{ cellValue }}
+                      }
                     </span>
                   }
                 </td>

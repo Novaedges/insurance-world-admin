@@ -25,6 +25,15 @@ export class ProductService {
     return this.http.get<any>(this.apiUrl, { params });
   }
 
+  downloadProducts(isActive?: boolean): Observable<Blob> {
+    let params = new HttpParams();
+    if (isActive !== undefined) {
+      params = params.set('isActive', isActive.toString());
+    }
+    params = params.set('download', '1');
+    return this.http.get(this.apiUrl, { params, responseType: 'blob' });
+  }
+
   saveProduct(data: FormData): Observable<any> {
     const id = data.get('_id');
     if (id) {
