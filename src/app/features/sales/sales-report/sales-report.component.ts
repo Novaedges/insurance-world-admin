@@ -26,7 +26,7 @@ export class SalesReportComponent implements OnInit {
   pageSize = 10;
   currentPage = 1;
   searchTerm = '';
-  salesExecutiveId = ''; // Adjust if you have a dropdown for this later
+  salesExecutiveId = '';
 
   pageSizeOptions = [10, 20, 50, 100];
   isLoading = false;
@@ -49,8 +49,9 @@ export class SalesReportComponent implements OnInit {
 
     this.salesService
       .getSales(this.pageSize, skip, this.searchTerm, this.salesExecutiveId)
+      .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
-        next: (res) => {
+        next: (res: any) => {
           if (res.status && res.result) {
             this.items = res.result;
             this.totalItems = res.totalCount || 0;
@@ -58,13 +59,11 @@ export class SalesReportComponent implements OnInit {
             this.items = [];
             this.totalItems = 0;
           }
-          this.isLoading = false;
         },
         error: (err) => {
           console.error('Failed to load sales report', err);
           this.items = [];
           this.totalItems = 0;
-          this.isLoading = false;
         },
       });
   }

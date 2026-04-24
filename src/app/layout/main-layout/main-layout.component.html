@@ -80,6 +80,21 @@
         </a>
       }
 
+      @if (hasSectionAccess(['claim-management'])) {
+        <div class="nav-section-label">Claims</div>
+      }
+      @if (hasAccess('claim-management')) {
+        <a
+          routerLink="/claim-management/record"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="icon ri-refund-2-line"></i>
+          <span class="label">Claim Record</span>
+        </a>
+      }
+
       @if (
         hasSectionAccess([
           'admin-creation',

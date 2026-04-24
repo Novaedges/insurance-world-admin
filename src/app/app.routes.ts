@@ -91,6 +91,13 @@ export const routes: Routes = [
         path: 'sales-reports',
         loadChildren: () => import('./features/sales/sales.routes').then((m) => m.SALES_ROUTES),
       },
+      {
+        path: 'claim-management',
+        loadChildren: () =>
+          import('./features/claim-management/claim-management.routes').then(
+            (m) => m.CLAIM_MANAGEMENT_ROUTES,
+          ),
+      },
       // Future Enhancement Modules
       {
         path: 'whatsapp',

@@ -4,6 +4,11 @@ import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
+export interface ComponentAccess {
+  component: string;
+  permissions: string[];
+}
+
 export interface User {
   id?: string;
   _id?: string;
@@ -14,6 +19,7 @@ export interface User {
   contactNumber?: string;
   email?: string;
   permissions?: string[];
+  componentAccess?: ComponentAccess[];
   status?: boolean;
   firstName?: string;
   lastName?: string;
@@ -174,6 +180,39 @@ export class AuthService {
       clearInterval(this.sessionCheckInterval);
       this.sessionCheckInterval = null;
     }
+  }
+
+  hasPermission(moduleId: string, permission: string): boolean {
+    const user = this.currentUser();
+    if (!user) return false;
+
+    const role = user.role?.toUpperCase() || '';
+    if (role === 'SUPER ADMIN' || role === 'SUPER_ADMIN' || role === 'ADMIN') return true;
+
+    const idMap: { [key: string]: string } = {
+      dashboard: 'Dashboard',
+      products: 'ProductManagement',
+      inquiries: 'EnquiryManagement',
+      'sales-reports': 'SalesReports',
+      'admin-creation': 'AdminCreation',
+      'insurance-company': 'InsuranceCompany',
+      'agent-management': 'PartnerManagement',
+      'rto-management': 'RTOManagement',
+      'insurance-category': 'InsuranceCategories',
+      'policy-type': 'PolicyType',
+      'vehicle-make': 'VehicleMake',
+      'vehicle-model': 'VehicleModel',
+      marketing: 'PromotionalBanners',
+      'claim-management': 'ClaimRecord',
+    };
+
+    const targetComponent = idMap[moduleId] || moduleId;
+    const access = (user.componentAccess || []).find(
+      (m) => m.component.toLowerCase() === targetComponent.toLowerCase(),
+    );
+
+    if (!access) return false;
+    return access.permissions.includes(permission.toUpperCase());
   }
 
   private checkSession() {

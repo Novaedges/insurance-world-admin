@@ -1,3 +1,8 @@
+export interface ComponentAccess {
+  component: string;
+  permissions: string[];
+}
+
 export interface Admin {
   id?: string;
   firstName: string;
@@ -5,9 +10,9 @@ export interface Admin {
   email: string;
   roleType: 'ADMIN' | 'SALES' | 'SUPER_ADMIN';
   phoneNumber: string;
-  password?: string; // Optional for updates maybe?
+  password?: string;
   status: 'Active' | 'Inactive';
-  componentAccess?: string[];
+  componentAccess?: ComponentAccess[];
   createdAt?: string;
   isActive?: boolean;
   _id?: string;

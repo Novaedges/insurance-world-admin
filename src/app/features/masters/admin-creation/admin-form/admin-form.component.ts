@@ -18,26 +18,23 @@ export class AdminFormComponent implements OnChanges {
   form: FormGroup;
 
   availableModules = [
-    { id: 'products', name: 'Product Management' },
-    { id: 'inquiries', name: 'Inquiry Management' },
-    { id: 'sales-reports', name: 'Sales Reports' },
-    { id: 'admin-creation', name: 'Admin Creation' },
-    { id: 'rto-management', name: 'RTO Management' },
-    { id: 'vehicle-make', name: 'Vehicle Make' },
-    { id: 'vehicle-model', name: 'Vehicle Model' },
-    { id: 'insurance-category', name: 'Categories' },
-    { id: 'child-category', name: 'Sub-Categories' },
-    { id: 'insurance-company', name: 'Insurance Companies' },
-    { id: 'agent-management', name: 'Partner Management' },
-    { id: 'whatsapp', name: 'WhatsApp' },
-    { id: 'sms', name: 'SMS' },
-    { id: 'payments', name: 'Payments' },
-    { id: 'commissions', name: 'Commissions' },
-    { id: 'renewals', name: 'Renewals' },
-    { id: 'crm', name: 'CRM Sync' },
-    { id: 'marketing', name: 'Marketing' },
-    { id: 'ai-engine', name: 'AI Engine' },
+    { id: 'Dashboard', name: 'Dashboard' },
+    { id: 'ProductManagement', name: 'Product Management' },
+    { id: 'EnquiryManagement', name: 'Enquiry Management' },
+    { id: 'SalesReports', name: 'Sales Reports' },
+    { id: 'ClaimRecord', name: 'Claim Record' },
+    { id: 'AdminCreation', name: 'Admin Creation' },
+    { id: 'InsuranceCompany', name: 'Insurance Company' },
+    { id: 'PartnerManagement', name: 'Partner Management' },
+    { id: 'RTOManagement', name: 'RTO Management' },
+    { id: 'InsuranceCategories', name: 'Insurance Categories' },
+    { id: 'PolicyType', name: 'Policy Type' },
+    { id: 'VehicleMake', name: 'Vehicle Make' },
+    { id: 'VehicleModel', name: 'Vehicle Model' },
+    { id: 'PromotionalBanners', name: 'Promotional Banners' },
   ];
+
+  availablePermissions = ['VIEW', 'ADD', 'EDIT', 'DELETE'];
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
@@ -69,17 +66,50 @@ export class AdminFormComponent implements OnChanges {
     }
   }
 
-  togglePermission(moduleId: string) {
-    const current = this.form.get('componentAccess')?.value || [];
-    if (current.includes(moduleId)) {
-      this.form.patchValue({ componentAccess: current.filter((id: string) => id !== moduleId) });
+  toggleModule(componentId: string) {
+    const current: any[] = this.form.get('componentAccess')?.value || [];
+    const moduleIndex = current.findIndex((m) => m.component === componentId);
+
+    if (moduleIndex > -1) {
+      current.splice(moduleIndex, 1);
     } else {
-      this.form.patchValue({ componentAccess: [...current, moduleId] });
+      current.push({
+        component: componentId,
+        permissions: [],
+      });
     }
+
+    this.form.patchValue({ componentAccess: [...current] });
   }
 
-  isPermissionSelected(moduleId: string): boolean {
-    return (this.form.get('componentAccess')?.value || []).includes(moduleId);
+  isModuleEnabled(componentId: string): boolean {
+    const current: any[] = this.form.get('componentAccess')?.value || [];
+    return current.some((m) => m.component === componentId);
+  }
+
+  togglePermission(componentId: string, permission: string) {
+    const current: any[] = this.form.get('componentAccess')?.value || [];
+    const moduleIndex = current.findIndex((m) => m.component === componentId);
+
+    if (moduleIndex > -1) {
+      const module = { ...current[moduleIndex] };
+      const permissions = [...module.permissions];
+
+      if (permissions.includes(permission)) {
+        module.permissions = permissions.filter((p) => p !== permission);
+      } else {
+        module.permissions = [...permissions, permission];
+      }
+      current[moduleIndex] = module;
+    }
+
+    this.form.patchValue({ componentAccess: [...current] });
+  }
+
+  isPermissionSelected(componentId: string, permission: string): boolean {
+    const current: any[] = this.form.get('componentAccess')?.value || [];
+    const module = current.find((m) => m.component === componentId);
+    return module ? module.permissions.includes(permission) : false;
   }
 
   onSubmit() {

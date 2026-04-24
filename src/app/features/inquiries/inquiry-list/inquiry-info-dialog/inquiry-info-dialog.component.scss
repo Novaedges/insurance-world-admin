@@ -181,6 +181,17 @@
       }
     }
 
+    &.highlight-secondary {
+      background: rgba(245, 158, 11, 0.05);
+      border-color: rgba(245, 158, 11, 0.2);
+      .label {
+        color: #f59e0b;
+      }
+      .value {
+        color: #f59e0b;
+      }
+    }
+
     &:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);

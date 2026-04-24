@@ -34,7 +34,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   private routeMap: { [key: string]: string } = {
     '/dashboard': 'Dashboard',
     '/products': 'Product Management',
-    '/inquiries': 'Inquiry Management',
+    '/inquiries': 'Enquiry Management',
     '/sales-reports': 'Sales Reports',
     '/admin-creation': 'Admin Creation',
     '/rto-management': 'RTO Management',
@@ -53,6 +53,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     '/crm': 'CRM Integration',
     '/ai-engine': 'AI Premium Suggestions',
     '/marketing': 'Marketing Automation',
+    '/claim-management/record': 'Claim Record',
   };
 
   constructor() {
@@ -131,13 +132,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   }
 
   hasAccess(moduleId: string): boolean {
-    const user = this.authService.currentUser();
-    if (!user) return false;
-
-    const role = user.role?.toUpperCase() || '';
-    if (role === 'SUPER ADMIN' || role === 'SUPER_ADMIN' || role === 'ADMIN') return true;
-
-    return (user.permissions || []).includes(moduleId);
+    return this.authService.hasPermission(moduleId, 'VIEW');
   }
 
   hasSectionAccess(modules: string[]): boolean {

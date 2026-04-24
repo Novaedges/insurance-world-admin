@@ -1,8 +1,8 @@
 <div class="page-header">
-  <h2>Inquiry Management</h2>
+  <h2>Enquiry Management</h2>
 </div>
 
-<!-- Inquiry Table -->
+<!-- Enquiry Table -->
 <div class="table-container glass-panel">
   <div class="table-actions-header">
     <div class="search-box">
@@ -115,6 +115,7 @@
                     class="btn-icon btn-primary-light"
                     (click)="openAssign(inq._id)"
                     title="Assign Sales Person"
+                    [disabled]="inq.status === 'Completed'"
                   >
                     <i class="ri-user-add-line"></i>
                   </button>
@@ -195,7 +196,7 @@
 </div>
 
 <!-- Info Modal -->
-<app-dialog [isOpen]="isInfoModalOpen" [title]="'Inquiry Details'" (closeEvent)="closeInfo()">
+<app-dialog [isOpen]="isInfoModalOpen" [title]="'Enquiry Details'" (closeEvent)="closeInfo()">
   @if (isInfoModalOpen) {
     <app-inquiry-info-dialog
       [inquiryId]="selectedInquiryId"
@@ -205,11 +206,7 @@
 </app-dialog>
 
 <!-- Assign Modal -->
-<app-dialog
-  [isOpen]="isAssignModalOpen"
-  [title]="'Assign Application'"
-  (closeEvent)="closeAssign()"
->
+<app-dialog [isOpen]="isAssignModalOpen" [title]="'Assign Enquiry'" (closeEvent)="closeAssign()">
   @if (isAssignModalOpen) {
     <app-inquiry-assign-dialog
       [inquiryId]="selectedInquiryId"
@@ -220,7 +217,11 @@
 </app-dialog>
 
 <!-- Update Status Modal -->
-<app-dialog [isOpen]="isUpdateModalOpen" [title]="'Update Status'" (closeEvent)="closeUpdate()">
+<app-dialog
+  [isOpen]="isUpdateModalOpen"
+  [title]="'Update Enquiry Status'"
+  (closeEvent)="closeUpdate()"
+>
   @if (isUpdateModalOpen) {
     <app-inquiry-update-dialog
       [inquiryId]="selectedInquiryId"

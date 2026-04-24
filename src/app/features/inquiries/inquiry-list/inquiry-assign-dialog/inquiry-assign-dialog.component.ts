@@ -34,14 +34,16 @@ export class InquiryAssignDialogComponent implements OnInit {
       next: (res) => {
         console.log(res);
         const data = res.result || res.data || [];
-        this.admins = data.map((admin: any) => ({
-          ...admin,
-          _id: admin._id || admin.id,
-          displayName:
-            admin.firstName && admin.lastName
-              ? `${admin.firstName} ${admin.lastName}`
-              : admin.name || admin.firstName || admin.lastName || 'Unknown',
-        }));
+        this.admins = data
+          .filter((admin: any) => admin.roleType === 'SALES-EXECUTIVE')
+          .map((admin: any) => ({
+            ...admin,
+            _id: admin._id || admin.id,
+            displayName:
+              admin.firstName && admin.lastName
+                ? `${admin.firstName} ${admin.lastName}`
+                : admin.name || admin.firstName || admin.lastName || 'Unknown',
+          }));
         this.cdr.detectChanges();
       },
       error: (err) => {

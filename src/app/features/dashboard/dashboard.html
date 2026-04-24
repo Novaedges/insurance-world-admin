@@ -1,37 +1,125 @@
 <div class="dashboard-container">
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="fancy-loader">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+
   <!-- Header -->
   <div class="page-header">
-    <h2>Dashboard Overview</h2>
-    <div class="date-filter">
-      <div class="input-group" (click)="startDate.showPicker()">
-        <span class="label">From</span>
-        <input type="date" #startDate [(ngModel)]="dateRange.start" />
-        <i class="ri-calendar-line"></i>
+    <div class="title-section">
+      <h2>Dashboard Overview</h2>
+      <p class="subtitle">Real-time performance metrics</p>
+    </div>
+    <div class="header-actions">
+      <div class="date-filter">
+        <div class="input-group" (click)="startInput.showPicker()">
+          <span class="label">From</span>
+          <input
+            type="date"
+            #startInput
+            [(ngModel)]="dateRange.start"
+            (change)="onDateChange()"
+            [max]="today"
+          />
+          <i class="ri-calendar-line"></i>
+        </div>
+        <div class="input-group" (click)="endInput.showPicker()">
+          <span class="label">To</span>
+          <input
+            type="date"
+            #endInput
+            [(ngModel)]="dateRange.end"
+            (change)="onDateChange()"
+            [max]="today"
+          />
+          <i class="ri-calendar-line"></i>
+        </div>
       </div>
-      <div class="input-group" (click)="endDate.showPicker()">
-        <span class="label">To</span>
-        <input type="date" #endDate [(ngModel)]="dateRange.end" />
-        <i class="ri-calendar-line"></i>
-      </div>
+      <button class="btn-refresh" (click)="loadDashboard()" title="Refresh Dashboard">
+        <i class="ri-refresh-line"></i>
+      </button>
     </div>
   </div>
 
   <!-- KPI Cards -->
-  <section class="kpi-grid">
-    @for (kpi of kpis; track $index) {
-      <div class="kpi-card glass-panel">
-        <div class="icon-wrapper" [class]="kpi.colorClass">
-          <i [class]="kpi.icon"></i>
-        </div>
-        <div class="kpi-content">
-          <h3>{{ kpi.value }}</h3>
-          <p>{{ kpi.label }}</p>
-          <span class="trend" [class.up]="kpi.trend > 0" [class.down]="kpi.trend < 0">
-            {{ kpi.trend > 0 ? '+' : '' }}{{ kpi.trend }}% vs last month
-          </span>
-        </div>
+  <section class="kpi-grid" *ngIf="kpiStats">
+    <div class="kpi-card glass-panel">
+      <div class="icon-wrapper blue-icon">
+        <i class="ri-mail-line"></i>
       </div>
-    }
+      <div class="kpi-content">
+        <h3>{{ kpiStats.totalInquiries.value }}</h3>
+        <p>Total Enquiries</p>
+        <span class="trend" [class.up]="kpiStats.totalInquiries.trend >= 0">
+          {{ kpiStats.totalInquiries.trend >= 0 ? '↑' : '↓' }} {{ kpiStats.totalInquiries.trend }}%
+        </span>
+      </div>
+    </div>
+
+    <div class="kpi-card glass-panel">
+      <div class="icon-wrapper green-icon">
+        <i class="ri-shield-check-line"></i>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ kpiStats.activePolicies.value }}</h3>
+        <p>Active Policies</p>
+        <span class="trend" [class.up]="kpiStats.activePolicies.trend >= 0">
+          {{ kpiStats.activePolicies.trend >= 0 ? '↑' : '↓' }} {{ kpiStats.activePolicies.trend }}%
+        </span>
+      </div>
+    </div>
+
+    <div class="kpi-card glass-panel">
+      <div class="icon-wrapper purple-icon">
+        <i class="ri-pie-chart-line"></i>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ kpiStats.conversionRate.value }}%</h3>
+        <p>Conversion Rate</p>
+        <span class="trend" [class.up]="kpiStats.conversionRate.trend >= 0">
+          {{ kpiStats.conversionRate.trend >= 0 ? '↑' : '↓' }} {{ kpiStats.conversionRate.trend }}%
+        </span>
+      </div>
+    </div>
+
+    <div class="kpi-card glass-panel">
+      <div class="icon-wrapper orange-icon">
+        <i class="ri-wallet-3-line"></i>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ kpiStats.totalPremium.value | currency: 'INR' }}</h3>
+        <p>Total Premium</p>
+        <span class="trend" [class.up]="kpiStats.totalPremium.trend >= 0">
+          {{ kpiStats.totalPremium.trend >= 0 ? '↑' : '↓' }} {{ kpiStats.totalPremium.trend }}%
+        </span>
+      </div>
+    </div>
+
+    <div class="kpi-card glass-panel">
+      <div class="icon-wrapper pink-icon">
+        <i class="ri-hand-coin-line"></i>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ totalCommission | currency: 'INR' }}</h3>
+        <p>Total Commission</p>
+        <span class="trend up">↑ New</span>
+      </div>
+    </div>
+
+    <div class="kpi-card glass-panel">
+      <div class="icon-wrapper teal-icon">
+        <i class="ri-bank-card-line"></i>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ netPremium | currency: 'INR' }}</h3>
+        <p>Net Sale Amount</p>
+        <span class="trend up">↑ Result</span>
+      </div>
+    </div>
   </section>
 
   <div class="insights-grid">
@@ -42,17 +130,20 @@
         @for (cat of categoryStats; track $index) {
           <div class="bar-group">
             <div class="bar-label">
-              <span>{{ cat.label }}</span>
-              <span>{{ cat.value }}%</span>
+              <span>{{ cat.category }}</span>
+              <span>{{ cat.percentage }}%</span>
             </div>
             <div class="progress-track">
               <div
                 class="progress-fill"
-                [style.width.%]="cat.value"
-                [style.background]="cat.color"
+                [style.width.%]="cat.percentage"
+                [style.background]="'#6366f1'"
               ></div>
             </div>
           </div>
+        }
+        @if (categoryStats.length === 0) {
+          <div class="empty-state">No category data available</div>
         }
       </div>
     </section>
@@ -61,78 +152,102 @@
     <section class="chart-panel glass-panel">
       <h3>Top Demanded Models</h3>
       <div class="circle-chart-container">
-        <!-- CSS-based Pie/Donut Chart Simulation using Conic Gradient -->
         <div class="donut-chart" [style.background]="conicGradient">
           <div class="donut-hole">
-            <span class="center-text">Total<br />12k</span>
+            <span class="center-text">Total<br />{{ totalModelCount }}</span>
           </div>
         </div>
         <div class="legend">
           @for (item of topModels; track $index) {
             <div class="legend-item">
               <span class="dot" [style.background]="item.color"></span>
-              <span>{{ item.label }}</span>
+              <span class="label-text">{{ item.model }} ({{ item.count }})</span>
             </div>
           }
         </div>
       </div>
     </section>
 
-    <!-- Sales Performance -->
+    <!-- Executive Performance -->
     <section class="sales-panel glass-panel">
-      <h3>Top Sales Agents</h3>
-      <table class="sales-table">
-        <thead>
-          <tr>
-            <th>Agent</th>
-            <th>Sales</th>
-            <th>Conversion</th>
-            <th>Trend</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (agent of topAgents; track agent.name) {
+      <h3>Top Sales Executives</h3>
+      <div class="table-wrapper">
+        <table class="sales-table">
+          <thead>
             <tr>
-              <td>
-                <div class="agent-info">
-                  <!-- <div class="avatar">{{ agent.initials }}</div> -->
-                  <span>{{ agent.name }}</span>
-                </div>
-              </td>
-              <td>₹{{ agent.sales | number }}</td>
-              <td>{{ agent.conversion }}%</td>
-              <td>
-                <span class="trend-badge" [class.up]="agent.trend === 'up'">
-                  <i
-                    [class]="
-                      agent.trend === 'up' ? 'ri-arrow-right-up-line' : 'ri-arrow-right-down-line'
-                    "
-                  ></i>
-                </span>
-              </td>
+              <th>Executive Name</th>
+              <th>Sales</th>
+              <th>Conv.</th>
+              <th>Trend</th>
             </tr>
-          }
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            @for (exec of topExecutives; track exec.name) {
+              <tr>
+                <td>
+                  <div class="agent-info">
+                    <div class="avatar exec-avatar">{{ exec.name.charAt(0) }}</div>
+                    <span>{{ exec.name }}</span>
+                  </div>
+                </td>
+                <td>{{ exec.sales }}</td>
+                <td>{{ exec.conversion }}%</td>
+                <td>
+                  <span class="trend-badge" [class.up]="exec.trend >= 0">
+                    <i
+                      [class]="
+                        exec.trend >= 0 ? 'ri-arrow-right-up-line' : 'ri-arrow-right-down-line'
+                      "
+                    ></i>
+                    {{ exec.trend }}%
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     </section>
 
-    <!-- Alerts & Tasks -->
-    <section class="alerts-panel glass-panel">
-      <h3>Action Items</h3>
-      <ul class="alert-list">
-        @for (alert of alerts; track $index) {
-          <li class="alert-item" [class]="alert.type">
-            <div class="alert-icon">
-              <i class="ri-alert-fill"></i>
-            </div>
-            <div class="alert-content">
-              <strong>{{ alert.title }}</strong>
-              <p>{{ alert.desc }}</p>
-            </div>
-            <span class="alert-time">{{ alert.due }}</span>
-          </li>
-        }
-      </ul>
+    <!-- Sales Performance -->
+    <section class="sales-panel glass-panel">
+      <h3>Top Sales Partners</h3>
+      <div class="table-wrapper">
+        <table class="sales-table">
+          <thead>
+            <tr>
+              <th>Agent Name</th>
+              <th>Sales</th>
+              <th>Conv.</th>
+              <th>Trend</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (agent of topAgents; track agent.name) {
+              <tr>
+                <td>
+                  <div class="agent-info">
+                    <div class="avatar">{{ agent.name.charAt(0) }}</div>
+                    <span>{{ agent.name }}</span>
+                  </div>
+                </td>
+                <td>{{ agent.sales }}</td>
+                <td>{{ agent.conversion }}%</td>
+                <td>
+                  <span class="trend-badge" [class.up]="agent.trend >= 0">
+                    <i
+                      [class]="
+                        agent.trend >= 0 ? 'ri-arrow-right-up-line' : 'ri-arrow-right-down-line'
+                      "
+                    ></i>
+                    {{ agent.trend }}%
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     </section>
   </div>
 </div>

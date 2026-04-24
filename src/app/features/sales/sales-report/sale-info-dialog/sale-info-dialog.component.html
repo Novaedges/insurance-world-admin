@@ -128,14 +128,22 @@
             class="detail-item highlight-primary"
             style="background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3)"
           >
-            <span class="label">Selling Price</span>
+            <span class="label">Premium Price</span>
             <span class="value" style="color: #1d4ed8; font-size: 1.25rem">{{
               saleDetails.sellingPrice | currency: 'INR'
             }}</span>
           </div>
           <div class="detail-item highlight-success">
             <span class="label">Commission</span>
-            <span class="value">{{ saleDetails.commission | currency: 'INR' }}</span>
+            <span class="value" style="color: #e4cd19; font-size: 1.25rem">{{
+              saleDetails.commission | currency: 'INR'
+            }}</span>
+          </div>
+          <div class="detail-item highlight-success">
+            <span class="label">Selling Price</span>
+            <span class="value">{{
+              saleDetails.sellingPrice - saleDetails.commission | currency: 'INR'
+            }}</span>
           </div>
         </div>
       </div>

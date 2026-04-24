@@ -12,3 +12,31 @@
   display: flex;
   gap: 0.5rem;
 }
+
+.price-range {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.85rem;
+
+  .min {
+    color: #64748b;
+  }
+
+  .separator {
+    display: none; // Stacked view looks better in tight columns
+  }
+
+  .max {
+    font-weight: 600;
+    color: var(--text-main);
+  }
+}
+
+.text-success {
+  color: #10b981;
+}
+
+.text-warning {
+  color: #f59e0b;
+}

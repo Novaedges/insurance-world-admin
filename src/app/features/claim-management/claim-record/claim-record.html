@@ -1,0 +1,52 @@
+<div class="page-header">
+  <div class="title-section">
+    <h2>Claim Records</h2>
+    <p class="subtitle">Manage and track insurance claims</p>
+  </div>
+  <div class="header-actions">
+    <div class="custom-select-container" (click)="$event.stopPropagation()">
+      <div
+        class="select-box"
+        [class.open]="isStatusDropdownOpen"
+        (click)="toggleStatusDropdown($event)"
+      >
+        <span class="selected-text">{{ getSelectedStatusText() }}</span>
+        <i class="ri-arrow-down-s-line"></i>
+      </div>
+      @if (isStatusDropdownOpen) {
+        <div class="select-dropdown">
+          @for (status of availableStatuses; track status) {
+            <label class="dropdown-item" [class.active-item]="selectedStatuses.includes(status)">
+              <input
+                type="checkbox"
+                [value]="status"
+                [checked]="selectedStatuses.includes(status)"
+                (change)="toggleStatus(status)"
+              />
+              <span class="item-text">{{ status }}</span>
+            </label>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+<div class="table-container glass-panel">
+  <app-table
+    [data]="claims"
+    [columns]="columns"
+    [totalItems]="totalItems"
+    [pageSize]="pageSize"
+    [currentPage]="currentPage"
+    [isLoading]="isLoading"
+    (pageChange)="onPageChange($event)"
+    (refresh)="onRefresh()"
+    (edit)="onUpdateStatus($event)"
+    [editTooltip]="'Complete Claim'"
+    [editDisableField]="'status'"
+    [actions]="true"
+    [hiddenActions]="['delete', 'password', 'view']"
+  >
+  </app-table>
+</div>

@@ -1,13 +1,18 @@
 <div class="page-header">
-  <h2>Admin Management</h2>
-  <button class="btn-primary" (click)="openForm()">+ Create Admin</button>
+  <div class="header-actions">
+    @if (authService.hasPermission('admin-creation', 'ADD')) {
+      <button class="btn-primary" (click)="openForm()">
+        <i class="ri-add-line"></i> Create admin
+      </button>
+    }
+  </div>
 </div>
 
 <app-table
   [data]="admins"
   [columns]="columns"
   [isLoading]="isLoading"
-  [hiddenActions]="[]"
+  [hiddenActions]="getHiddenActions()"
   [showStatusFilter]="true"
   [statusFilterValue]="isActiveFilter ? 'true' : 'false'"
   [totalItems]="totalItems"

@@ -7,7 +7,7 @@ import { ConfirmationService } from '../../services/confirmation.service';
 export interface Column {
   field: string;
   header: string;
-  type?: 'text' | 'status' | 'currency' | 'date';
+  type?: 'text' | 'status' | 'currency' | 'date' | 'uppercase';
   currencyCode?: string;
 }
 
@@ -37,6 +37,8 @@ export class TableComponent {
   @Input() isLoading: boolean = false;
   @Input() showStatusFilter: boolean = false;
   @Input() statusFilterValue: 'true' | 'false' = 'true';
+  @Input() editTooltip: string = 'Edit';
+  @Input() editDisableField: string = '';
 
   // Pagination Inputs
   @Input() totalItems: number = 0;

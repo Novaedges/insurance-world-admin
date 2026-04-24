@@ -7,6 +7,7 @@ import { AdminFormComponent } from './admin-form/admin-form.component';
 import { AdminCreationService } from './admin-creation.service'; // Import new service
 import { Admin } from '../../../core/models/master.models';
 import { SnackbarService } from '../../../core/services/snackbar.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-admin-creation',
@@ -47,6 +48,7 @@ export class AdminCreationComponent implements OnInit {
     private adminService: AdminCreationService,
     private cdr: ChangeDetectorRef,
     private snackbarService: SnackbarService,
+    public authService: AuthService,
   ) {}
 
   ngOnInit() {
@@ -65,6 +67,7 @@ export class AdminCreationComponent implements OnInit {
         this.admins = data.map((item: any) => ({
           ...item,
           status: item.isActive ? 'Active' : 'Inactive',
+          roleType: this.formatRole(item.roleType),
         }));
         this.totalItems = success.totalCount || 0;
         this.cdr.detectChanges();
@@ -74,6 +77,14 @@ export class AdminCreationComponent implements OnInit {
         this.snackbarService.error(err.error?.msg || 'Failed to load admins');
       },
     });
+  }
+
+  formatRole(role: string): string {
+    if (!role) return '';
+    return role
+      .split(/[-_]/)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
   }
 
   onPageChange(event: { page: number; limit: number }) {
@@ -127,9 +138,13 @@ export class AdminCreationComponent implements OnInit {
       const payload = { ...admin, _id };
       this.adminService.updateAdmin(payload).subscribe({
         next: (success: any) => {
-          this.snackbarService.success(success.msg || 'Admin updated successfully');
-          this.loadData();
-          this.closeForm();
+          if (success.status) {
+            this.snackbarService.success(success.msg || 'Admin updated successfully');
+            this.loadData();
+            this.closeForm();
+          } else {
+            this.snackbarService.error(success.msg || 'Failed to update admin');
+          }
         },
         error: (err: any) => {
           this.snackbarService.error(err.error?.msg || 'Failed to update admin');
@@ -138,9 +153,13 @@ export class AdminCreationComponent implements OnInit {
     } else {
       this.adminService.createAdmin(admin).subscribe({
         next: (success: any) => {
-          this.snackbarService.success(success.msg || 'Admin created successfully');
-          this.loadData();
-          this.closeForm();
+          if (success.status) {
+            this.snackbarService.success(success.msg || 'Admin created successfully');
+            this.loadData();
+            this.closeForm();
+          } else {
+            this.snackbarService.error(success.msg || 'Failed to create admin');
+          }
         },
         error: (err: any) => {
           this.snackbarService.error(err.error?.msg || 'Failed to create admin');
@@ -188,15 +207,31 @@ export class AdminCreationComponent implements OnInit {
       };
       this.adminService.updatePassword(payload).subscribe({
         next: (success: any) => {
-          this.closePasswordModal();
-          this.loadData();
-          this.snackbarService.success(success.msg || 'Password updated successfully');
+          if (success.status) {
+            this.closePasswordModal();
+            this.loadData();
+            this.snackbarService.success(success.msg || 'Password updated successfully');
+          } else {
+            this.snackbarService.error(success.msg || 'Failed to update password');
+          }
         },
         error: (err: any) => {
           this.snackbarService.error(err.error?.msg || 'Failed to update password');
         },
       });
     }
+  }
+
+  getHiddenActions(): string[] {
+    const hidden = [];
+    if (!this.authService.hasPermission('admin-creation', 'EDIT')) {
+      hidden.push('edit');
+      hidden.push('password');
+    }
+    if (!this.authService.hasPermission('admin-creation', 'DELETE')) {
+      hidden.push('delete');
+    }
+    return hidden;
   }
 
   onView(item: any) {

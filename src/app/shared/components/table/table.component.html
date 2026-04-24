@@ -78,6 +78,10 @@
                     <span>
                       {{ cellValue | date: 'dd-MM-yyyy' }}
                     </span>
+                  } @else if (col.type === 'uppercase') {
+                    <span>
+                      {{ cellValue | uppercase }}
+                    </span>
                   } @else {
                     <span>
                       @if (cellValue?.isRange) {
@@ -104,8 +108,9 @@
                     <button
                       class="btn-icon btn-primary-light"
                       (click)="onEdit(row)"
-                      appTooltip="Edit"
+                      [appTooltip]="editTooltip"
                       *ngIf="!hiddenActions.includes('edit')"
+                      [disabled]="editDisableField && row[editDisableField] === 'COMPLETED'"
                     >
                       <i class="ri-pencil-line"></i>
                     </button>

@@ -147,25 +147,26 @@
                 {{ inquiryDetails.policyDetails.maxPrice | currency: 'INR' }}
               </span>
             </div>
-            <div class="detail-item highlight-success">
+            <div class="detail-item highlight-primary">
               <span class="label">Expected Commission</span>
               <span class="value">{{
                 inquiryDetails.policyDetails.commission | currency: 'INR'
               }}</span>
             </div>
-            <div class="detail-item highlight-danger">
-              <span class="label">Available Discount</span>
-              <span class="value"
-                >-{{ inquiryDetails.policyDetails.discount | currency: 'INR' }}</span
-              >
-            </div>
+
             <div class="detail-item highlight-primary">
-              <span class="label">Final Selling Price</span>
+              <span class="label">Premium Price</span>
               <span class="value">{{ inquiryDetails.sellingPrice | currency: 'INR' }}</span>
             </div>
-            <div class="detail-item highlight-success">
-              <span class="label">Actual Commission</span>
+            <div class="detail-item highlight-secondary">
+              <span class="label">Commission on sell</span>
               <span class="value">{{ inquiryDetails.afterSaleCommission | currency: 'INR' }}</span>
+            </div>
+            <div class="detail-item highlight-success">
+              <span class="label">Final Selling Price</span>
+              <span class="value">{{
+                inquiryDetails.sellingPrice - inquiryDetails.afterSaleCommission | currency: 'INR'
+              }}</span>
             </div>
           </div>
         </div>

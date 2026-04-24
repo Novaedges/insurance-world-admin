@@ -32,6 +32,8 @@
           <th>Phone</th>
           <th>Policy</th>
           <th>Price</th>
+          <th>Premium Price</th>
+          <th>Commission</th>
           <th>Selling Price</th>
           <th>Executive</th>
           <th>Lapse Date</th>
@@ -63,8 +65,19 @@
                 {{ sale.policyName }} <br />
                 <small class="text-muted">{{ sale.policyCode }}</small>
               </td>
-              <td>{{ sale.actualPrice | currency: 'INR' }}</td>
-              <td>{{ sale.sellingPrice | currency: 'INR' }}</td>
+              <td>
+                <div class="price-range">
+                  <span class="min">{{ sale.minPrice | currency: 'INR' }}</span>
+                  <span class="separator">-</span>
+                  <span class="max">{{ sale.maxPrice | currency: 'INR' }}</span>
+                </div>
+              </td>
+              <td class="font-bold text-primary">{{ sale.sellingPrice || 0 | currency: 'INR' }}</td>
+              <td class="text-warning font-bold">{{ sale.commission | currency: 'INR' }}</td>
+
+              <td class="font-bold text-success">
+                {{ sale.sellingPrice - sale.commission | currency: 'INR' }}
+              </td>
               <td>{{ sale.salesExecutiveName }}</td>
               <td class="text-danger font-bold">
                 {{ sale.lapsDate ? (sale.lapsDate | date: 'dd MMM yyyy') : 'N/A' }}
