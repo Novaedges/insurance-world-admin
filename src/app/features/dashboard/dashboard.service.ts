@@ -11,11 +11,8 @@ export class DashboardService {
 
   getDashboardData(startDate: string, endDate: string): Observable<any> {
     // startDate and endDate should be in YYYYMMDD format
-    return this.http.get<any>(
-      `${environment.apiUrl}/api/web/iw/module/admin/dashboard/v1`,
-      {
-        params: { startDate, endDate },
-      },
-    );
+    return this.http.get<any>(`${environment.apiUrl}/api/web/iw/module/admin/dashboard/v1`, {
+      params: { startDate, endDate },
+    });
   }
 }

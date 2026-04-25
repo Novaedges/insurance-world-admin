@@ -9,11 +9,7 @@ import { environment } from '../../../../environments/environment';
 export class ClaimRecordService {
   private http = inject(HttpClient);
 
-  getClaims(
-    limit: number = 10,
-    skip: number = 0,
-    status: string[] = ['PENDING'],
-  ): Observable<any> {
+  getClaims(limit: number = 10, skip: number = 0, status: string[] = ['PENDING']): Observable<any> {
     return this.http.get<any>(`${environment.apiUrl}/api/web/iw/module/claim/v1`, {
       params: {
         limit: limit.toString(),

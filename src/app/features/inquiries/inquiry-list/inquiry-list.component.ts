@@ -25,6 +25,7 @@ import { InquiryReportItem } from '../../../core/models/inquiry.models';
 })
 export class InquiryListComponent implements OnInit {
   items: InquiryReportItem[] = [];
+  filteredItems: InquiryReportItem[] = [];
   isLoading = true;
 
   // Pagination
@@ -103,6 +104,7 @@ export class InquiryListComponent implements OnInit {
       next: (res) => {
         if (res.status && res.result) {
           this.items = res.result;
+          this.filterItems(); // Initial filter
           this.totalItems = res.totalCount || 0;
           if (this.items.length === 0) {
             this.apiMessage = res.msg || 'No data found.';
@@ -130,11 +132,21 @@ export class InquiryListComponent implements OnInit {
   }
 
   onSearch(event: any) {
-    this.searchTerm = event.target.value;
-    // Note: Inquiry API currently doesn't support search parameter based on service definition
-    // If it did, we would pass it to loadData()
-    this.currentPage = 1;
-    this.loadData();
+    this.searchTerm = event.target.value.toLowerCase();
+    this.filterItems();
+  }
+
+  filterItems() {
+    if (!this.searchTerm) {
+      this.filteredItems = [...this.items];
+      return;
+    }
+
+    this.filteredItems = this.items.filter((item) => {
+      const searchStr =
+        `${item.regNumber} ${item.name} ${item.phoneNumber} ${item.policyName} ${item.status}`.toLowerCase();
+      return searchStr.includes(this.searchTerm);
+    });
   }
 
   onPageChange(event: { page: number; limit: number }) {
