@@ -85,7 +85,7 @@ export class InquiryUpdateDialogComponent implements OnInit {
               const targetPolicyName = inquiry.policyName;
               // If policies are already loaded, try to find and select
               if (this.policies.length > 0) {
-                this.selectPolicyByName(targetPolicyName, true);
+                this.selectPolicyByName(targetPolicyName);
               } else {
                 // Store temporarily to select once policies load
                 this.tempPolicyName = targetPolicyName;
@@ -151,8 +151,11 @@ export class InquiryUpdateDialogComponent implements OnInit {
         if (res.status && res.result) {
           this.policies = res.result;
           if (this.tempPolicyName) {
-            this.selectPolicyByName(this.tempPolicyName, true);
+            this.selectPolicyByName(this.tempPolicyName);
             this.tempPolicyName = '';
+          } else if (this.formData.policyId) {
+            // Re-sync if policyId was already set by loadInquiryDetails
+            this.onPolicyChange();
           }
         }
       },
@@ -167,6 +170,10 @@ export class InquiryUpdateDialogComponent implements OnInit {
       next: (res) => {
         if (res.status && res.result) {
           this.policyTypes = res.result;
+          // Re-sync type details if a policy is already selected
+          if (this.formData.policyId) {
+            this.onPolicyChange();
+          }
         }
       },
       error: (err) => {
@@ -198,8 +205,12 @@ export class InquiryUpdateDialogComponent implements OnInit {
       );
 
       // Pre-fill fields if they are null
-      if (!this.formData.commission) this.formData.commission = selectedPolicy.commission;
-      if (!this.formData.discount) this.formData.discount = selectedPolicy.discount;
+      if (this.formData.commission === null || this.formData.commission === undefined) {
+        this.formData.commission = selectedPolicy.commission;
+      }
+      if (this.formData.discount === null || this.formData.discount === undefined) {
+        this.formData.discount = selectedPolicy.discount;
+      }
       this.cdr.detectChanges();
     } else {
       this.selectedPolicyDetails = null;
