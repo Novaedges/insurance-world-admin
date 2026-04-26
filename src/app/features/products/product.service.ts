@@ -25,13 +25,13 @@ export class ProductService {
     return this.http.get<any>(this.apiUrl, { params });
   }
 
-  downloadProducts(isActive?: boolean): Observable<Blob> {
+  downloadPolicyExcel(isActive?: boolean): Observable<any> {
+    const url = environment.apiUrl + '/api/web/iw/module/insurance/policy/download/v1';
     let params = new HttpParams();
     if (isActive !== undefined) {
       params = params.set('isActive', isActive.toString());
     }
-    params = params.set('download', '1');
-    return this.http.get(this.apiUrl, { params, responseType: 'blob' });
+    return this.http.get<any>(url, { params });
   }
 
   saveProduct(data: FormData): Observable<any> {

@@ -314,9 +314,13 @@ $border: #e2e8f0;
 
   th,
   td {
-    padding: 0.75rem 0.5rem;
+    padding: 0.75rem 0.4rem;
     text-align: left;
     border-bottom: 1px solid $border;
+  }
+
+  .amount-col {
+    text-align: right;
   }
 
   th {
@@ -359,7 +363,7 @@ $border: #e2e8f0;
   th:last-child,
   td:last-child {
     text-align: center;
-    padding-right: 1.5rem; /* Fix: Prevent "TREND" from hitting edge */
+    padding-right: 0.5rem;
   }
 
   .trend-badge {

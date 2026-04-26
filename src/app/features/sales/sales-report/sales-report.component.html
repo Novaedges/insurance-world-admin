@@ -12,10 +12,47 @@
   <div class="table-actions-header">
     <div class="search-box">
       <i class="ri-search-line"></i>
-      <input type="text" placeholder="Search by Reg No, Name..." (change)="onSearch($event)" />
+      <input
+        type="text"
+        placeholder="Search by Reg No, Name..."
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearch()"
+      />
     </div>
 
     <div class="header-actions-right">
+      <div class="date-filter">
+        <div class="input-group" (click)="startInput.showPicker()">
+          <span class="label">From</span>
+          <input
+            type="date"
+            #startInput
+            [(ngModel)]="startDate"
+            (change)="onDateChange()"
+            [max]="maxDate"
+          />
+          <i class="ri-calendar-line"></i>
+        </div>
+        <div class="input-group" (click)="endInput.showPicker()">
+          <span class="label">To</span>
+          <input
+            type="date"
+            #endInput
+            [(ngModel)]="endDate"
+            (change)="onDateChange()"
+            [max]="maxDate"
+          />
+          <i class="ri-calendar-line"></i>
+        </div>
+      </div>
+      <button
+        class="btn-refresh"
+        (click)="clearFilters()"
+        title="Clear Filters"
+        *ngIf="searchTerm || startDate || endDate"
+      >
+        <i class="ri-filter-off-line"></i>
+      </button>
       <button class="btn-refresh" (click)="onRefresh()" title="Refresh Data">
         <i class="ri-refresh-line"></i>
       </button>

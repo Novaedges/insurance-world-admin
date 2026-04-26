@@ -108,17 +108,17 @@ export class ProductListComponent implements OnInit {
     this.cdr.detectChanges();
 
     this.productService
-      .downloadProducts(this.isActiveFilter)
+      .downloadPolicyExcel(this.isActiveFilter)
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
-        next: (blob: Blob) => {
-          const url = window.URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = `products_${new Date().getTime()}.xlsx`;
-          link.click();
-          window.URL.revokeObjectURL(url);
-          this.snackbarService.success('Excel downloaded successfully');
+        next: (response: any) => {
+          if (response.status && response.result && response.result.length > 0) {
+            const link = response.result[0].link;
+            window.open(link, '_blank');
+            this.snackbarService.success(response.msg || 'Excel generated successfully');
+          } else {
+            this.snackbarService.error(response.msg || 'Failed to generate Excel');
+          }
           this.cdr.detectChanges();
         },
         error: (err) => {

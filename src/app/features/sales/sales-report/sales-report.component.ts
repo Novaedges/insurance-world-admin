@@ -27,6 +27,9 @@ export class SalesReportComponent implements OnInit {
   currentPage = 1;
   searchTerm = '';
   salesExecutiveId = '';
+  startDate = '';
+  endDate = '';
+  maxDate = new Date().toISOString().split('T')[0];
 
   pageSizeOptions = [10, 20, 50, 100];
   isLoading = false;
@@ -39,6 +42,10 @@ export class SalesReportComponent implements OnInit {
     private snackbarService: SnackbarService,
   ) {}
 
+  formatDateForApi(dateStr: string): string {
+    return dateStr ? dateStr.replace(/-/g, '') : '';
+  }
+
   ngOnInit() {
     this.loadData();
   }
@@ -48,7 +55,14 @@ export class SalesReportComponent implements OnInit {
     const skip = (this.currentPage - 1) * this.pageSize;
 
     this.salesService
-      .getSales(this.pageSize, skip, this.searchTerm, this.salesExecutiveId)
+      .getSales(
+        this.pageSize,
+        skip,
+        this.searchTerm,
+        this.salesExecutiveId,
+        this.formatDateForApi(this.startDate),
+        this.formatDateForApi(this.endDate),
+      )
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
         next: (res: any) => {
@@ -73,9 +87,21 @@ export class SalesReportComponent implements OnInit {
     this.loadData();
   }
 
-  onSearch(event: any) {
-    this.searchTerm = event.target.value;
-    this.currentPage = 1; // Reset pagination on search
+  onSearch() {
+    this.currentPage = 1;
+    this.loadData();
+  }
+
+  onDateChange() {
+    this.currentPage = 1;
+    this.loadData();
+  }
+
+  clearFilters() {
+    this.searchTerm = '';
+    this.startDate = '';
+    this.endDate = '';
+    this.currentPage = 1;
     this.loadData();
   }
 
@@ -122,17 +148,27 @@ export class SalesReportComponent implements OnInit {
     this.isLoading = true;
 
     this.salesService
-      .downloadSales(this.searchTerm, this.salesExecutiveId)
+      .downloadSalesReportExcel(
+        this.searchTerm,
+        this.salesExecutiveId,
+        this.formatDateForApi(this.startDate),
+        this.formatDateForApi(this.endDate),
+      )
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
-        next: (blob: Blob) => {
-          const url = window.URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = `sales_report_${new Date().getTime()}.xlsx`;
-          link.click();
-          window.URL.revokeObjectURL(url);
-          this.snackbarService.success('Sales report downloaded successfully');
+        next: (response: any) => {
+          if (
+            response.status &&
+            response.result &&
+            response.result.length > 0 &&
+            response.result[0].length > 0
+          ) {
+            const link = response.result[0][0].link;
+            window.open(link, '_blank');
+            this.snackbarService.success(response.msg || 'Sales report generated successfully');
+          } else {
+            this.snackbarService.error(response.msg || 'Failed to generate sales report');
+          }
         },
         error: (err) => {
           console.error('Download error:', err);

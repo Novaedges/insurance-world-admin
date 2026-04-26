@@ -16,6 +16,8 @@ export class SalesService {
     skip: number = 0,
     search: string = '',
     salesExecutiveId: string = '',
+    startDate: string = '',
+    endDate: string = '',
   ): Observable<any> {
     let params = new HttpParams()
       .set('limit', limit.toString())
@@ -24,6 +26,12 @@ export class SalesService {
 
     if (salesExecutiveId) {
       params = params.set('salesExecutiveId', salesExecutiveId);
+    }
+    if (startDate) {
+      params = params.set('startDate', startDate);
+    }
+    if (endDate) {
+      params = params.set('endDate', endDate);
     }
 
     return this.http.get<any>(this.apiUrl, { params });
@@ -34,13 +42,25 @@ export class SalesService {
     return this.http.get<any>(this.apiUrl, { params });
   }
 
-  downloadSales(search: string = '', salesExecutiveId: string = ''): Observable<Blob> {
-    let params = new HttpParams().set('search', search).set('download', '1');
+  downloadSalesReportExcel(
+    search: string = '',
+    salesExecutiveId: string = '',
+    startDate: string = '',
+    endDate: string = '',
+  ): Observable<any> {
+    const url = environment.apiUrl + '/api/web/iw/module/admin/sales/report/download/v1';
+    let params = new HttpParams().set('search', search);
 
     if (salesExecutiveId) {
       params = params.set('salesExecutiveId', salesExecutiveId);
     }
+    if (startDate) {
+      params = params.set('startDate', startDate);
+    }
+    if (endDate) {
+      params = params.set('endDate', endDate);
+    }
 
-    return this.http.get(this.apiUrl, { params, responseType: 'blob' });
+    return this.http.get<any>(url, { params });
   }
 }

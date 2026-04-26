@@ -104,9 +104,12 @@
         <i class="ri-hand-coin-line"></i>
       </div>
       <div class="kpi-content">
-        <h3>{{ totalCommission | currency: 'INR' }}</h3>
+        <h3>{{ kpiStats.totalCommission.value | currency: 'INR' }}</h3>
         <p>Total Commission</p>
-        <span class="trend up">↑ New</span>
+        <span class="trend" [class.up]="kpiStats.totalCommission.trend >= 0">
+          {{ kpiStats.totalCommission.trend >= 0 ? '↑' : '↓' }}
+          {{ kpiStats.totalCommission.trend }}%
+        </span>
       </div>
     </div>
 
@@ -176,8 +179,9 @@
           <thead>
             <tr>
               <th>Executive Name</th>
-              <th>Sales</th>
-              <th>Conv.</th>
+              <th class="amount-col">Total Premium</th>
+              <th class="amount-col">Commission</th>
+              <th class="amount-col">Net Pay</th>
               <th>Trend</th>
             </tr>
           </thead>
@@ -186,12 +190,17 @@
               <tr>
                 <td>
                   <div class="agent-info">
-                    <div class="avatar exec-avatar">{{ exec.name.charAt(0) }}</div>
-                    <span>{{ exec.name }}</span>
+                    <div class="avatar exec-avatar">
+                      {{ (exec.name?.trim() || 'Self Enquiry').charAt(0) }}
+                    </div>
+                    <span>{{ exec.name?.trim() || 'Self Enquiry' }}</span>
                   </div>
                 </td>
-                <td>{{ exec.sales }}</td>
-                <td>{{ exec.conversion }}%</td>
+                <td class="amount-col">{{ exec.sales | currency: 'INR' }}</td>
+                <td class="amount-col">{{ exec.totalCommission || 0 | currency: 'INR' }}</td>
+                <td class="amount-col">
+                  {{ (exec.sales || 0) - (exec.totalCommission || 0) | currency: 'INR' }}
+                </td>
                 <td>
                   <span class="trend-badge" [class.up]="exec.trend >= 0">
                     <i
@@ -227,11 +236,11 @@
               <tr>
                 <td>
                   <div class="agent-info">
-                    <div class="avatar">{{ agent.name.charAt(0) }}</div>
-                    <span>{{ agent.name }}</span>
+                    <div class="avatar">{{ (agent.name?.trim() || 'Self Enquiry').charAt(0) }}</div>
+                    <span>{{ agent.name?.trim() || 'Self Enquiry' }}</span>
                   </div>
                 </td>
-                <td>{{ agent.sales }}</td>
+                <td>{{ agent.sales | currency: 'INR' }}</td>
                 <td>{{ agent.conversion }}%</td>
                 <td>
                   <span class="trend-badge" [class.up]="agent.trend >= 0">

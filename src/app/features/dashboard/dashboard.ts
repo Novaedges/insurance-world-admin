@@ -60,7 +60,9 @@ export class DashboardComponent implements OnInit {
             const data = res.result[0];
             this.kpiStats = data.kpis;
             this.totalCommission = data.totalCommission || 0;
-            this.netPremium = (this.kpiStats?.totalPremium?.value || 0) - this.totalCommission;
+            this.netPremium =
+              (this.kpiStats?.totalPremium?.value || 0) -
+              (this.kpiStats?.totalCommission?.value || 0);
             this.categoryStats = data.categoryInsights || [];
             this.topModels = data.topDemandedModels || [];
             this.topAgents = data.topSalesAgents || [];
