@@ -22,6 +22,7 @@ export class ProductListComponent implements OnInit {
     { field: 'policyCode', header: 'Item Code' },
     { field: 'policyName', header: 'Policy Name' },
     { field: 'policyTypeName', header: 'Policy Type' },
+    { field: 'priority', header: 'Priority' },
     { field: 'minPrice - maxPrice', header: 'Price Range', type: 'currency', currencyCode: 'INR' },
     { field: 'commission', header: 'Commission', type: 'currency', currencyCode: 'INR' },
     { field: 'status', header: 'Status', type: 'status' },

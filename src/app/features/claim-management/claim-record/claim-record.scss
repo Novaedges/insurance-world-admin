@@ -20,6 +20,98 @@
       font-weight: 500;
     }
   }
+
+  .header-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+
+    .btn-primary {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1.25rem;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
+
+      &:hover:not(:disabled) {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+        filter: brightness(1.05);
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(0);
+      }
+
+      &:disabled {
+        background: #e2e8f0;
+        color: #94a3b8;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+
+      i {
+        font-size: 1.1rem;
+      }
+    }
+
+    .date-filter {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      background: #ffffff;
+      padding: 0.25rem 0.75rem;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+
+      .input-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        label {
+          font-size: 0.75rem;
+          font-weight: 700;
+          color: #64748b;
+          text-transform: uppercase;
+          letter-spacing: 0.025em;
+        }
+
+        .date-input {
+          border: none;
+          background: transparent;
+          color: #1e293b;
+          font-size: 0.85rem;
+          font-weight: 600;
+          outline: none;
+          cursor: pointer;
+          padding: 0.25rem 0;
+
+          &::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            filter: invert(0.4);
+            &:hover {
+              filter: invert(0.2);
+            }
+          }
+        }
+      }
+
+      // Divider between inputs
+      .input-group:first-child {
+        border-right: 1px solid #e2e8f0;
+        padding-right: 0.75rem;
+      }
+    }
+  }
 }
 
 .custom-select-container {

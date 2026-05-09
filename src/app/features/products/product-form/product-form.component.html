@@ -27,6 +27,14 @@
         }
       </div>
 
+      <div class="form-group">
+        <label>Priority <span class="text-danger">*</span></label>
+        <input type="number" formControlName="priority" placeholder="Enter Priority (e.g. 0)" />
+        @if (form.get('priority')?.invalid && form.get('priority')?.touched) {
+          <div class="error-msg">Priority is required</div>
+        }
+      </div>
+
       <div class="form-group full-width">
         <label>Insurance Companies <span class="text-danger">*</span></label>
         <div class="checkbox-group scrollable-grid multi-select-grid">

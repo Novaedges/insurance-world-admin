@@ -99,6 +99,7 @@ export class ProductFormComponent implements OnChanges, OnInit {
       policyTypeId: ['', Validators.required],
       rtoIds: [[], Validators.required],
       policyCovers: [[]],
+      priority: [0, Validators.required],
     });
 
     this.form.valueChanges.subscribe(() => this.calculateFinalPrice());
@@ -180,6 +181,7 @@ export class ProductFormComponent implements OnChanges, OnInit {
           makeId: [],
           modelId: [],
           policyCovers: [],
+          priority: 0,
         });
         this.finalPrice = 0;
         this.currentStep = 1;
@@ -361,6 +363,7 @@ export class ProductFormComponent implements OnChanges, OnInit {
       formData.append('discountType', formValue.discountType);
       formData.append('basePrice', String(formValue.basePrice));
       formData.append('policyCovers', JSON.stringify(formValue.policyCovers || []));
+      formData.append('priority', String(formValue.priority || 0));
 
       if (formValue._id || formValue.id) {
         formData.append('_id', formValue._id || formValue.id);

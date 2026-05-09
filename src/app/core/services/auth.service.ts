@@ -192,7 +192,7 @@ export class AuthService {
     const idMap: { [key: string]: string } = {
       dashboard: 'Dashboard',
       products: 'ProductManagement',
-      inquiries: 'EnquiryManagement',
+      enquiries: 'EnquiryManagement',
       'sales-reports': 'SalesReports',
       'admin-creation': 'AdminCreation',
       'insurance-company': 'InsuranceCompany',

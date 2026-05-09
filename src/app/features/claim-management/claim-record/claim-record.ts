@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ClaimRecordService } from './claim-record.service';
 import { TableComponent, Column } from '../../../shared/components/table/table.component';
 import { finalize } from 'rxjs/operators';
@@ -9,7 +10,7 @@ import { SnackbarService } from '../../../core/services/snackbar.service';
 @Component({
   selector: 'app-claim-record',
   standalone: true,
-  imports: [CommonModule, TableComponent],
+  imports: [CommonModule, TableComponent, FormsModule],
   templateUrl: './claim-record.html',
   styleUrl: './claim-record.scss',
 })
@@ -28,6 +29,10 @@ export class ClaimRecordComponent implements OnInit {
   selectedStatuses: string[] = ['PENDING', 'COMPLETED'];
   isStatusDropdownOpen = false;
 
+  startDate = '';
+  endDate = '';
+  maxDate = new Date().toISOString().split('T')[0];
+
   columns: Column[] = [
     { field: 'createdAt', header: 'Date', type: 'date' },
     { field: 'RegistrationNo', header: 'Reg No', type: 'uppercase' },
@@ -40,7 +45,23 @@ export class ClaimRecordComponent implements OnInit {
   ];
 
   ngOnInit() {
+    this.initDates();
     this.loadClaims();
+  }
+
+  initDates() {
+    // const now = new Date();
+    // const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+    // const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+    // this.startDate = firstDay.toISOString().split('T')[0];
+    // this.endDate = lastDay.toISOString().split('T')[0];
+    this.startDate = '';
+    this.endDate = '';
+  }
+
+  formatDateForApi(dateStr: string): string {
+    return dateStr ? dateStr.replace(/-/g, '') : '';
   }
 
   loadClaims() {
@@ -130,5 +151,34 @@ export class ClaimRecordComponent implements OnInit {
 
   onRefresh() {
     this.loadClaims();
+  }
+
+  onDownload() {
+    this.isLoading = true;
+    const status =
+      this.selectedStatuses.length > 0 ? this.selectedStatuses : ['PENDING', 'COMPLETED'];
+
+    this.claimService
+      .downloadClaimsExcel(status)
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: (res: any) => {
+          if (res.status && res.result && res.result.length > 0) {
+            const link = res.result[0].link;
+            if (link) {
+              window.open(link, '_blank');
+              this.snackbarService.success('Claim records report generated successfully');
+            } else {
+              this.snackbarService.error('Download link not found');
+            }
+          } else {
+            this.snackbarService.error(res.msg || 'Failed to generate report');
+          }
+        },
+        error: (err) => {
+          console.error('Download error:', err);
+          this.snackbarService.error('Error downloading claim records');
+        },
+      });
   }
 }

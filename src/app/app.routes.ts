@@ -83,7 +83,7 @@ export const routes: Routes = [
           import('./features/products/products.routes').then((m) => m.PRODUCTS_ROUTES),
       },
       {
-        path: 'inquiries',
+        path: 'enquiries',
         loadChildren: () =>
           import('./features/inquiries/inquiries.routes').then((m) => m.INQUIRIES_ROUTES),
       },

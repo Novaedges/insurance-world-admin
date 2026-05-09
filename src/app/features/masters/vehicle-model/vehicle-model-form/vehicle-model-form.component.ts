@@ -49,6 +49,7 @@ export class VehicleModelFormComponent implements OnChanges, OnInit {
       manufacturerId: ['', Validators.required],
       engineCC: [''],
       fuelType: ['Petrol', Validators.required],
+      priority: [0, Validators.required],
       isActive: [true, Validators.required],
     });
   }

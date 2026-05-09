@@ -9,7 +9,7 @@
       <i class="ri-search-line"></i>
       <input
         type="text"
-        placeholder="Search inquiries..."
+        placeholder="Search enquiries..."
         (input)="onSearch($event)"
         [(ngModel)]="searchTerm"
       />
@@ -78,7 +78,7 @@
                   <div class="dot"></div>
                   <div class="dot"></div>
                 </div>
-                <p class="fancy-loader-text">Loading inquiries...</p>
+                <p class="fancy-loader-text">Loading enquiries...</p>
               </div>
             </td>
           </tr>
@@ -137,7 +137,7 @@
                 class="no-data"
                 style="text-align: center; padding: 3rem; color: #94a3b8; font-style: italic"
               >
-                {{ apiMessage || 'No inquiries found.' }}
+                {{ apiMessage || 'No enquiries found.' }}
               </td>
             </tr>
           }

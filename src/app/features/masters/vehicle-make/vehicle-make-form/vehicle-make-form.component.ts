@@ -38,6 +38,7 @@ export class VehicleMakeFormComponent implements OnInit, OnChanges {
       _id: [''],
       name: ['', Validators.required],
       vehicleTypeId: [[], Validators.required],
+      priority: [0, Validators.required],
       isActive: [true, Validators.required],
     });
   }

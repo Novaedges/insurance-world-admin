@@ -34,7 +34,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   private routeMap: { [key: string]: string } = {
     '/dashboard': 'Dashboard',
     '/products': 'Product Management',
-    '/inquiries': 'Enquiry Management',
+    '/enquiries': 'Enquiry Management',
     '/sales-reports': 'Sales Reports',
     '/admin-creation': 'Admin Creation',
     '/rto-management': 'RTO Management',

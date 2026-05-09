@@ -20,7 +20,8 @@ export class VehicleMakeComponent implements OnInit {
   protected readonly Array = Array;
   columns: Column[] = [
     { field: 'name', header: 'Make Name' },
-    { field: 'vehicleTypeName', header: 'Category' }, // Assuming backend returns populated or we map it
+    { field: 'vehicleTypeName', header: 'Category' },
+    { field: 'priority', header: 'Priority' },
     { field: 'status', header: 'Status', type: 'status' },
   ];
 

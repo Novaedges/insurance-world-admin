@@ -4,6 +4,29 @@
     <p class="subtitle">Manage and track insurance claims</p>
   </div>
   <div class="header-actions">
+    <!-- <div class="date-filter">
+      <div class="input-group">
+        <label>From</label>
+        <input
+          type="date"
+          [(ngModel)]="startDate"
+          (change)="onRefresh()"
+          [max]="maxDate"
+          class="date-input"
+        />
+      </div>
+      <div class="input-group">
+        <label>To</label>
+        <input
+          type="date"
+          [(ngModel)]="endDate"
+          (change)="onRefresh()"
+          [max]="maxDate"
+          class="date-input"
+        />
+      </div>
+    </div> -->
+
     <div class="custom-select-container" (click)="$event.stopPropagation()">
       <div
         class="select-box"
@@ -29,6 +52,10 @@
         </div>
       }
     </div>
+    <button class="btn-primary" (click)="onDownload()" [disabled]="isLoading">
+      <i class="ri-file-excel-2-line"></i>
+      <span>Download Excel</span>
+    </button>
   </div>
 </div>
 

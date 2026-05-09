@@ -21,6 +21,7 @@ export class VehicleModelComponent implements OnInit {
     { field: 'name', header: 'Model Name' },
     { field: 'vehicleTypeName', header: 'Category' },
     { field: 'manufacturerName', header: 'Make' },
+    { field: 'priority', header: 'Priority' },
     { field: 'status', header: 'Status', type: 'status' },
   ];
 

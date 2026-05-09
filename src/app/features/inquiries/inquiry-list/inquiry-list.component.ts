@@ -117,10 +117,10 @@ export class InquiryListComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Failed to fetch inquiries', err);
+        console.error('Failed to fetch enquiries', err);
         this.items = [];
         this.totalItems = 0;
-        this.apiMessage = err.error?.msg || 'Failed to load inquiries.';
+        this.apiMessage = err.error?.msg || 'Failed to load enquiries.';
         this.isLoading = false;
       },
     });

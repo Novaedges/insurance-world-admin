@@ -25,4 +25,12 @@ export class ClaimRecordService {
       status: status,
     });
   }
+
+  downloadClaimsExcel(status: string[]): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}/api/web/iw/module/admin/claim/download/v1`, {
+      params: {
+        status: JSON.stringify(status),
+      },
+    });
+  }
 }

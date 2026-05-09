@@ -43,7 +43,7 @@
         <span class="label">Dashboard</span>
       </a>
 
-      @if (hasSectionAccess(['products', 'inquiries', 'sales-reports'])) {
+      @if (hasSectionAccess(['products', 'enquiries', 'sales-reports'])) {
         <div class="nav-section-label">Core</div>
       }
       @if (hasAccess('products')) {
@@ -57,15 +57,15 @@
           <span class="label">Products</span>
         </a>
       }
-      @if (hasAccess('inquiries')) {
+      @if (hasAccess('enquiries')) {
         <a
-          routerLink="/inquiries"
+          routerLink="/enquiries"
           routerLinkActive="active"
           class="nav-item"
           (click)="closeMobileSidebar()"
         >
           <i class="icon ri-mail-send-line"></i>
-          <span class="label">Inquiries</span>
+          <span class="label">Enquiries</span>
         </a>
       }
       @if (hasAccess('sales-reports')) {
