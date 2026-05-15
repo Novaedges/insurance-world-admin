@@ -328,13 +328,51 @@
           <i class="ri-timer-line"></i>
           <span>{{ sessionTimeRemaining() }}</span>
         </div>
-        <button
-          class="btn-icon"
-          [class.animating]="isCheckingNotification"
-          (click)="triggerNotificationAnimation()"
-        >
-          <i class="ri-notification-3-line"></i>
-        </button>
+        <div class="notification-wrapper" style="position: relative">
+          <button
+            class="btn-icon notification-btn"
+            [class.active]="isNotificationDropdownOpen()"
+            (click)="triggerNotificationAnimation()"
+          >
+            <i class="ri-notification-3-line"></i>
+            @if (notificationCount() > 0) {
+              <span class="notification-badge">{{ notificationCount() }}</span>
+            }
+          </button>
+
+          @if (isNotificationDropdownOpen()) {
+            <div class="dropdown-menu notification-dropdown">
+              <div class="dropdown-header">
+                <strong>Notifications</strong>
+                @if (notificationCount() > 0) {
+                  <span class="badge-count">{{ notificationCount() }} New</span>
+                }
+              </div>
+              <div class="notification-list">
+                @for (noti of unreadNotifications().slice(0, 5); track noti) {
+                  <div class="notification-item" (click)="viewEnquiry()">
+                    <div class="noti-icon">
+                      <i class="ri-mail-unread-line"></i>
+                    </div>
+                    <div class="noti-content">
+                      <p class="noti-title">{{ noti.title }}</p>
+                      <p class="noti-body">{{ noti.body }}</p>
+                    </div>
+                  </div>
+                }
+                @if (unreadNotifications().length === 0) {
+                  <div class="empty-state">
+                    <i class="ri-notification-off-line"></i>
+                    <p>All caught up!</p>
+                  </div>
+                }
+              </div>
+              <div class="dropdown-footer">
+                <button class="view-all-btn" (click)="viewEnquiry()">View All Enquiries</button>
+              </div>
+            </div>
+          }
+        </div>
         <div class="settings-wrapper" style="position: relative">
           <button class="btn-icon" (click)="toggleSettings()">
             <i class="ri-settings-4-line"></i>
@@ -368,3 +406,26 @@
 </div>
 <app-confirmation-dialog></app-confirmation-dialog>
 <app-snackbar></app-snackbar>
+
+<app-dialog
+  [isOpen]="isEnquiryDialogOpen()"
+  [title]="'New Enquiry Received!'"
+  (closeEvent)="closeEnquiryDialog()"
+>
+  <div class="new-enquiry-content">
+    <div class="info-icon">
+      <i class="ri-mail-send-line"></i>
+    </div>
+    <p>A new enquiry has just arrived in the system.</p>
+    @if (latestEnquiry()) {
+      <div class="enquiry-details">
+        <p><strong>Customer:</strong> {{ latestEnquiry().customerName || 'N/A' }}</p>
+        <p><strong>Reg Number:</strong> {{ latestEnquiry().regNumber || 'N/A' }}</p>
+      </div>
+    }
+    <div class="dialog-actions">
+      <button class="btn-secondary" (click)="closeEnquiryDialog()">Dismiss</button>
+      <button class="btn-primary" (click)="viewEnquiry()">View Enquiry</button>
+    </div>
+  </div>
+</app-dialog>

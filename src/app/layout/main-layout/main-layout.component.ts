@@ -6,6 +6,9 @@ import { SnackbarService } from '../../core/services/snackbar.service';
 import { filter } from 'rxjs/operators';
 import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { AuthService } from '../../core/services/auth.service';
+import { FCMService } from '../../core/services/fcm.service';
+import { DialogComponent } from '../../shared/components/dialog/dialog.component';
+import { effect } from '@angular/core';
 
 @Component({
   selector: 'app-main-layout',
@@ -16,6 +19,7 @@ import { AuthService } from '../../core/services/auth.service';
     RouterModule,
     SnackbarComponent,
     ConfirmationDialogComponent,
+    DialogComponent,
   ],
   templateUrl: './main-layout.component.html',
   styleUrls: ['./main-layout.component.scss'],
@@ -24,6 +28,13 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   public authService = inject(AuthService);
   private router = inject(Router);
   private snackbarService = inject(SnackbarService);
+  private fcmService = inject(FCMService);
+
+  unreadNotifications = signal<any[]>([]);
+  notificationCount = signal<number>(0);
+  isEnquiryDialogOpen = signal<boolean>(false);
+  isNotificationDropdownOpen = signal<boolean>(false);
+  latestEnquiry = signal<any>(null);
 
   isCollapsed = false;
   pageTitle = 'Dashboard';
@@ -62,6 +73,36 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
       .subscribe((event: any) => {
         this.updateTitle(event.url);
       });
+
+    // Handle incoming notifications
+    effect(() => {
+      const msg = this.fcmService.currentMessage();
+      if (msg) {
+        // Play notification sound ONLY on new incoming messages
+        this.playNotificationSound();
+
+        // Add to unread list
+        this.unreadNotifications.update((list) => [msg, ...list]);
+        this.notificationCount.set(this.unreadNotifications().length);
+
+        if (msg.data?.type === 'NEW_ENQUIRY') {
+          this.latestEnquiry.set(msg.data);
+          this.isEnquiryDialogOpen.set(true);
+        }
+        this.snackbarService.info(`New notification: ${msg.title}`);
+      }
+    });
+  }
+
+  private playNotificationSound() {
+    try {
+      const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+      audio.play().catch((err) => {
+        console.warn('Sound playback blocked by browser until user interaction:', err);
+      });
+    } catch (err) {
+      console.warn('Could not play notification sound:', err);
+    }
   }
 
   ngOnInit() {
@@ -71,6 +112,10 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
       });
 
       this.startCountdownTimer();
+
+      // FCM Setup
+      this.fcmService.requestPermission();
+      this.fcmService.listenForMessages();
     }
   }
 
@@ -158,6 +203,9 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   toggleSettings() {
     this.isSettingsOpen = !this.isSettingsOpen;
+    if (this.isSettingsOpen) {
+      this.isNotificationDropdownOpen.set(false);
+    }
   }
 
   closeSettingsMenu() {
@@ -168,18 +216,45 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     this.authService.logout();
   }
 
-  // Experimental UI
-  isCheckingNotification = false;
+  // Notification Dropdown Logic
+  toggleNotifications() {
+    this.isNotificationDropdownOpen.set(!this.isNotificationDropdownOpen());
+    if (this.isNotificationDropdownOpen()) {
+      this.isSettingsOpen = false;
+    }
+  }
+
+  closeNotificationDropdown() {
+    this.isNotificationDropdownOpen.set(false);
+  }
 
   triggerNotificationAnimation() {
-    if (this.isCheckingNotification) return;
+    // This is now the bell click handler
+    this.toggleNotifications();
+  }
 
-    this.isCheckingNotification = true;
+  closeEnquiryDialog() {
+    this.isEnquiryDialogOpen.set(false);
+    this.fcmService.clearMessage();
+  }
 
-    // Simulate checking notifications with a quick delay
-    setTimeout(() => {
-      this.snackbarService.info('All caught up! No recent notifications. ✨');
-      this.isCheckingNotification = false;
-    }, 400);
+  viewEnquiry() {
+    this.isEnquiryDialogOpen.set(false);
+    this.unreadNotifications.set([]);
+    this.notificationCount.set(0);
+    this.closeNotificationDropdown();
+    this.fcmService.clearMessage();
+    this.router.navigate(['/enquiries']);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.notification-btn') && !target.closest('.dropdown-menu')) {
+      this.closeNotificationDropdown();
+    }
+    if (!target.closest('.settings-wrapper')) {
+      this.closeSettingsMenu();
+    }
   }
 }
