@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Agent } from '../../../core/models/master.models';
 import { TableComponent, Column } from '../../../shared/components/table/table.component';
 import { DialogComponent } from '../../../shared/components/dialog/dialog.component';
@@ -11,7 +12,7 @@ import { AgentService } from './agent.service';
 @Component({
   selector: 'app-agent-management',
   standalone: true,
-  imports: [CommonModule, TableComponent, DialogComponent, AgentFormComponent],
+  imports: [CommonModule, TableComponent, DialogComponent, AgentFormComponent, FormsModule],
   templateUrl: './agent-management.component.html',
   styleUrls: ['./agent-management.component.scss'],
 })
@@ -24,6 +25,11 @@ export class AgentManagementComponent implements OnInit {
   selectedItem: Agent | null = null;
   isInfoModalOpen = false;
   infoData: any = null;
+
+  // Password reset state
+  isPasswordDialogOpen = false;
+  passwordFormItem: Agent | null = null;
+  newPassword = '';
 
   // Pagination
   totalItems = 0;
@@ -126,6 +132,42 @@ export class AgentManagementComponent implements OnInit {
   closeInfoModal() {
     this.isInfoModalOpen = false;
     this.infoData = null;
+  }
+
+  openPasswordForm(item: any) {
+    this.passwordFormItem = item;
+    this.newPassword = '';
+    this.isPasswordDialogOpen = true;
+  }
+
+  closePasswordForm() {
+    this.isPasswordDialogOpen = false;
+    this.passwordFormItem = null;
+    this.newPassword = '';
+  }
+
+  onPasswordSave() {
+    if (!this.passwordFormItem || this.newPassword.length < 6 || this.isSubmitting) return;
+
+    const id = this.passwordFormItem._id || this.passwordFormItem.id;
+    if (!id) return;
+
+    this.isSubmitting = true;
+    const payload = { _id: id, password: this.newPassword };
+
+    this.agentService
+      .updateAgent(payload)
+      .pipe(finalize(() => (this.isSubmitting = false)))
+      .subscribe({
+        next: () => {
+          this.snackbar.success('Password updated successfully');
+          this.closePasswordForm();
+        },
+        error: (err) => {
+          console.error('Password save error:', err);
+          this.snackbar.error(err.error?.msg || 'Failed to update password');
+        },
+      });
   }
 
   onSave(item: Agent) {

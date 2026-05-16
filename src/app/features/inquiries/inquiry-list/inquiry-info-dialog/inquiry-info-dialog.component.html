@@ -129,6 +129,22 @@
           </div>
         </div>
 
+        @if (inquiryDetails.policyCovers && inquiryDetails.policyCovers.length > 0) {
+          <div class="info-card wide">
+            <div class="card-header">
+              <i class="ri-shield-user-line"></i>
+              <h4>Selected Policy Covers</h4>
+            </div>
+            <div class="card-content">
+              <div class="coverage-tags">
+                @for (cover of inquiryDetails.policyCovers; track cover) {
+                  <span class="coverage-tag highlight-primary">{{ cover }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        }
+
         <!-- Pricing Info Card -->
         <div class="info-card wide">
           <div class="card-header">
@@ -147,27 +163,42 @@
                 {{ inquiryDetails.policyDetails.maxPrice | currency: 'INR' }}
               </span>
             </div>
-            <div class="detail-item highlight-primary">
-              <span class="label">Expected Commission</span>
-              <span class="value">{{
-                inquiryDetails.policyDetails.commission | currency: 'INR'
-              }}</span>
-            </div>
-
-            <div class="detail-item highlight-primary">
-              <span class="label">Premium Price</span>
-              <span class="value">{{ inquiryDetails.sellingPrice | currency: 'INR' }}</span>
-            </div>
-            <div class="detail-item highlight-secondary">
-              <span class="label">Commission on sell</span>
-              <span class="value">{{ inquiryDetails.afterSaleCommission | currency: 'INR' }}</span>
-            </div>
-            <div class="detail-item highlight-success">
-              <span class="label">Final Selling Price</span>
-              <span class="value">{{
-                inquiryDetails.sellingPrice - inquiryDetails.afterSaleCommission | currency: 'INR'
-              }}</span>
-            </div>
+            @if (
+              inquiryDetails.policyDetails.commission && inquiryDetails.policyDetails.commission > 0
+            ) {
+              <div class="detail-item highlight-primary">
+                <span class="label">Expected Commission</span>
+                <span class="value">{{
+                  inquiryDetails.policyDetails.commission | currency: 'INR'
+                }}</span>
+              </div>
+            }
+            @if (inquiryDetails.sellingPrice && inquiryDetails.sellingPrice > 0) {
+              <div class="detail-item highlight-primary">
+                <span class="label">Premium Price</span>
+                <span class="value">{{ inquiryDetails.sellingPrice | currency: 'INR' }}</span>
+              </div>
+            }
+            @if (inquiryDetails.afterSaleCommission && inquiryDetails.afterSaleCommission > 0) {
+              <div class="detail-item highlight-secondary">
+                <span class="label">Commission on sell</span>
+                <span class="value">{{
+                  inquiryDetails.afterSaleCommission | currency: 'INR'
+                }}</span>
+              </div>
+            }
+            @if (
+              inquiryDetails.sellingPrice &&
+              inquiryDetails.afterSaleCommission &&
+              inquiryDetails.sellingPrice - inquiryDetails.afterSaleCommission > 0
+            ) {
+              <div class="detail-item highlight-success">
+                <span class="label">Final Selling Price</span>
+                <span class="value">{{
+                  inquiryDetails.sellingPrice - inquiryDetails.afterSaleCommission | currency: 'INR'
+                }}</span>
+              </div>
+            }
           </div>
         </div>
 

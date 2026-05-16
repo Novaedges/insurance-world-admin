@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { InquiryService } from '../inquiry.service';
 import { ProductService } from '../../../products/product.service';
 import { PolicyTypeService } from '../../../masters/policy-type/policy-type.service';
+import { InsuranceCompanyService } from '../../../masters/insurance-company/insurance-company.service';
 import { SnackbarService } from '../../../../core/services/snackbar.service';
 
 @Component({
@@ -22,8 +23,10 @@ export class InquiryUpdateDialogComponent implements OnInit {
   statusOptions = ['Pending', 'Connected', 'Completed', 'Not Interested', 'Cancelled'];
   policies: any[] = [];
   policyTypes: any[] = [];
+  insuranceCompanies: any[] = [];
   selectedPolicyDetails: any = null;
   selectedPolicyTypeDetails: any = null;
+  selectedPolicyCovers: string[] = [];
 
   formData = {
     status: 'Pending',
@@ -44,7 +47,6 @@ export class InquiryUpdateDialogComponent implements OnInit {
   }
 
   isSubmitting = false;
-
   get isReadOnly(): boolean {
     return this.currentStatus === 'Completed';
   }
@@ -53,6 +55,7 @@ export class InquiryUpdateDialogComponent implements OnInit {
     private inquiryService: InquiryService,
     private productService: ProductService,
     private policyTypeService: PolicyTypeService,
+    private insuranceCompanyService: InsuranceCompanyService,
     private snackbarService: SnackbarService,
     private cdr: ChangeDetectorRef,
   ) {}
@@ -61,9 +64,45 @@ export class InquiryUpdateDialogComponent implements OnInit {
     if (this.currentStatus && this.statusOptions.includes(this.currentStatus)) {
       this.formData.status = this.currentStatus;
     }
+    this.getInsuranceCompanyName();
     this.loadPolicies();
     this.loadPolicyTypes();
     this.loadInquiryDetails();
+  }
+
+  getInsuranceCompanyName() {
+    this.insuranceCompanyService.getCompanies(true).subscribe({
+      next: (res) => {
+        if (res.status && res.result) {
+          this.insuranceCompanies = res.result;
+        }
+      },
+      error: (err) => console.error('Failed to load companies', err),
+    });
+  }
+
+  loadCompaniesName(): string {
+    if (!this.selectedPolicyDetails) return '';
+    if (this.selectedPolicyDetails.insuranceCompany) {
+      return this.selectedPolicyDetails.insuranceCompany;
+    }
+
+    if (
+      this.selectedPolicyDetails.insuranceCompaniesId &&
+      Array.isArray(this.selectedPolicyDetails.insuranceCompaniesId)
+    ) {
+      const names = [];
+      for (const id of this.selectedPolicyDetails.insuranceCompaniesId) {
+        // Handle if id is an object with _id or id, or just string
+        const idStr = typeof id === 'object' && id !== null ? id._id || id.id : id;
+        const comp = this.insuranceCompanies.find((c) => c._id === idStr);
+        if (comp) {
+          names.push(comp.companyName || comp.name);
+        }
+      }
+      return names.join(', ');
+    }
+    return '';
   }
 
   loadInquiryDetails() {
@@ -76,9 +115,13 @@ export class InquiryUpdateDialogComponent implements OnInit {
             if (inquiry && inquiry.policyDetails) {
               this.selectedPolicyDetails = inquiry.policyDetails;
             }
-
+            console.log(this.selectedPolicyDetails);
             if (inquiry && inquiry.policyTypeDetails) {
               this.selectedPolicyTypeDetails = inquiry.policyTypeDetails;
+            }
+
+            if (inquiry && inquiry.policyCovers) {
+              this.selectedPolicyCovers = inquiry.policyCovers;
             }
 
             if (inquiry && inquiry.policyName) {

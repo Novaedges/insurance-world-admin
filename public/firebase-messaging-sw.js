@@ -15,7 +15,7 @@ const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
-  
+
   // Broadcast the message to the main thread
   const channel = new BroadcastChannel('fcm_notifications');
   channel.postMessage(payload);
@@ -24,7 +24,7 @@ messaging.onBackgroundMessage((payload) => {
   const notificationOptions = {
     body: payload.notification.body,
     icon: '/favicon.ico',
-    data: payload.data
+    data: payload.data,
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);

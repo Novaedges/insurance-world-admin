@@ -43,4 +43,5 @@ export interface InquiryReportItem {
     _id: string;
   };
   salesExecutiveDetails?: any;
+  policyCovers?: string[];
 }

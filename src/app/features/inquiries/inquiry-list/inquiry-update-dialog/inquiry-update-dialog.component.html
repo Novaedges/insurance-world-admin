@@ -55,12 +55,12 @@
               <div class="detail-item">
                 <span class="label">Price Range:</span>
                 <span class="value">
-                  ₹{{ selectedPolicyDetails.minPrice }} - ₹{{ selectedPolicyDetails.maxPrice }}
+                  ₹{{ selectedPolicyDetails?.minPrice }} - ₹{{ selectedPolicyDetails?.maxPrice }}
                 </span>
               </div>
               <div class="detail-item">
                 <span class="label">Insurance Co:</span>
-                <span class="value">{{ selectedPolicyDetails.insuranceCompany }}</span>
+                <span class="value">{{ loadCompaniesName() }}</span>
               </div>
             </div>
 
@@ -74,6 +74,46 @@
                 <span class="value">₹{{ selectedPolicyDetails.discount }}</span>
               </div>
             </div>
+
+            @if (selectedPolicyCovers.length > 0) {
+              <div
+                class="detail-items-row"
+                style="
+                  margin-top: 1rem;
+                  border-top: 1px dashed var(--border-color);
+                  padding-top: 1rem;
+                "
+              >
+                <div
+                  class="detail-item full-width"
+                  style="
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 0.5rem;
+                  "
+                >
+                  <span class="label">Selected Policy Covers:</span>
+                  <div class="coverage-tags" style="display: flex; flex-wrap: wrap; gap: 0.4rem">
+                    @for (cover of selectedPolicyCovers; track cover) {
+                      <span
+                        class="coverage-pill"
+                        style="
+                          background: #e0e7ff;
+                          color: #4f46e5;
+                          padding: 0.2rem 0.6rem;
+                          border-radius: 20px;
+                          font-size: 0.75rem;
+                          font-weight: 500;
+                          border: 1px solid rgba(79, 70, 229, 0.2);
+                        "
+                        >{{ cover }}</span
+                      >
+                    }
+                  </div>
+                </div>
+              </div>
+            }
           </div>
         </div>
       }
