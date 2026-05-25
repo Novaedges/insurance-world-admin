@@ -117,6 +117,7 @@ export interface Agent {
     ifscCode?: string;
     bankBranch?: string;
   };
+  introducerName?: string;
   status: 'Active' | 'Inactive';
   isActive?: boolean;
   _id?: string;

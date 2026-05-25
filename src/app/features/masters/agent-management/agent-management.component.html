@@ -4,6 +4,11 @@
     <p>Manage insurance agents and codes</p>
   </div>
   <div class="header-actions">
+    <button class="btn-secondary" (click)="downloadExcel()" [disabled]="isDownloading">
+      <i class="ri-download-line" *ngIf="!isDownloading"></i>
+      <i class="ri-loader-4-line animate-spin" *ngIf="isDownloading"></i>
+      Download Excel
+    </button>
     <button class="btn-primary" (click)="openForm()"><i class="ri-add-line"></i> Add Agent</button>
   </div>
 </div>
@@ -65,6 +70,10 @@
         <div class="card-item">
           <span class="card-label">Phone Number</span>
           <span class="card-value">{{ infoData.phoneNumber }}</span>
+        </div>
+        <div class="card-item" *ngIf="infoData.introducerName">
+          <span class="card-label">Introducer Name</span>
+          <span class="card-value">{{ infoData.introducerName }}</span>
         </div>
       </div>
 

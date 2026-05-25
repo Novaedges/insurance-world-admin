@@ -25,6 +25,7 @@ export class AgentManagementComponent implements OnInit {
   selectedItem: Agent | null = null;
   isInfoModalOpen = false;
   infoData: any = null;
+  isDownloading = false;
 
   // Password reset state
   isPasswordDialogOpen = false;
@@ -91,6 +92,25 @@ export class AgentManagementComponent implements OnInit {
     this.isActiveFilter = status;
     this.currentPage = 1;
     this.loadData();
+  }
+
+  downloadExcel() {
+    this.isDownloading = true;
+    this.agentService.downloadExcel(this.isActiveFilter).subscribe({
+      next: (res) => {
+        this.isDownloading = false;
+        if (res.status && res.result && res.result[0][0]?.link) {
+          window.open(res.result[0][0].link, '_blank');
+        } else {
+          this.snackbar.error('Failed to generate excel');
+        }
+      },
+      error: (err) => {
+        this.isDownloading = false;
+        console.error('Download error:', err);
+        this.snackbar.error('Error downloading excel');
+      },
+    });
   }
 
   openForm(item: Agent | null = null) {

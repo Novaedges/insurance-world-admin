@@ -32,6 +32,7 @@ export class AgentFormComponent implements OnChanges {
       ifscCode: [''],
       bankBranch: [''],
       panNumber: [''],
+      introducerName: [''],
       isActive: [true, Validators.required],
     });
   }

@@ -44,4 +44,14 @@ export class AgentService {
       body: data,
     });
   }
+
+  downloadExcel(isActive?: boolean): Observable<any> {
+    let params = new HttpParams();
+    if (isActive !== undefined) {
+      params = params.set('isActive', isActive.toString());
+    }
+    return this.http.get<any>(environment.apiUrl + '/api/web/iw/module/insurance/agent/download/v1', {
+      params,
+    });
+  }
 }
