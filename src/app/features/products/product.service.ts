@@ -48,9 +48,9 @@ export class ProductService {
     });
   }
 
-  deleteProduct(id: string): Observable<any> {
+  deleteProduct(id: string, isActive: boolean = false): Observable<any> {
     return this.http.delete<any>(this.apiUrl, {
-      params: { _id: id, isActive: false },
+      params: { _id: id, isActive: isActive.toString() },
     });
   }
 }

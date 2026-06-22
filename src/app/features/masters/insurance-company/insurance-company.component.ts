@@ -138,10 +138,13 @@ export class InsuranceCompanyComponent implements OnInit {
 
   onDelete(item: any) {
     if (!item._id) return;
-    this.companyService.deleteCompany(item._id).subscribe({
+    const isCurrentlyInactive = item.isActive === false || item.status === 'Inactive';
+    const targetActiveStatus = isCurrentlyInactive;
+    this.companyService.deleteCompany(item._id, targetActiveStatus).subscribe({
       next: (res: any) => {
         if (res.status) {
-          this.snackbar.show('Company deleted successfully', 'success');
+          const actionText = targetActiveStatus ? 'restored' : 'deactivated';
+          this.snackbar.show(`Company ${actionText} successfully`, 'success');
           this.loadData();
         } else {
           this.snackbar.error(res.msg || 'Operation failed');
@@ -149,7 +152,7 @@ export class InsuranceCompanyComponent implements OnInit {
         this.cdr.detectChanges();
       },
       error: () => {
-        this.snackbar.error('Error deleting company');
+        this.snackbar.error('Error updating company status');
         this.cdr.detectChanges();
       },
     });

@@ -131,12 +131,18 @@ export class VehicleModelComponent implements OnInit {
 
   onDelete(item: any) {
     if (item._id) {
-      this.modelService.deleteModel(item._id).subscribe({
+      const isCurrentlyInactive = item.isActive === false || item.status === 'Inactive';
+      const targetActiveStatus = isCurrentlyInactive;
+      this.modelService.deleteModel(item._id, targetActiveStatus).subscribe({
         next: (response: any) => {
           this.loadData();
-          this.snackbarService.success(response.msg || 'Model deleted successfully');
+          const actionText = targetActiveStatus ? 'restored' : 'deactivated';
+          this.snackbarService.success(response.msg || `Model ${actionText} successfully`);
         },
-        error: (error) => console.error('Error deleting model:', error),
+        error: (error) => {
+          console.error('Error deleting model:', error);
+          this.snackbarService.error(error.error?.msg || 'Failed to update model status');
+        },
       });
     }
   }

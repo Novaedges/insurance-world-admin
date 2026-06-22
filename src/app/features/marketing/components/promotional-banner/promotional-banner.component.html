@@ -20,6 +20,7 @@
     [hiddenActions]="['view', 'password']"
     [showStatusFilter]="true"
     [statusFilterValue]="isActiveFilter ? 'true' : 'false'"
+    deleteConfirmMessage="Are you want to sure one"
     (statusFilterChange)="onStatusFilterChange($event)"
     (pageChange)="onPageChange($event)"
     (edit)="openForm($event)"

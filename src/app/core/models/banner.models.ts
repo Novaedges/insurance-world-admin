@@ -4,6 +4,7 @@ export interface Banner {
   showInPortal: boolean;
   priority: number;
   isActive?: boolean;
+  status?: string;
   createdAt?: string;
   updatedAt?: string;
 }

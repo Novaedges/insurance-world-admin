@@ -131,12 +131,18 @@ export class InsuranceCategoryComponent implements OnInit {
 
   onDelete(item: any) {
     if (item._id) {
-      this.categoryService.deleteCategory(item._id).subscribe({
+      const isCurrentlyInactive = item.isActive === false || item.status === 'Inactive';
+      const targetActiveStatus = isCurrentlyInactive;
+      this.categoryService.deleteCategory(item._id, targetActiveStatus).subscribe({
         next: (response: any) => {
           this.loadData();
-          this.snackbarService.success(response.msg || 'Category deleted successfully');
+          const actionText = targetActiveStatus ? 'restored' : 'deactivated';
+          this.snackbarService.success(response.msg || `Category ${actionText} successfully`);
         },
-        error: (error) => console.error('Error deleting category:', error),
+        error: (error) => {
+          console.error('Error deleting category:', error);
+          this.snackbarService.error(error.error?.msg || 'Failed to update category status');
+        },
       });
     }
   }

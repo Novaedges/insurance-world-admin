@@ -20,7 +20,7 @@ export class PromotionalBannerComponent implements OnInit {
   columns: Column[] = [
     { field: 'priority', header: 'Priority' },
     { field: 'showInPortal', header: 'Show in Portal' },
-    { field: 'status', header: 'Status' },
+    { field: 'status', header: 'Status', type: 'status' },
   ];
 
   isModalOpen = false;
@@ -126,14 +126,14 @@ export class PromotionalBannerComponent implements OnInit {
   onDelete(item: Banner): void {
     if (!item._id) return;
 
-    // API logic for delete actually toggles status as per docs
-    const newStatus = !item.isActive;
-    this.bannerService.toggleBannerStatus(item._id, newStatus).subscribe({
+    const isCurrentlyInactive = item.isActive === false || item.status === 'Inactive';
+    const targetActiveStatus = isCurrentlyInactive;
+    this.bannerService.toggleBannerStatus(item._id, targetActiveStatus).subscribe({
       next: (response: BannerApiResponse) => {
         if (response.status) {
           this.loadData();
           this.snackbarService.success(
-            response.msg || `Banner ${newStatus ? 'activated' : 'deactivated'} successfully`,
+            response.msg || `Banner ${targetActiveStatus ? 'activated' : 'deactivated'} successfully`,
           );
         } else {
           this.snackbarService.error(response.msg || 'Failed to update banner status');

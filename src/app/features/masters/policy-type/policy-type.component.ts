@@ -136,23 +136,20 @@ export class PolicyTypeComponent implements OnInit {
   }
 
   onDelete(item: any) {
-    if (confirm('Are you sure you want to delete this policy type?')) {
-      if (item._id) {
-        this.policyTypeService.deletePolicyType(item._id).subscribe({
-          next: (response: any) => {
-            if (response.status || response.status === undefined) {
-              this.loadData();
-              this.snackbarService.success(response.msg || 'Policy Type deleted successfully');
-            } else {
-              this.snackbarService.error(response.msg || 'Failed to delete policy type');
-            }
-          },
-          error: (error) => {
-            console.error('Error deleting policy type:', error);
-            this.snackbarService.error(error.error?.msg || 'Failed to delete policy type');
-          },
-        });
-      }
+    if (item._id) {
+      const isCurrentlyInactive = item.isActive === false || item.status === 'Inactive';
+      const targetActiveStatus = isCurrentlyInactive;
+      this.policyTypeService.deletePolicyType(item._id, targetActiveStatus).subscribe({
+        next: (response: any) => {
+          this.loadData();
+          const actionText = targetActiveStatus ? 'restored' : 'deactivated';
+          this.snackbarService.success(response.msg || `Policy Type ${actionText} successfully`);
+        },
+        error: (error) => {
+          console.error('Error deleting policy type:', error);
+          this.snackbarService.error(error.error?.msg || 'Failed to update policy type status');
+        },
+      });
     }
   }
 }

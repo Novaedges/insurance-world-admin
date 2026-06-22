@@ -171,17 +171,21 @@ export class AdminCreationComponent implements OnInit {
   onDelete(item: Admin) {
     const id = item._id || item.id;
     if (id) {
+      const isCurrentlyInactive = item.isActive === false || item.status === 'Inactive';
+      const targetActiveStatus = isCurrentlyInactive;
       const payload = {
         _id: id,
-        active: false,
+        active: targetActiveStatus,
       };
       this.adminService.deleteAdmin(payload).subscribe({
         next: (success: any) => {
           this.loadData();
-          this.snackbarService.success(success.msg || 'Admin deleted successfully');
+          const actionText = targetActiveStatus ? 'restored' : 'deactivated';
+          this.snackbarService.success(success.msg || `Admin ${actionText} successfully`);
         },
         error: (err: any) => {
-          this.snackbarService.error(err.error?.msg || 'Failed to delete admin');
+          console.error('Delete error', err);
+          this.snackbarService.error(err.error?.msg || 'Failed to update status');
         },
       });
     }

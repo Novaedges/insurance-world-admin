@@ -226,18 +226,21 @@ export class ProductListComponent implements OnInit {
 
   onDelete(item: any) {
     if (item._id) {
-      this.productService.deleteProduct(item._id).subscribe({
+      const isCurrentlyInactive = item.isActive === false || item.status === 'Inactive';
+      const targetActiveStatus = isCurrentlyInactive;
+      this.productService.deleteProduct(item._id, targetActiveStatus).subscribe({
         next: (response: any) => {
           if (response.status !== false) {
             this.loadData();
-            this.snackbarService.success(response.msg || 'Product deleted successfully');
+            const actionText = targetActiveStatus ? 'restored' : 'deactivated';
+            this.snackbarService.success(response.msg || `Product ${actionText} successfully`);
           } else {
-            this.snackbarService.error(response.msg || 'Failed to delete product');
+            this.snackbarService.error(response.msg || 'Failed to update status');
           }
         },
         error: (err) => {
           console.error('Delete error', err);
-          this.snackbarService.error(err.error?.msg || 'Failed to delete product');
+          this.snackbarService.error(err.error?.msg || 'Failed to update status');
         },
       });
     }

@@ -9,14 +9,6 @@
     <input type="text" formControlName="rtoName" placeholder="Enter RTO Name" />
   </div>
 
-  <div class="form-group">
-    <label>Status</label>
-    <select formControlName="isActive">
-      <option [ngValue]="true">Active</option>
-      <option [ngValue]="false">Inactive</option>
-    </select>
-  </div>
-
   <div class="form-actions">
     <button type="button" class="btn-secondary" (click)="onCancel()">Cancel</button>
     <button type="submit" class="btn-primary" [disabled]="form.invalid">Save</button>

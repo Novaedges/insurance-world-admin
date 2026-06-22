@@ -33,9 +33,9 @@ export class PolicyTypeService {
     return this.http.put<any>(this.apiUrl, data);
   }
 
-  deletePolicyType(id: string): Observable<any> {
+  deletePolicyType(id: string, isActive: boolean = false): Observable<any> {
     return this.http.delete<any>(this.apiUrl, {
-      body: { _id: id, isActive: false },
+      params: { _id: id, isActive: isActive.toString() },
     });
   }
 }

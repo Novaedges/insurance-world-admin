@@ -225,9 +225,12 @@ export class AgentManagementComponent implements OnInit {
   onDelete(item: Agent) {
     const id = item._id || item.id;
     if (id) {
-      const payload = { _id: id, isActive: false };
+      const isCurrentlyInactive = item.isActive === false || item.status === 'Inactive';
+      const targetActiveStatus = isCurrentlyInactive;
+      const payload = { _id: id, isActive: targetActiveStatus };
       this.agentService.deleteAgent(payload).subscribe((success: any) => {
-        this.snackbar.success(success.msg);
+        const actionText = targetActiveStatus ? 'restored' : 'deactivated';
+        this.snackbar.success(success.msg || `Agent ${actionText} successfully`);
         this.loadData();
       });
     }

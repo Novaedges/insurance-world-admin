@@ -33,9 +33,9 @@ export class InsuranceCompanyService {
     return this.http.put<any>(this.apiUrl, data);
   }
 
-  deleteCompany(id: string): Observable<any> {
+  deleteCompany(id: string, isActive: boolean = false): Observable<any> {
     return this.http.delete<any>(this.apiUrl, {
-      params: { _id: id, isActive: false },
+      params: { _id: id, isActive: isActive.toString() },
     });
   }
 }

@@ -41,7 +41,7 @@ export class AgentService {
 
   deleteAgent(data: any): Observable<any> {
     return this.http.delete<any>(environment.apiUrl + '/api/web/iw/module/insurance/agent/v1', {
-      body: data,
+      params: data,
     });
   }
 
@@ -50,8 +50,11 @@ export class AgentService {
     if (isActive !== undefined) {
       params = params.set('isActive', isActive.toString());
     }
-    return this.http.get<any>(environment.apiUrl + '/api/web/iw/module/insurance/agent/download/v1', {
-      params,
-    });
+    return this.http.get<any>(
+      environment.apiUrl + '/api/web/iw/module/insurance/agent/download/v1',
+      {
+        params,
+      },
+    );
   }
 }

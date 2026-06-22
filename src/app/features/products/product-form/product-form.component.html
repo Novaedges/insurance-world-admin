@@ -257,16 +257,7 @@
         <label>Final Net Price (Auto)</label>
         <input type="text" [value]="finalPrice | currency: 'INR'" disabled class="disabled-input" />
       </div>
-      <div class="form-group">
-        <label>Status <span class="text-danger">*</span></label>
-        <select formControlName="status">
-          <option value="Active">Active</option>
-          <option value="Inactive">Inactive</option>
-        </select>
-        @if (form.get('status')?.invalid && form.get('status')?.touched) {
-          <div class="error-msg">Status is required</div>
-        }
-      </div>
+
       <div class="form-group full-width">
         <label>Terms & Conditions</label>
         <textarea formControlName="termsAndConditions" rows="2" placeholder="Enter T&C"></textarea>

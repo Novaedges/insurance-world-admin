@@ -121,12 +121,18 @@ export class RtoManagementComponent implements OnInit {
 
   onDelete(item: any) {
     if (item._id) {
-      this.rtoService.deleteRTO(item._id).subscribe({
+      const isCurrentlyInactive = item.isActive === false || item.status === 'Inactive';
+      const targetActiveStatus = isCurrentlyInactive;
+      this.rtoService.deleteRTO(item._id, targetActiveStatus).subscribe({
         next: (success: any) => {
           this.loadData();
-          this.snackbarService.success(success.msg);
+          const actionText = targetActiveStatus ? 'restored' : 'deactivated';
+          this.snackbarService.success(success.msg || `RTO ${actionText} successfully`);
         },
-        error: (error) => console.error('Error deleting RTO:', error),
+        error: (error) => {
+          console.error('Error deleting RTO:', error);
+          this.snackbarService.error(error.error?.msg || 'Failed to update RTO status');
+        },
       });
     }
   }
