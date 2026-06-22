@@ -124,14 +124,13 @@ export class InquiryUpdateDialogComponent implements OnInit {
               this.selectedPolicyCovers = inquiry.policyCovers;
             }
 
-            if (inquiry && inquiry.policyName) {
-              const targetPolicyName = inquiry.policyName;
+            if (inquiry) {
               // If policies are already loaded, try to find and select
               if (this.policies.length > 0) {
-                this.selectPolicyByName(targetPolicyName);
+                this.selectPolicyByDetails(inquiry);
               } else {
                 // Store temporarily to select once policies load
-                this.tempPolicyName = targetPolicyName;
+                this.tempInquiry = inquiry;
               }
             }
 
@@ -171,14 +170,65 @@ export class InquiryUpdateDialogComponent implements OnInit {
     }
   }
 
-  private tempPolicyName: string = '';
+  private tempInquiry: any = null;
 
-  private selectPolicyByName(name: string, skipUpdateDetails: boolean = false) {
-    const matchedPolicy = this.policies.find(
-      (p) =>
-        p.policyName?.toLowerCase() === name.toLowerCase() ||
-        p.name?.toLowerCase() === name.toLowerCase(),
-    );
+  private selectPolicyByDetails(inquiry: any, skipUpdateDetails: boolean = false) {
+    if (!inquiry) return;
+    const name = inquiry.policyName;
+    const policyTypeId = inquiry.policyTypeDetails?._id;
+    const companyName = inquiry.policyDetails?.insuranceCompany;
+
+    let matchedPolicy = this.policies.find((p) => {
+      const nameMatch =
+        p.policyName?.toLowerCase() === name?.toLowerCase() ||
+        p.name?.toLowerCase() === name?.toLowerCase();
+      const typeMatch = policyTypeId ? p.policyTypeId === policyTypeId : true;
+
+      let companyMatch = false;
+      if (companyName) {
+        if (p.insuranceCompanies && Array.isArray(p.insuranceCompanies)) {
+          companyMatch = p.insuranceCompanies.some(
+            (c: any) =>
+              c.name?.toLowerCase() === companyName.toLowerCase() ||
+              c.companyName?.toLowerCase() === companyName.toLowerCase(),
+          );
+        }
+        if (!companyMatch && p.insuranceCompaniesId && Array.isArray(p.insuranceCompaniesId)) {
+          companyMatch = p.insuranceCompaniesId.some((id: any) => {
+            const idStr = typeof id === 'object' && id !== null ? id._id || id.id : id;
+            const comp = this.insuranceCompanies.find((c) => c._id === idStr);
+            if (comp) {
+              const cName = comp.companyName || comp.name;
+              return cName?.toLowerCase() === companyName.toLowerCase();
+            }
+            return false;
+          });
+        }
+      } else {
+        companyMatch = true;
+      }
+      return nameMatch && typeMatch && companyMatch;
+    });
+
+    // Fallback 1: match name and type
+    if (!matchedPolicy) {
+      matchedPolicy = this.policies.find((p) => {
+        const nameMatch =
+          p.policyName?.toLowerCase() === name?.toLowerCase() ||
+          p.name?.toLowerCase() === name?.toLowerCase();
+        const typeMatch = policyTypeId ? p.policyTypeId === policyTypeId : true;
+        return nameMatch && typeMatch;
+      });
+    }
+
+    // Fallback 2: match name only
+    if (!matchedPolicy) {
+      matchedPolicy = this.policies.find(
+        (p) =>
+          p.policyName?.toLowerCase() === name?.toLowerCase() ||
+          p.name?.toLowerCase() === name?.toLowerCase(),
+      );
+    }
 
     if (matchedPolicy) {
       this.formData.policyId = matchedPolicy._id;
@@ -193,9 +243,9 @@ export class InquiryUpdateDialogComponent implements OnInit {
       next: (res) => {
         if (res.status && res.result) {
           this.policies = res.result;
-          if (this.tempPolicyName) {
-            this.selectPolicyByName(this.tempPolicyName);
-            this.tempPolicyName = '';
+          if (this.tempInquiry) {
+            this.selectPolicyByDetails(this.tempInquiry);
+            this.tempInquiry = null;
           } else if (this.formData.policyId) {
             // Re-sync if policyId was already set by loadInquiryDetails
             this.onPolicyChange();
