@@ -123,12 +123,24 @@
                       <i class="ri-lock-password-line"></i>
                     </button>
                     <button
-                      [class]="(row.isActive === false || row.status === 'Inactive') ? 'btn-icon btn-success-light' : 'btn-icon btn-danger-light'"
+                      [class]="
+                        row.isActive === false || row.status === 'Inactive'
+                          ? 'btn-icon btn-success-light'
+                          : 'btn-icon btn-danger-light'
+                      "
                       (click)="onDelete(row)"
-                      [appTooltip]="(row.isActive === false || row.status === 'Inactive') ? 'Restore' : 'Delete'"
+                      [appTooltip]="
+                        row.isActive === false || row.status === 'Inactive' ? 'Restore' : 'Delete'
+                      "
                       *ngIf="!hiddenActions.includes('delete')"
                     >
-                      <i [ngClass]="(row.isActive === false || row.status === 'Inactive') ? 'ri-refresh-line' : 'ri-delete-bin-line'"></i>
+                      <i
+                        [ngClass]="
+                          row.isActive === false || row.status === 'Inactive'
+                            ? 'ri-refresh-line'
+                            : 'ri-delete-bin-line'
+                        "
+                      ></i>
                     </button>
                   </div>
                 </td>

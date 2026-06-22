@@ -45,7 +45,8 @@ export class TableComponent {
   @Input() pageSize: number = 10;
   @Input() currentPage: number = 1;
   @Input() showPagination: boolean = true;
-  @Input() deleteConfirmMessage: string = 'Are you sure you want to delete this item? This action cannot be undone.';
+  @Input() deleteConfirmMessage: string =
+    'Are you sure you want to delete this item? This action cannot be undone.';
   @Input() deleteConfirmTitle: string = 'Delete Item';
 
   @Output() edit = new EventEmitter<any>();
@@ -118,7 +119,9 @@ export class TableComponent {
     const isInactive = row.isActive === false || row.status === 'Inactive';
     const confirmed = await this.confirmationService.confirm({
       title: isInactive ? 'Restore Item' : this.deleteConfirmTitle,
-      message: isInactive ? 'Are you sure you want to restore this item?' : this.deleteConfirmMessage,
+      message: isInactive
+        ? 'Are you sure you want to restore this item?'
+        : this.deleteConfirmMessage,
       confirmText: isInactive ? 'Yes, Restore' : 'Yes, Delete',
       cancelText: 'Cancel',
       type: isInactive ? 'info' : 'danger',

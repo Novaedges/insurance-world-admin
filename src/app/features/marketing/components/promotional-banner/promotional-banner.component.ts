@@ -133,7 +133,8 @@ export class PromotionalBannerComponent implements OnInit {
         if (response.status) {
           this.loadData();
           this.snackbarService.success(
-            response.msg || `Banner ${targetActiveStatus ? 'activated' : 'deactivated'} successfully`,
+            response.msg ||
+              `Banner ${targetActiveStatus ? 'activated' : 'deactivated'} successfully`,
           );
         } else {
           this.snackbarService.error(response.msg || 'Failed to update banner status');
