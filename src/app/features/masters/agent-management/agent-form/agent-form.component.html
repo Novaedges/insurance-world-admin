@@ -1,14 +1,14 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
   <div class="form-group-row">
     <div class="form-group">
-      <label>First Name</label>
+      <label>First Name <span class="required">*</span></label>
       <input type="text" formControlName="firstName" placeholder="Enter first name" />
       @if (form.get('firstName')?.invalid && form.get('firstName')?.touched) {
         <span class="error-text">First name is required</span>
       }
     </div>
     <div class="form-group">
-      <label>Last Name</label>
+      <label>Last Name <span class="required">*</span></label>
       <input type="text" formControlName="lastName" placeholder="Enter last name" />
       @if (form.get('lastName')?.invalid && form.get('lastName')?.touched) {
         <span class="error-text">Last name is required</span>
@@ -18,7 +18,7 @@
 
   <div class="form-group-row">
     <div class="form-group">
-      <label>Phone Number</label>
+      <label>Phone Number <span class="required">*</span></label>
       <input type="text" formControlName="phoneNumber" placeholder="Enter phone number" />
       @if (form.get('phoneNumber')?.invalid && form.get('phoneNumber')?.touched) {
         <span class="error-text">Enter valid 10-digit phone number</span>
@@ -35,7 +35,7 @@
 
   @if (!agent) {
     <div class="form-group">
-      <label>Password</label>
+      <label>Password <span class="required">*</span></label>
       <input
         type="password"
         formControlName="password"
@@ -60,31 +60,46 @@
   }
 
   <div class="form-group">
-    <label>PAN Number (Optional)</label>
+    <label>PAN Number <span class="required">*</span></label>
     <input type="text" formControlName="panNumber" placeholder="Enter PAN number" />
+    @if (form.get('panNumber')?.invalid && form.get('panNumber')?.touched) {
+      <span class="error-text">PAN number is required</span>
+    }
   </div>
 
-  <div class="form-section-title full-width">Bank Details (Optional)</div>
+  <div class="form-section-title full-width">Bank Details</div>
 
   <div class="form-group-row">
     <div class="form-group">
-      <label>Bank Name</label>
+      <label>Bank Name <span class="required">*</span></label>
       <input type="text" formControlName="bankName" placeholder="Enter bank name" />
+      @if (form.get('bankName')?.invalid && form.get('bankName')?.touched) {
+        <span class="error-text">Bank name is required</span>
+      }
     </div>
     <div class="form-group">
-      <label>Bank Account Number</label>
+      <label>Bank Account Number <span class="required">*</span></label>
       <input type="text" formControlName="bankAccNumber" placeholder="Enter account number" />
+      @if (form.get('bankAccNumber')?.invalid && form.get('bankAccNumber')?.touched) {
+        <span class="error-text">Bank account number is required</span>
+      }
     </div>
   </div>
 
   <div class="form-group-row">
     <div class="form-group">
-      <label>IFSC Code</label>
+      <label>IFSC Code <span class="required">*</span></label>
       <input type="text" formControlName="ifscCode" placeholder="Enter IFSC code" />
+      @if (form.get('ifscCode')?.invalid && form.get('ifscCode')?.touched) {
+        <span class="error-text">IFSC code is required</span>
+      }
     </div>
     <div class="form-group">
-      <label>Bank Branch</label>
+      <label>Bank Branch <span class="required">*</span></label>
       <input type="text" formControlName="bankBranch" placeholder="Enter branch name" />
+      @if (form.get('bankBranch')?.invalid && form.get('bankBranch')?.touched) {
+        <span class="error-text">Bank branch is required</span>
+      }
     </div>
   </div>
 

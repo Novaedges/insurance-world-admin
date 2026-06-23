@@ -179,9 +179,13 @@ export class AgentManagementComponent implements OnInit {
       .updateAgent(payload)
       .pipe(finalize(() => (this.isSubmitting = false)))
       .subscribe({
-        next: () => {
-          this.snackbar.success('Password updated successfully');
-          this.closePasswordForm();
+        next: (res: any) => {
+          if (res && res.status) {
+            this.snackbar.success(res.msg || 'Password updated successfully');
+            this.closePasswordForm();
+          } else {
+            this.snackbar.error(res?.msg || 'Failed to update password');
+          }
         },
         error: (err) => {
           console.error('Password save error:', err);
@@ -210,10 +214,14 @@ export class AgentManagementComponent implements OnInit {
       : this.agentService.createAgent(payload);
 
     request.pipe(finalize(() => (this.isSubmitting = false))).subscribe({
-      next: () => {
-        this.snackbar.success(`Agent ${item._id ? 'updated' : 'added'} successfully`);
-        this.loadData();
-        this.closeForm();
+      next: (res: any) => {
+        if (res && res.status) {
+          this.snackbar.success(res.msg || `Agent ${item._id ? 'updated' : 'added'} successfully`);
+          this.loadData();
+          this.closeForm();
+        } else {
+          this.snackbar.error(res?.msg || `Failed to save agent`);
+        }
       },
       error: (err) => {
         console.error('Save error:', err);
@@ -228,10 +236,20 @@ export class AgentManagementComponent implements OnInit {
       const isCurrentlyInactive = item.isActive === false || item.status === 'Inactive';
       const targetActiveStatus = isCurrentlyInactive;
       const payload = { _id: id, isActive: targetActiveStatus };
-      this.agentService.deleteAgent(payload).subscribe((success: any) => {
-        const actionText = targetActiveStatus ? 'restored' : 'deactivated';
-        this.snackbar.success(success.msg || `Agent ${actionText} successfully`);
-        this.loadData();
+      this.agentService.deleteAgent(payload).subscribe({
+        next: (res: any) => {
+          if (res && res.status) {
+            const actionText = targetActiveStatus ? 'restored' : 'deactivated';
+            this.snackbar.success(res.msg || `Agent ${actionText} successfully`);
+            this.loadData();
+          } else {
+            this.snackbar.error(res?.msg || 'Failed to update agent status');
+          }
+        },
+        error: (err) => {
+          console.error('Delete error:', err);
+          this.snackbar.error(err.error?.msg || 'Failed to update agent status');
+        }
       });
     }
   }
