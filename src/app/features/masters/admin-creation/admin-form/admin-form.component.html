@@ -47,10 +47,6 @@
     <div class="form-group full-width">
       <label>Module Access Permissions</label>
       <div class="permissions-container">
-        <div class="permissions-header">
-          <div class="module-name-header">Module Name</div>
-          <div class="permissions-list-header">Permissions</div>
-        </div>
         <div class="permissions-body">
           @for (module of availableModules; track module.id) {
             <div class="module-permission-row" [class.enabled]="isModuleEnabled(module.id)">
@@ -64,19 +60,6 @@
                   <span class="slider round"></span>
                 </label>
                 <span class="module-name-text">{{ module.name }}</span>
-              </div>
-
-              <div class="permissions-list" [class.hidden]="!isModuleEnabled(module.id)">
-                @for (perm of availablePermissions; track perm) {
-                  <label class="checkbox-pill">
-                    <input
-                      type="checkbox"
-                      [checked]="isPermissionSelected(module.id, perm)"
-                      (change)="togglePermission(module.id, perm)"
-                    />
-                    <span class="pill-text">{{ perm }}</span>
-                  </label>
-                }
               </div>
             </div>
           }

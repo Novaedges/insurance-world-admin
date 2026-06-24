@@ -268,7 +268,7 @@
           </div>
           <div class="card-item">
             <span class="card-label">Discount</span>
-            <span class="card-value">{{ infoData.discount | currency: 'INR' }}</span>
+            <span class="card-value">{{ infoData.discount || 0 }}%</span>
           </div>
           <div class="card-item">
             <span class="card-label">Commission</span>

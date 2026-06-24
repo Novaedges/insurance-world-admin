@@ -70,8 +70,8 @@
                 <span class="value">₹{{ selectedPolicyDetails.commission }}</span>
               </div>
               <div class="detail-item">
-                <span class="label">Base Discount:</span>
-                <span class="value">₹{{ selectedPolicyDetails.discount }}</span>
+                <span class="label">Discount:</span>
+                <span class="value">{{ selectedPolicyDetails.discount || 0 }}%</span>
               </div>
             </div>
 
@@ -123,17 +123,14 @@
         <label class="form-label">
           <i class="ri-price-tag-3-line"></i>
           Premium Price
-          @if (formData.status === 'Completed') {
-            <span class="required">*</span>
-          } @else {
-            <small>(Optional)</small>
-          }
+          <span class="required">*</span>
         </label>
         <div class="input-wrapper">
           <span class="prefix">₹</span>
           <input
             type="number"
             [(ngModel)]="formData.sellingPrice"
+            (ngModelChange)="onSellingPriceChange()"
             placeholder="0.00"
             [disabled]="isSubmitting || isReadOnly"
             class="form-input"
@@ -151,24 +148,7 @@
           <input
             type="number"
             [(ngModel)]="formData.commission"
-            placeholder="0"
-            [disabled]="isSubmitting || isReadOnly"
-            class="form-input"
-          />
-        </div>
-      </div>
-
-      <!-- Discount (Flat) -->
-      <div class="form-group">
-        <label class="form-label">
-          <i class="ri-coupon-line"></i>
-          Discount (Flat)
-        </label>
-        <div class="input-wrapper">
-          <span class="prefix">₹</span>
-          <input
-            type="number"
-            [(ngModel)]="formData.discount"
+            (ngModelChange)="onCommissionChange()"
             placeholder="0"
             [disabled]="isSubmitting || isReadOnly"
             class="form-input"

@@ -33,6 +33,7 @@ export class InquiryUpdateDialogComponent implements OnInit {
     policyId: '',
     sellingPrice: null as number | null,
     commission: null as number | null,
+    afterSaleCommission: null as number | null,
     discount: null as number | null,
     lapsDate: '',
     paymentNotes: [] as { note: string; referenceNo: string }[],
@@ -42,8 +43,7 @@ export class InquiryUpdateDialogComponent implements OnInit {
   get netAmount(): number {
     const premium = this.formData.sellingPrice || 0;
     const commission = this.formData.commission || 0;
-    const discount = this.formData.discount || 0;
-    return premium - commission - discount;
+    return premium - commission;
   }
 
   isSubmitting = false;
@@ -111,11 +111,11 @@ export class InquiryUpdateDialogComponent implements OnInit {
         next: (res) => {
           if (res.status && res.result) {
             const inquiry = Array.isArray(res.result) ? res.result[0] : res.result;
+
             console.log(inquiry);
             if (inquiry && inquiry.policyDetails) {
               this.selectedPolicyDetails = inquiry.policyDetails;
             }
-            console.log(this.selectedPolicyDetails);
             if (inquiry && inquiry.policyTypeDetails) {
               this.selectedPolicyTypeDetails = inquiry.policyTypeDetails;
             }
@@ -133,10 +133,11 @@ export class InquiryUpdateDialogComponent implements OnInit {
                 this.tempInquiry = inquiry;
               }
             }
-
+            console.log(inquiry);
             if (inquiry && inquiry.afterSaleCommission !== undefined) {
               this.formData.commission = inquiry.afterSaleCommission;
             }
+            console.log(this.formData);
             if (inquiry && inquiry.discount !== undefined) {
               this.formData.discount = inquiry.discount;
             }
@@ -174,6 +175,24 @@ export class InquiryUpdateDialogComponent implements OnInit {
 
   private selectPolicyByDetails(inquiry: any, skipUpdateDetails: boolean = false) {
     if (!inquiry) return;
+
+    // First try to match by exact policyId
+    const policyIdStr =
+      typeof inquiry.policyId === 'object' && inquiry.policyId !== null
+        ? inquiry.policyId._id || inquiry.policyId.id
+        : inquiry.policyId;
+
+    if (policyIdStr) {
+      const matched = this.policies.find((p) => p._id === policyIdStr);
+      if (matched) {
+        this.formData.policyId = matched._id;
+        if (!skipUpdateDetails) {
+          this.onPolicyChange(false);
+        }
+        return;
+      }
+    }
+
     const name = inquiry.policyName;
     const policyTypeId = inquiry.policyTypeDetails?._id;
     const companyName = inquiry.policyDetails?.insuranceCompany;
@@ -233,7 +252,7 @@ export class InquiryUpdateDialogComponent implements OnInit {
     if (matchedPolicy) {
       this.formData.policyId = matchedPolicy._id;
       if (!skipUpdateDetails) {
-        this.onPolicyChange();
+        this.onPolicyChange(false);
       }
     }
   }
@@ -248,7 +267,7 @@ export class InquiryUpdateDialogComponent implements OnInit {
             this.tempInquiry = null;
           } else if (this.formData.policyId) {
             // Re-sync if policyId was already set by loadInquiryDetails
-            this.onPolicyChange();
+            this.onPolicyChange(false);
           }
         }
       },
@@ -265,7 +284,7 @@ export class InquiryUpdateDialogComponent implements OnInit {
           this.policyTypes = res.result;
           // Re-sync type details if a policy is already selected
           if (this.formData.policyId) {
-            this.onPolicyChange();
+            this.onPolicyChange(false);
           }
         }
       },
@@ -287,7 +306,7 @@ export class InquiryUpdateDialogComponent implements OnInit {
     }
   }
 
-  onPolicyChange() {
+  onPolicyChange(isManual: boolean = true) {
     const selectedPolicy = this.policies.find((p) => p._id === this.formData.policyId);
     if (selectedPolicy) {
       this.selectedPolicyDetails = selectedPolicy;
@@ -298,17 +317,30 @@ export class InquiryUpdateDialogComponent implements OnInit {
       );
 
       // Pre-fill fields if they are null
-      if (this.formData.commission === null || this.formData.commission === undefined) {
-        this.formData.commission = selectedPolicy.commission;
+      if (isManual) {
+        this.formData.commission = null;
       }
       if (this.formData.discount === null || this.formData.discount === undefined) {
-        this.formData.discount = selectedPolicy.discount;
+        this.formData.discount = 0;
       }
       this.cdr.detectChanges();
     } else {
       this.selectedPolicyDetails = null;
       this.selectedPolicyTypeDetails = null;
     }
+  }
+
+  onSellingPriceChange() {
+    if (this.selectedPolicyDetails) {
+      const sellingPrice = this.formData.sellingPrice || 0;
+      const discountPercent = this.selectedPolicyDetails.discount || 0;
+      this.formData.commission = Math.round((sellingPrice * discountPercent) / 100);
+      this.formData.discount = this.formData.commission;
+    }
+  }
+
+  onCommissionChange() {
+    this.formData.discount = this.formData.commission;
   }
 
   onSubmit() {

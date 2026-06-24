@@ -249,7 +249,7 @@ export class AgentManagementComponent implements OnInit {
         error: (err) => {
           console.error('Delete error:', err);
           this.snackbar.error(err.error?.msg || 'Failed to update agent status');
-        }
+        },
       });
     }
   }

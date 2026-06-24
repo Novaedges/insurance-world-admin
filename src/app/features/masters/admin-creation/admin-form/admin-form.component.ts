@@ -75,7 +75,7 @@ export class AdminFormComponent implements OnChanges {
     } else {
       current.push({
         component: componentId,
-        permissions: [],
+        permissions: ['VIEW', 'ADD', 'EDIT', 'DELETE'],
       });
     }
 
@@ -85,31 +85,6 @@ export class AdminFormComponent implements OnChanges {
   isModuleEnabled(componentId: string): boolean {
     const current: any[] = this.form.get('componentAccess')?.value || [];
     return current.some((m) => m.component === componentId);
-  }
-
-  togglePermission(componentId: string, permission: string) {
-    const current: any[] = this.form.get('componentAccess')?.value || [];
-    const moduleIndex = current.findIndex((m) => m.component === componentId);
-
-    if (moduleIndex > -1) {
-      const module = { ...current[moduleIndex] };
-      const permissions = [...module.permissions];
-
-      if (permissions.includes(permission)) {
-        module.permissions = permissions.filter((p) => p !== permission);
-      } else {
-        module.permissions = [...permissions, permission];
-      }
-      current[moduleIndex] = module;
-    }
-
-    this.form.patchValue({ componentAccess: [...current] });
-  }
-
-  isPermissionSelected(componentId: string, permission: string): boolean {
-    const current: any[] = this.form.get('componentAccess')?.value || [];
-    const module = current.find((m) => m.component === componentId);
-    return module ? module.permissions.includes(permission) : false;
   }
 
   onSubmit() {

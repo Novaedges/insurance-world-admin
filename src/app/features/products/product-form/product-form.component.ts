@@ -85,8 +85,8 @@ export class ProductFormComponent implements OnChanges, OnInit {
       // New Pricing/Commission fields
       basePrice: [0, Validators.required],
       maxPrice: [0],
-      discountType: ['FLAT'],
-      discountValue: [0],
+      discountType: ['CENT'],
+      discountValue: [0, [Validators.min(0), Validators.max(100)]],
       commission: [0],
 
       policyDuration: [1, Validators.required],
@@ -152,6 +152,7 @@ export class ProductFormComponent implements OnChanges, OnInit {
           basePrice: this.data.minPrice !== undefined ? this.data.minPrice : this.data.basePrice,
           discountValue:
             this.data.discount !== undefined ? this.data.discount : this.data.discountValue,
+          discountType: 'CENT',
           insuranceCategoryId: ensureArray(this.data.vehicleTypeId),
           makeId: ensureArray(this.data.manufacturerId),
           modelId: ensureArray(this.data.vehicleModelId),
@@ -170,7 +171,7 @@ export class ProductFormComponent implements OnChanges, OnInit {
         this.form.reset({
           basePrice: 0,
           maxPrice: 0,
-          discountType: 'FLAT',
+          discountType: 'CENT',
           discountValue: 0,
           commission: 0,
           policyDuration: 1,

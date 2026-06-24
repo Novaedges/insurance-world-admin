@@ -187,7 +187,7 @@ export class AuthService {
     if (!user) return false;
 
     const role = user.role?.toUpperCase() || '';
-    if (role === 'SUPER ADMIN' || role === 'SUPER_ADMIN' || role === 'ADMIN') return true;
+    if (role === 'SUPER ADMIN' || role === 'SUPER_ADMIN') return true;
 
     const idMap: { [key: string]: string } = {
       dashboard: 'Dashboard',

@@ -236,14 +236,18 @@
       </div>
 
       <div class="form-group">
-        <label>Discount Value (Flat)</label>
+        <label>Discount Value (%)</label>
         <input type="number" formControlName="discountValue" placeholder="0" />
+        @if (form.get('discountValue')?.invalid && form.get('discountValue')?.touched) {
+          <div class="error-msg">Discount must be between 0% and 100%</div>
+        }
       </div>
 
       <!-- Hidden/Deprecated fields required by frontend schema -->
       <div class="form-group" style="display: none">
         <label>Discount Type</label>
         <select formControlName="discountType">
+          <option value="CENT">Percentage</option>
           <option value="FLAT">Flat Amount</option>
         </select>
       </div>

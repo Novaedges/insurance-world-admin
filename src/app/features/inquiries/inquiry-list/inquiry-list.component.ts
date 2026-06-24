@@ -111,6 +111,7 @@ export class InquiryListComponent implements OnInit {
           }
         } else {
           this.items = [];
+          this.filterItems();
           this.totalItems = 0;
           this.apiMessage = res.msg || 'No data found.';
         }
@@ -119,6 +120,7 @@ export class InquiryListComponent implements OnInit {
       error: (err) => {
         console.error('Failed to fetch enquiries', err);
         this.items = [];
+        this.filterItems();
         this.totalItems = 0;
         this.apiMessage = err.error?.msg || 'Failed to load enquiries.';
         this.isLoading = false;
