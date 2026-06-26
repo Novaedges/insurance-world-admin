@@ -130,7 +130,7 @@
           >
             <span class="label">Premium Price</span>
             <span class="value" style="color: #1d4ed8; font-size: 1.25rem">{{
-              saleDetails.sellingPrice | currency: 'INR'
+              saleDetails.actualPrice | currency: 'INR'
             }}</span>
           </div>
           <div class="detail-item highlight-success">
@@ -140,10 +140,10 @@
             }}</span>
           </div>
           <div class="detail-item highlight-success">
-            <span class="label">Discount %</span>
-            <span class="value" style="color: #10b981; font-size: 1.25rem"
-              >{{ saleDetails.discountPercent || 0 }}%</span
-            >
+            <span class="label">Received Amount</span>
+            <span class="value" style="color: #10b981; font-size: 1.25rem">{{
+              saleDetails.actualPrice - saleDetails.commission | currency: 'INR'
+            }}</span>
           </div>
         </div>
       </div>
