@@ -140,10 +140,10 @@
             }}</span>
           </div>
           <div class="detail-item highlight-success">
-            <span class="label">Selling Price</span>
-            <span class="value">{{
-              saleDetails.sellingPrice - saleDetails.commission | currency: 'INR'
-            }}</span>
+            <span class="label">Discount %</span>
+            <span class="value" style="color: #10b981; font-size: 1.25rem"
+              >{{ saleDetails.discountPercent || 0 }}%</span
+            >
           </div>
         </div>
       </div>

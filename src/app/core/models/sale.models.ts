@@ -32,4 +32,5 @@ export interface SaleReportItem {
   coverage: string[];
   actualPrice: number;
   lapsDate?: string;
+  discountPercent?: number;
 }

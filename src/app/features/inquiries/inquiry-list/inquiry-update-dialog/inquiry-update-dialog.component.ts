@@ -351,6 +351,11 @@ export class InquiryUpdateDialogComponent implements OnInit {
       return;
     }
 
+    if (!this.formData.lapsDate) {
+      this.snackbarService.error('Lapse Date is mandatory');
+      return;
+    }
+
     if (this.formData.status === 'Completed' && !this.formData.sellingPrice) {
       this.snackbarService.error('Selling Price is required when marking as Completed');
       return;

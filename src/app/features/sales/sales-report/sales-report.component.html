@@ -70,8 +70,8 @@
           <th>Policy</th>
           <th>Price</th>
           <th>Premium Price</th>
+          <th>Discount %</th>
           <th>Commission</th>
-          <th>Selling Price</th>
           <th>Executive</th>
           <th>Lapse Date</th>
           <th class="text-center">Action</th>
@@ -111,10 +111,8 @@
               </td>
               <td class="font-bold text-primary">{{ sale.sellingPrice || 0 | currency: 'INR' }}</td>
               <td class="text-warning font-bold">{{ sale.commission | currency: 'INR' }}</td>
+              <td class="font-bold">{{ sale.discountPercent || 0 }}%</td>
 
-              <td class="font-bold text-success">
-                {{ sale.sellingPrice - sale.commission | currency: 'INR' }}
-              </td>
               <td>{{ sale.salesExecutiveName }}</td>
               <td class="text-danger font-bold">
                 {{ sale.lapsDate ? (sale.lapsDate | date: 'dd MMM yyyy') : 'N/A' }}
