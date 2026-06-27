@@ -340,6 +340,16 @@ export class InquiryUpdateDialogComponent implements OnInit {
   }
 
   onCommissionChange() {
+    if (this.selectedPolicyDetails) {
+      const sellingPrice = this.formData.sellingPrice || 0;
+      const discountPercent = this.selectedPolicyDetails.discount || 0;
+      const maxCommission = Math.round((sellingPrice * discountPercent) / 100);
+      
+      if (this.formData.commission !== null && this.formData.commission > maxCommission) {
+        this.formData.commission = maxCommission;
+        this.snackbarService.error(`Commission cannot exceed the maximum allowed value of ₹${maxCommission}`);
+      }
+    }
     this.formData.discount = this.formData.commission;
   }
 
