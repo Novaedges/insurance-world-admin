@@ -7,6 +7,9 @@ import { InquiryAssignDialogComponent } from './inquiry-assign-dialog/inquiry-as
 import { InquiryUpdateDialogComponent } from './inquiry-update-dialog/inquiry-update-dialog.component';
 import { InquiryService } from './inquiry.service';
 import { InquiryReportItem } from '../../../core/models/inquiry.models';
+import { AuthService } from '../../../core/services/auth.service';
+import { ConfirmationService } from '../../../shared/services/confirmation.service';
+import { SnackbarService } from '../../../core/services/snackbar.service';
 
 @Component({
   selector: 'app-inquiry-list',
@@ -48,7 +51,19 @@ export class InquiryListComponent implements OnInit {
   apiMessage: string = '';
   isStatusDropdownOpen = false;
 
-  constructor(private inquiryService: InquiryService) {}
+  constructor(
+    private inquiryService: InquiryService,
+    private authService: AuthService,
+    private confirmationService: ConfirmationService,
+    private snackbarService: SnackbarService,
+  ) {}
+
+  isAdmin(): boolean {
+    const user = this.authService.currentUser();
+    if (!user) return false;
+    const role = user.role?.toUpperCase() || '';
+    return role === 'ADMIN' || role === 'SUPER_ADMIN' || role === 'SUPER ADMIN';
+  }
 
   ngOnInit() {
     this.loadData();
@@ -221,5 +236,31 @@ export class InquiryListComponent implements OnInit {
   onUpdateSaved() {
     this.closeUpdate();
     this.loadData();
+  }
+
+  deleteInquiry(id: string) {
+    this.confirmationService.confirm({
+      title: 'Delete Inquiry',
+      message: 'Are you sure you want to delete this inquiry? This action cannot be undone.',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      type: 'danger',
+    }).then((confirmed) => {
+      if (confirmed) {
+        this.inquiryService.deleteInquiry(id).subscribe({
+          next: (res) => {
+            if (res.status !== false) {
+              this.snackbarService.success(res.msg || 'Inquiry deleted successfully');
+              this.loadData();
+            } else {
+              this.snackbarService.error(res.msg || 'Failed to delete Inquiry');
+            }
+          },
+          error: (err) => {
+            this.snackbarService.error(err.error?.msg || 'Failed to delete Inquiry');
+          },
+        });
+      }
+    });
   }
 }

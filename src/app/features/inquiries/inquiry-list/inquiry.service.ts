@@ -50,4 +50,9 @@ export class InquiryService {
   }): Observable<any> {
     return this.http.patch<any>(this.apiUrl, payload);
   }
+
+  deleteInquiry(id: string): Observable<any> {
+    let params = new HttpParams().set('_id', id);
+    return this.http.delete<any>(this.apiUrl, { params });
+  }
 }

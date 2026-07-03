@@ -115,7 +115,7 @@
                     class="btn-icon btn-primary-light"
                     (click)="openAssign(inq._id)"
                     title="Assign Sales Person"
-                    [disabled]="inq.status === 'Completed'"
+                    [disabled]="inq.status === 'Completed' || (inq.salesExecutiveDetails?._id && !isAdmin())"
                   >
                     <i class="ri-user-add-line"></i>
                   </button>
@@ -126,6 +126,15 @@
                   >
                     <i class="ri-edit-line"></i>
                   </button>
+                  @if (isAdmin()) {
+                    <button
+                      class="btn-icon btn-danger-light"
+                      (click)="deleteInquiry(inq._id)"
+                      title="Delete Enquiry"
+                    >
+                      <i class="ri-delete-bin-line"></i>
+                    </button>
+                  }
                 </div>
               </td>
             </tr>
