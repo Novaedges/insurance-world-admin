@@ -239,28 +239,30 @@ export class InquiryListComponent implements OnInit {
   }
 
   deleteInquiry(id: string) {
-    this.confirmationService.confirm({
-      title: 'Delete Inquiry',
-      message: 'Are you sure you want to delete this inquiry? This action cannot be undone.',
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
-      type: 'danger',
-    }).then((confirmed) => {
-      if (confirmed) {
-        this.inquiryService.deleteInquiry(id).subscribe({
-          next: (res) => {
-            if (res.status !== false) {
-              this.snackbarService.success(res.msg || 'Inquiry deleted successfully');
-              this.loadData();
-            } else {
-              this.snackbarService.error(res.msg || 'Failed to delete Inquiry');
-            }
-          },
-          error: (err) => {
-            this.snackbarService.error(err.error?.msg || 'Failed to delete Inquiry');
-          },
-        });
-      }
-    });
+    this.confirmationService
+      .confirm({
+        title: 'Delete Inquiry',
+        message: 'Are you sure you want to delete this inquiry? This action cannot be undone.',
+        confirmText: 'Delete',
+        cancelText: 'Cancel',
+        type: 'danger',
+      })
+      .then((confirmed) => {
+        if (confirmed) {
+          this.inquiryService.deleteInquiry(id).subscribe({
+            next: (res) => {
+              if (res.status !== false) {
+                this.snackbarService.success(res.msg || 'Inquiry deleted successfully');
+                this.loadData();
+              } else {
+                this.snackbarService.error(res.msg || 'Failed to delete Inquiry');
+              }
+            },
+            error: (err) => {
+              this.snackbarService.error(err.error?.msg || 'Failed to delete Inquiry');
+            },
+          });
+        }
+      });
   }
 }

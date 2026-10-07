@@ -115,7 +115,9 @@
                     class="btn-icon btn-primary-light"
                     (click)="openAssign(inq._id)"
                     title="Assign Sales Person"
-                    [disabled]="inq.status === 'Completed' || (inq.salesExecutiveDetails?._id && !isAdmin())"
+                    [disabled]="
+                      inq.status === 'Completed' || (inq.salesExecutiveDetails?._id && !isAdmin())
+                    "
                   >
                     <i class="ri-user-add-line"></i>
                   </button>
